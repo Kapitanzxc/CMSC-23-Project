@@ -10,11 +10,11 @@ A mobile Slam Book with Friend list tracker using forms, navigation, routes, and
 
 ## Things you did in the code
 
-1. Define the routes for every page.
-2. Usage of different widgets, drawer, and form field.
-3. Receive and send date from different screens.
-4. Monitor user's input using controllers.
-5. Saving user's input using a map.
+1. Define routes for each page.
+2. Utilize different widgets, drawers, and form fields.
+3. Receive and send data between screens.
+4. Monitor user input using controllers.
+5. Save user input using a map.
 
 ## Challenges encountered
 
