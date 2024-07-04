@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const SlamBook());
-}
-
 class SlamBook extends StatefulWidget {
-  final String? title;
+  final Map friendList;
 
-  const SlamBook({super.key, this.title});
+  const SlamBook({super.key, required this.friendList});
 
   @override
   State<SlamBook> createState() => _SlamBookState();
 }
 
 class _SlamBookState extends State<SlamBook> {
-  bool checkboxValue = false;
+  // List of superpowers
   List<String> superpowers = [
     "Super Strength",
     "Flight",
@@ -47,7 +43,7 @@ class _SlamBookState extends State<SlamBook> {
   String? saveNickname;
   String? saveAge;
   String? saveRelationshipStatus;
-  String? saveHappinesLvl;
+  String? saveHappinessLvl;
   String? saveSuperPower;
   String? saveMotto;
 
@@ -63,6 +59,8 @@ class _SlamBookState extends State<SlamBook> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        // Drawer
+        drawer: drawer(),
         // Personalizing the appbar and background color
         backgroundColor: Color.fromRGBO(245, 239, 230, 1),
         appBar: AppBar(
@@ -163,7 +161,6 @@ class _SlamBookState extends State<SlamBook> {
                               top: 20, left: 40, right: 40, bottom: 20),
                           // Creation of drowdownbutton
                           child: DropdownButtonFormField(
-                            onSaved: (newValue) {},
                             value: dropdownValue,
                             items: superpowers.map((item) {
                               return DropdownMenuItem(
@@ -214,7 +211,7 @@ class _SlamBookState extends State<SlamBook> {
                           OutlinedButton.icon(
                               style: OutlinedButton.styleFrom(
                                 side: BorderSide(
-                                    color: Color.fromRGBO(140, 209, 147, 1)),
+                                    color: Color.fromRGBO(79, 111, 82, 1)),
                               ),
                               // When pressed, reset the form
                               onPressed: () {
@@ -223,6 +220,7 @@ class _SlamBookState extends State<SlamBook> {
                                   resetForm();
                                 });
                               },
+                              // Reset icon
                               icon: const Icon(Icons.restart_alt,
                                   color: Color.fromRGBO(79, 111, 82, 1)),
                               label: Text("Reset",
@@ -243,7 +241,8 @@ class _SlamBookState extends State<SlamBook> {
                                   submitForm();
                                 }
                               },
-                              icon: const Icon(Icons.send),
+                              // Submit icon
+                              icon: const Icon(Icons.send, size: 20),
                               label: const Text("Submit",
                                   style: TextStyle(
                                       color:
@@ -257,12 +256,51 @@ class _SlamBookState extends State<SlamBook> {
             )));
   }
 
+  // Drawer Function
+  Widget drawer() {
+    return Drawer(
+      child: ListView(
+        children: [
+          // Drawer title formatting
+          Container(
+            color: Color.fromRGBO(26, 77, 46, 1),
+            height: 100,
+            child: DrawerHeader(
+                child: Text(
+              "Exercise 5: Menu, Routes, and Navigation",
+              style: TextStyle(
+                  fontSize: 20, color: Color.fromRGBO(243, 243, 243, 1)),
+            )),
+          ),
+          // Friends tab
+          ListTile(
+            title: Text("Friends"),
+            onTap: () {
+              // Pops the drawer
+              Navigator.pop(context);
+              // Returns the updated friendList
+              Navigator.pop(context, widget.friendList);
+            },
+          ),
+          // Slambook Tab (closes the drawer)
+          ListTile(
+            title: Text("Slambook"),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   // Text field formatting function
   Padding textFieldCreator(TextEditingController controller, String labelText) {
     return Padding(
         padding: EdgeInsets.only(bottom: 20),
         child: TextFormField(
           controller: controller,
+          // Validation
           validator: (val) {
             if (val == null || val.isEmpty) return "This is a required field";
             return null;
@@ -325,7 +363,7 @@ class _SlamBookState extends State<SlamBook> {
                 buildSummaryRow("Nickname", saveNickname),
                 buildSummaryRow("Age", saveAge),
                 buildSummaryRow("Relationship Status", saveRelationshipStatus),
-                buildSummaryRow("Happiness Level", saveHappinesLvl),
+                buildSummaryRow("Happiness Level", saveHappinessLvl),
                 buildSummaryRow("Superpower", saveSuperPower),
                 buildSummaryRow("Favorite Motto", saveMotto)
               ],
@@ -342,11 +380,22 @@ class _SlamBookState extends State<SlamBook> {
       saveNickname = nicknameController.text;
       saveAge = ageController.text;
       saveRelationshipStatus = switchLight ? "Single" : "Not Single";
-      saveHappinesLvl = currentSliderValue.toString();
+      saveHappinessLvl = currentSliderValue.toString();
       saveSuperPower = dropdownValue;
       saveMotto = motto(radioValue);
+      // Assigning the new values in the map
+      widget.friendList[saveName] = [
+        saveName,
+        saveNickname,
+        saveAge,
+        saveRelationshipStatus,
+        saveHappinessLvl,
+        saveSuperPower,
+        saveMotto
+      ];
       showSummary = true; // Show summary
     });
+    // Print statement
     print("Submitted! Summary displayed");
   }
 
@@ -390,7 +439,7 @@ class _SlamBookState extends State<SlamBook> {
     return Padding(
       padding: EdgeInsets.only(bottom: 8),
       child: Row(children: [
-        // Label
+        // Label Formatting
         Expanded(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -399,11 +448,11 @@ class _SlamBookState extends State<SlamBook> {
                   color: Color.fromRGBO(79, 111, 82, 1),
                   fontWeight: FontWeight.bold)),
         ])),
-        // Value
+        // Value Formatting
         Expanded(
             child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [Text("${input}")],
+          children: [Text(input ?? "")],
         ))
       ]),
     );

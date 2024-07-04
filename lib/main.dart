@@ -1,5 +1,7 @@
-import 'package:exer5_navigation_app/homepage.dart';
-import 'package:exer5_navigation_app/slambook.dart';
+// Import statements
+import 'package:exer5_app/friends.dart';
+import 'package:exer5_app/slambook.dart';
+import 'package:exer5_app/summary.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -11,15 +13,26 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Defining the routes
     return MaterialApp(
-      initialRoute: "/homepage",
+      // Initial route is the friends page
+      initialRoute: "/friendspage",
       onGenerateRoute: (settings) {
-        if (settings.name == "/homepage") {
-          return MaterialPageRoute(builder: (context) => const HomePage());
+        if (settings.name == "/friendspage") {
+          return MaterialPageRoute(builder: (context) => const FriendsPage());
         }
 
         if (settings.name == "/slambookpage") {
-          return MaterialPageRoute(builder: (context) => const SlamBook());
+          final friendList = settings.arguments as Map<String, List<dynamic>>;
+          return MaterialPageRoute(
+              builder: (context) => SlamBook(friendList: friendList));
+        }
+
+        if (settings.name == "/summarypage") {
+          final friendListSettings = settings.arguments as List;
+          return MaterialPageRoute(
+              builder: (context) =>
+                  SummaryPage(friendListSettings: friendListSettings));
         }
 
         return null;

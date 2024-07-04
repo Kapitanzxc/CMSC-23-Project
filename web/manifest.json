@@ -1,6 +1,6 @@
 {
-    "name": "exer5_navigation_app",
-    "short_name": "exer5_navigation_app",
+    "name": "exer5_app",
+    "short_name": "exer5_app",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
