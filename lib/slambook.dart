@@ -302,7 +302,7 @@ class _SlamBookState extends State<SlamBook> {
           controller: controller,
           // Validation
           validator: (val) {
-            if (val == null || val.isEmpty) return "This is a required field";
+            if (val == null || val.isEmpty || val.trim().isEmpty ) return "This is a required field";
             return null;
           },
           decoration: InputDecoration(
