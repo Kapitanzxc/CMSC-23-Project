@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
+// Page for showing the summary/details
 class SummaryPage extends StatefulWidget {
-  final List? friendListSettings;
-  const SummaryPage({super.key, this.friendListSettings});
+  final List? friendListValues;
+  const SummaryPage({super.key, this.friendListValues});
 
   @override
   State<SummaryPage> createState() => _SummaryPageState();
@@ -15,7 +16,7 @@ class _SummaryPageState extends State<SummaryPage> {
         // Appbar formatting
         appBar: AppBar(
             backgroundColor: Color.fromRGBO(26, 77, 46, 1),
-            title: Text(widget.friendListSettings?[0],
+            title: Text(widget.friendListValues?[0],
                 style: TextStyle(color: Colors.white))),
         backgroundColor: Color.fromRGBO(245, 239, 230, 1),
         // Shows the summarry
@@ -56,15 +57,14 @@ class _SummaryPageState extends State<SummaryPage> {
             Column(
               children: [
                 // Creates row of summary from the list
-                buildSummaryRow("Name", widget.friendListSettings?[0]),
-                buildSummaryRow("Nickname", widget.friendListSettings?[1]),
-                buildSummaryRow("Age", widget.friendListSettings?[2]),
+                buildSummaryRow("Name", widget.friendListValues?[0]),
+                buildSummaryRow("Nickname", widget.friendListValues?[1]),
+                buildSummaryRow("Age", widget.friendListValues?[2]),
                 buildSummaryRow(
-                    "Relationship Status", widget.friendListSettings?[3]),
-                buildSummaryRow(
-                    "Happiness Level", widget.friendListSettings?[4]),
-                buildSummaryRow("Superpower", widget.friendListSettings?[5]),
-                buildSummaryRow("Favorite Motto", widget.friendListSettings?[6])
+                    "Relationship Status", widget.friendListValues?[3]),
+                buildSummaryRow("Happiness Level", widget.friendListValues?[4]),
+                buildSummaryRow("Superpower", widget.friendListValues?[5]),
+                buildSummaryRow("Favorite Motto", widget.friendListValues?[6])
               ],
             ),
           ],

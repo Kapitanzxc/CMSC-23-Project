@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tolentino_exer7_firebase/models/friend_model.dart';
+import 'package:tolentino_exer7_firebase/provider/friends_provider.dart';
 
 class SlamBook extends StatefulWidget {
-  final Map friendList;
-
-  const SlamBook({super.key, required this.friendList});
+  const SlamBook({super.key});
 
   @override
   State<SlamBook> createState() => _SlamBookState();
@@ -39,13 +40,13 @@ class _SlamBookState extends State<SlamBook> {
   bool showSummary = false;
 
   // Variables for saving the fields
-  String? saveName;
-  String? saveNickname;
-  String? saveAge;
-  String? saveRelationshipStatus;
-  String? saveHappinessLvl;
-  String? saveSuperPower;
-  String? saveMotto;
+  late String saveName;
+  late String saveNickname;
+  late String saveAge;
+  late String saveRelationshipStatus;
+  late String saveHappinessLvl;
+  late String saveSuperPower;
+  late String saveMotto;
 
   // Disposing controllers
   @override
@@ -102,7 +103,8 @@ class _SlamBookState extends State<SlamBook> {
                                 // Validators
                                 if (val == null || val.isEmpty) {
                                   return "This is a required field";
-                                } else if (int.tryParse(val) == null) {
+                                } else if (int.tryParse(val) == null ||
+                                    int.parse(val) <= 0) {
                                   return "Please enter a valid age";
                                 } else {
                                   return null;
@@ -278,8 +280,7 @@ class _SlamBookState extends State<SlamBook> {
             onTap: () {
               // Pops the drawer
               Navigator.pop(context);
-              // Returns the updated friendList
-              Navigator.pop(context, widget.friendList);
+              Navigator.pop(context);
             },
           ),
           // Slambook Tab (closes the drawer)
@@ -302,7 +303,8 @@ class _SlamBookState extends State<SlamBook> {
           controller: controller,
           // Validation
           validator: (val) {
-            if (val == null || val.isEmpty || val.trim().isEmpty ) return "This is a required field";
+            if (val == null || val.isEmpty || val.trim().isEmpty)
+              return "This is a required field";
             return null;
           },
           decoration: InputDecoration(
@@ -383,16 +385,17 @@ class _SlamBookState extends State<SlamBook> {
       saveHappinessLvl = currentSliderValue.toString();
       saveSuperPower = dropdownValue;
       saveMotto = motto(radioValue);
-      // Assigning the new values in the map
-      widget.friendList[saveName] = [
-        saveName,
-        saveNickname,
-        saveAge,
-        saveRelationshipStatus,
-        saveHappinessLvl,
-        saveSuperPower,
-        saveMotto
-      ];
+      // Assigning the new values in the friendList
+      // Instantiate a todo objeect to be inserted, default userID will be 1, the id will be the next id in the list
+      Friend temp = Friend(
+          name: saveName,
+          nickname: saveNickname,
+          age: saveAge,
+          relationshipStatus: saveRelationshipStatus,
+          happinessLevel: saveHappinessLvl,
+          superpower: saveSuperPower,
+          motto: saveMotto);
+      context.read<FriendListProvider>().addFriend(temp);
       showSummary = true; // Show summary
     });
     // Print statement

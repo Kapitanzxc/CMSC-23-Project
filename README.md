@@ -1,22 +1,24 @@
 # Week 8: Data Persistence Using Firebase
 
-**Name:** Your Name <br/>
-**Section:** U-#L <br/>
-**Student number:** 2018 - 12345 <br/>
+**Name:** Vinly G. Tolentino <br/>
+**Section:** U-2L <br/>
+**Student number:** 2022 - 10929 <br/>
 
 ## Code Description
 
-Describe what your code does here
+The Slambook app is an application that allows users to manage a list of friends. Users can add new friends, edit existing friend details, view friend information, and delete friends from the list. All friend data is stored in Firebase.
 
 ## Things you did in the code
 
-Describe what you did here
+1. Manage folders depending on their functionality (screens, models, providers, api).
+2. Translate Exercise 4, where data are passed using routes, to an app that uses provider that centralized all the data.
+3. Utilization of firebase to save data in the cloud. 
 
 ## Challenges encountered
 
-Describe your challenges here
+1. Adding provider and api to my existing app.
 
 ## References
 
-- link to the reference
-- another link
+https://stackoverflow.com/questions/10926853/best-way-for-conditional-variable-assignment
+https://stackoverflow.com/questions/44490622/disable-a-text-edit-field-in-flutter

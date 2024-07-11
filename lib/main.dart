@@ -1,11 +1,29 @@
 // Import statements
-import 'package:exer5_app/friends.dart';
-import 'package:exer5_app/slambook.dart';
-import 'package:exer5_app/summary.dart';
 import 'package:flutter/material.dart';
+import 'package:tolentino_exer7_firebase/provider/friends_provider.dart';
+import 'package:tolentino_exer7_firebase/screens/friend_page.dart';
+import 'package:tolentino_exer7_firebase/screens/slambook_page.dart';
+import 'package:tolentino_exer7_firebase/screens/summary_page.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:provider/provider.dart';
 
-void main() {
-  runApp(const SplashScreen());
+Future<void> main() async {
+  // Initializing the firebase
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  runApp(
+    MultiProvider(
+      // Friend List Provider
+      providers: [
+        ChangeNotifierProvider(create: ((context) => FriendListProvider())),
+      ],
+      child: const SplashScreen(),
+    ),
+  );
 }
 
 class SplashScreen extends StatelessWidget {
@@ -13,26 +31,24 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Defining the routes
     return MaterialApp(
-      // Initial route is the friends page
-      initialRoute: "/friendspage",
+      title: 'Slambook App',
+      // Declaring routes
+      initialRoute: "friendspage",
       onGenerateRoute: (settings) {
-        if (settings.name == "/friendspage") {
+        if (settings.name == "/") {
           return MaterialPageRoute(builder: (context) => const FriendsPage());
         }
 
-        if (settings.name == "/slambookpage") {
-          final friendList = settings.arguments as Map<String, List<dynamic>>;
-          return MaterialPageRoute(
-              builder: (context) => SlamBook(friendList: friendList));
+        if (settings.name == "/slambook") {
+          return MaterialPageRoute(builder: (context) => const SlamBook());
         }
 
-        if (settings.name == "/summarypage") {
-          final friendListSettings = settings.arguments as List;
+        if (settings.name == "/summary") {
+          final friendListValues = settings.arguments as List;
           return MaterialPageRoute(
               builder: (context) =>
-                  SummaryPage(friendListSettings: friendListSettings));
+                  SummaryPage(friendListValues: friendListValues));
         }
 
         return null;
