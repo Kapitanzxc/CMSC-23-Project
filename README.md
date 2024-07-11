@@ -1,30 +1,22 @@
-# Week 4-5: User Interaction and Menu, Routes, and Navigation
+# Week 8: Data Persistence Using Firebase
 
-**Name:** Vinly G. Tolentino<br/>
-**Section:** U-2L <br/>
-**Student number:** 2022 - 10929 <br/>
+**Name:** Your Name <br/>
+**Section:** U-#L <br/>
+**Student number:** 2018 - 12345 <br/>
 
 ## Code Description
 
-A mobile Slam Book with Friend list tracker using forms, navigation, routes, and widgets.
+Describe what your code does here
 
 ## Things you did in the code
 
-1. Define routes for each page.
-2. Utilize different widgets, drawers, and form fields.
-3. Receive and send data between screens.
-4. Monitor user input using controllers.
-5. Save user input using a map.
+Describe what you did here
 
 ## Challenges encountered
 
-1. Navigating through different pages.
-2. Sending and receiving data.
-3. Displaying friends list.
+Describe your challenges here
 
 ## References
-- https://docs.flutter.dev/
-- https://stackoverflow.com/questions/57874576/how-to-change-outlinedbutton-border-color
-- https://stackoverflow.com/questions/56964776/how-to-draw-a-horizontal-line-in-flutter-row-widgets
-- https://stackoverflow.com/questions/57777737/flutter-give-container-rounded-border
-- https://stackoverflow.com/questions/15289447/is-there-a-better-way-to-parse-an-int-in-dart
+
+- link to the reference
+- another link
