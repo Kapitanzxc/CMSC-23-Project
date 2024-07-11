@@ -238,6 +238,9 @@ class _ModalPageState extends State<ModalPage> {
                   currentSliderValue.toString(),
                   dropdownValue,
                   motto(radioValue));
+
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text('Succesfully edited ${widget.friend.name}')));
               // Remove dialog after editing
               Navigator.of(context).pop();
             }
@@ -255,6 +258,8 @@ class _ModalPageState extends State<ModalPage> {
           // Delete friend through the provider
           onPressed: () {
             context.read<FriendListProvider>().deleteFriend(widget.friend);
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text('Succesfully deleted')));
             // Remove dialog after editing
             Navigator.of(context).pop();
           },
