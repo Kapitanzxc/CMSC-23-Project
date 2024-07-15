@@ -41,48 +41,48 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyB-tCpQ_lasKiLyNR5u8xbBNV5VL9o0D0g',
-    appId: '1:318346832538:web:6cd0de0a3d4a01daeb4d23',
-    messagingSenderId: '318346832538',
-    projectId: 'exer7-slambook-firebase',
-    authDomain: 'exer7-slambook-firebase.firebaseapp.com',
-    storageBucket: 'exer7-slambook-firebase.appspot.com',
-    measurementId: 'G-K4PRD0SS2C',
+    apiKey: 'AIzaSyAZA0Qvp5d4RC6WEm_Gof3hSVMz82xe08c',
+    appId: '1:852005782893:web:65356cd1da82de22e78664',
+    messagingSenderId: '852005782893',
+    projectId: 'cmsc23-mini-project',
+    authDomain: 'cmsc23-mini-project.firebaseapp.com',
+    storageBucket: 'cmsc23-mini-project.appspot.com',
+    measurementId: 'G-W5FY12ER5N',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyA2pELlY7pcDD5mythuE8f46lI6zAos6e4',
-    appId: '1:318346832538:android:b89be92fc859bbbfeb4d23',
-    messagingSenderId: '318346832538',
-    projectId: 'exer7-slambook-firebase',
-    storageBucket: 'exer7-slambook-firebase.appspot.com',
+    apiKey: 'AIzaSyAtO9kN-BJC1N_Exjdcu4MBbsjRhPVpcaA',
+    appId: '1:852005782893:android:2f45b555f167c1b7e78664',
+    messagingSenderId: '852005782893',
+    projectId: 'cmsc23-mini-project',
+    storageBucket: 'cmsc23-mini-project.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyA1q-xV8b2mcc09NMYCKFPVdmqBR58G14o',
-    appId: '1:318346832538:ios:da95cb5faf4cc404eb4d23',
-    messagingSenderId: '318346832538',
-    projectId: 'exer7-slambook-firebase',
-    storageBucket: 'exer7-slambook-firebase.appspot.com',
+    apiKey: 'AIzaSyD_baftGLwvbPkhdxs77UfhmWG6MT5DmGA',
+    appId: '1:852005782893:ios:36f421f4f238a0e8e78664',
+    messagingSenderId: '852005782893',
+    projectId: 'cmsc23-mini-project',
+    storageBucket: 'cmsc23-mini-project.appspot.com',
     iosBundleId: 'com.example.exer5App',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyA1q-xV8b2mcc09NMYCKFPVdmqBR58G14o',
-    appId: '1:318346832538:ios:da95cb5faf4cc404eb4d23',
-    messagingSenderId: '318346832538',
-    projectId: 'exer7-slambook-firebase',
-    storageBucket: 'exer7-slambook-firebase.appspot.com',
+    apiKey: 'AIzaSyD_baftGLwvbPkhdxs77UfhmWG6MT5DmGA',
+    appId: '1:852005782893:ios:36f421f4f238a0e8e78664',
+    messagingSenderId: '852005782893',
+    projectId: 'cmsc23-mini-project',
+    storageBucket: 'cmsc23-mini-project.appspot.com',
     iosBundleId: 'com.example.exer5App',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyB-tCpQ_lasKiLyNR5u8xbBNV5VL9o0D0g',
-    appId: '1:318346832538:web:b85905f88121ff8feb4d23',
-    messagingSenderId: '318346832538',
-    projectId: 'exer7-slambook-firebase',
-    authDomain: 'exer7-slambook-firebase.firebaseapp.com',
-    storageBucket: 'exer7-slambook-firebase.appspot.com',
-    measurementId: 'G-N9YWBSEMM1',
+    apiKey: 'AIzaSyAZA0Qvp5d4RC6WEm_Gof3hSVMz82xe08c',
+    appId: '1:852005782893:web:17589bdac8545102e78664',
+    messagingSenderId: '852005782893',
+    projectId: 'cmsc23-mini-project',
+    authDomain: 'cmsc23-mini-project.firebaseapp.com',
+    storageBucket: 'cmsc23-mini-project.appspot.com',
+    measurementId: 'G-GCBMH6WEJC',
   );
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tolentino_exer7_firebase/models/friend_model.dart';
-import 'package:tolentino_exer7_firebase/provider/friends_provider.dart';
+import 'package:tolentino_mini_project/models/friend_model.dart';
+import 'package:tolentino_mini_project/provider/friends_provider.dart';
 
 // Page for editing and deleting a friend
 class ModalPage extends StatefulWidget {

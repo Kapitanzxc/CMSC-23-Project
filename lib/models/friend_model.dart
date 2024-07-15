@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 // Friend Class
 class Friend {
   String? id;

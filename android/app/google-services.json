@@ -1,21 +1,40 @@
 {
   "project_info": {
-    "project_number": "318346832538",
-    "project_id": "exer7-slambook-firebase",
-    "storage_bucket": "exer7-slambook-firebase.appspot.com"
+    "project_number": "852005782893",
+    "project_id": "cmsc23-mini-project",
+    "storage_bucket": "cmsc23-mini-project.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:318346832538:android:b89be92fc859bbbfeb4d23",
+        "mobilesdk_app_id": "1:852005782893:android:b806f3b383365263e78664",
         "android_client_info": {
-          "package_name": "com.example.app"
+          "package_name": "com.example.exer5_app"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyA2pELlY7pcDD5mythuE8f46lI6zAos6e4"
+          "current_key": "AIzaSyAtO9kN-BJC1N_Exjdcu4MBbsjRhPVpcaA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:852005782893:android:2f45b555f167c1b7e78664",
+        "android_client_info": {
+          "package_name": "com.example.exer5_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtO9kN-BJC1N_Exjdcu4MBbsjRhPVpcaA"
         }
       ],
       "services": {

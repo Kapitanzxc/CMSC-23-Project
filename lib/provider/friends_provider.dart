@@ -1,9 +1,9 @@
+// Provider class
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:tolentino_exer7_firebase/api/friend_api.dart';
-import 'package:tolentino_exer7_firebase/models/friend_model.dart';
+import 'package:tolentino_mini_project/api/firebase_friend_api.dart';
+import 'package:tolentino_mini_project/models/friend_model.dart';
 
-// Provider class
 class FriendListProvider with ChangeNotifier {
   late Stream<QuerySnapshot> _friendsStream;
   var firebaseService = FirebaseFriendsAPI();

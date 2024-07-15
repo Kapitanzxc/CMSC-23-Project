@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tolentino_exer7_firebase/models/friend_model.dart';
-import 'package:tolentino_exer7_firebase/provider/friends_provider.dart';
-import 'package:tolentino_exer7_firebase/screens/modal_page.dart';
+import 'package:tolentino_mini_project/models/friend_model.dart';
+import 'package:tolentino_mini_project/provider/auth_provider.dart';
+import 'package:tolentino_mini_project/provider/friends_provider.dart';
+import 'package:tolentino_mini_project/screens/pages/modal_page.dart';
 
 class FriendsPage extends StatefulWidget {
   const FriendsPage({super.key});
@@ -204,6 +205,13 @@ class _FriendsPageState extends State<FriendsPage> {
                 Navigator.pushNamed(context, "/slambook");
                 // Update the friend list data once received
               }),
+          ListTile(
+            title: const Text('Logout'),
+            onTap: () {
+              context.read<UserAuthProvider>().signOut();
+              Navigator.pop(context);
+            },
+          ),
         ],
       ),
     );
