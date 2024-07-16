@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:tolentino_mini_project/provider/auth_provider.dart';
+import 'package:tolentino_mini_project/screens/account_creation/sign-up-pages/signup_pfp_page.dart';
 
+// First Signup Page
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
 
@@ -21,6 +21,7 @@ class _SignUpState extends State<SignUpPage> {
       body: SingleChildScrollView(
         child: Container(
             margin: const EdgeInsets.all(30),
+            // Form that contains email and password
             child: Form(
               key: _formKey,
               child: Column(
@@ -32,6 +33,7 @@ class _SignUpState extends State<SignUpPage> {
     );
   }
 
+// Sign up Text
   Widget get heading => const Padding(
         padding: EdgeInsets.only(bottom: 30),
         child: Text(
@@ -40,6 +42,7 @@ class _SignUpState extends State<SignUpPage> {
         ),
       );
 
+// Email Text Field
   Widget get emailField => Padding(
         padding: const EdgeInsets.only(bottom: 30),
         child: TextFormField(
@@ -57,6 +60,7 @@ class _SignUpState extends State<SignUpPage> {
         ),
       );
 
+// Password Text Field
   Widget get passwordField => Padding(
         padding: const EdgeInsets.only(bottom: 30),
         child: TextFormField(
@@ -75,18 +79,18 @@ class _SignUpState extends State<SignUpPage> {
         ),
       );
 
+// Sign up button text field
   Widget get submitButton => ElevatedButton(
       onPressed: () async {
         if (_formKey.currentState!.validate()) {
           _formKey.currentState!.save();
-          await context
-              .read<UserAuthProvider>()
-              .authService
-              .signUp(email!, password!);
-
-          // check if the widget hasn't been disposed of after an asynchronous action
-          if (mounted) Navigator.pop(context);
+          // Navigate to the next sign up page
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      SignupPfpPage(email: email, password: password)));
         }
       },
-      child: const Text("Sign Up"));
+      child: const Text("Next"));
 }

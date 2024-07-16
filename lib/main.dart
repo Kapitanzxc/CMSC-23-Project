@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:tolentino_mini_project/firebase_options.dart';
 import 'package:tolentino_mini_project/provider/auth_provider.dart';
 import 'package:tolentino_mini_project/provider/friends_provider.dart';
+import 'package:tolentino_mini_project/provider/storage_provider.dart';
+import 'package:tolentino_mini_project/provider/users_provider.dart';
 import 'package:tolentino_mini_project/screens/pages/friend_page.dart';
 import 'package:tolentino_mini_project/screens/pages/home_page.dart';
 import 'package:tolentino_mini_project/screens/pages/slambook_page.dart';
@@ -23,7 +25,9 @@ Future<void> main() async {
       // Friend List Provider
       providers: [
         ChangeNotifierProvider(create: ((context) => FriendListProvider())),
-        ChangeNotifierProvider(create: ((context) => UserAuthProvider()))
+        ChangeNotifierProvider(create: ((context) => UserAuthProvider())),
+        ChangeNotifierProvider(create: ((context) => UserInfoProvider())),
+        ChangeNotifierProvider(create: ((context) => StorageProvider()))
       ],
       child: const SplashScreen(),
     ),

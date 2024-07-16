@@ -11,21 +11,28 @@ class FirebaseAuthAPI {
     return auth.currentUser; // Returns who is logged in
   }
 
+  String? getCurrentUserId() {
+    return auth.currentUser?.uid; // Returns UID of the current user, if any
+  }
+
   Future<String> signIn(String email, String password) async {
     try {
       await auth.signInWithEmailAndPassword(email: email, password: password);
       return "Successfully signed in!";
-    } on FirebaseAuthException catch(e) {
+    } on FirebaseAuthException catch (e) {
       return "Failed at error: ${e.code}";
     }
   }
 
-  Future<String> signUp(String email, String password) async {
+  Future<UserCredential?> signUp(String email, String password) async {
     try {
-      await auth.createUserWithEmailAndPassword(email: email, password: password);
-      return "Successfully created account!";
-    } on FirebaseAuthException catch(e) {
-      return "Failed at error: ${e.code}";
+      UserCredential? userCredential = await auth
+          .createUserWithEmailAndPassword(email: email, password: password);
+      print("Successfully created account!");
+      return userCredential;
+    } on FirebaseAuthException catch (e) {
+      print("Failed at error: ${e.code}");
+      return null;
     }
   }
 

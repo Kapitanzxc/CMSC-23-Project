@@ -43,6 +43,7 @@ class _FriendsPageState extends State<FriendsPage> {
     return StreamBuilder(
       stream: friendList,
       builder: (context, snapshot) {
+        print('Connection State: ${snapshot.connectionState}');
         // Catching errrors
         if (snapshot.hasError) {
           return Center(

@@ -13,21 +13,27 @@ class FriendListProvider with ChangeNotifier {
     fetchFriendList();
   }
 
-  // Getter
-  Stream<QuerySnapshot> get friendList => _friendsStream;
-
   // Accessing the friendLists from the firebase
   void fetchFriendList() {
     _friendsStream = firebaseService.getAllfriends();
     notifyListeners();
   }
 
+  // Getter
+  Stream<QuerySnapshot> get friendList => _friendsStream;
+
   // Adding a friend and storing it in the firebase
-  void addFriend(Friend friend) async {
-    firebaseService.addFriend(friend.toJson(friend)).then((message) {
-      print(message);
-    });
-    notifyListeners();
+  Future<String?> addFriend(Friend friend) async {
+    try {
+      DocumentReference? document =
+          await firebaseService.addFriend(friend.toJson(friend));
+      String documentId = document!.id;
+      notifyListeners();
+      return documentId;
+    } catch (e) {
+      print("Error adding friend: $e");
+      return null;
+    }
   }
 
   // Edit a friend and update it in Firestore

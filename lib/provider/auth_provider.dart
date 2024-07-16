@@ -10,6 +10,7 @@ class UserAuthProvider with ChangeNotifier {
   UserAuthProvider() {
     authService = FirebaseAuthAPI();
     userStream = authService.getUserStream();
+    user = authService.getUser();
   }
 
   Future<String> signIn(String email, String password) async {
@@ -18,14 +19,19 @@ class UserAuthProvider with ChangeNotifier {
     return response;
   }
 
-  Future<String> signUp(String email, String password) async {
-    String response = await authService.signUp(email, password);
+  Future<UserCredential?> signUp(String email, String password) async {
+    UserCredential? userCredential = await authService.signUp(email, password);
+    print(userCredential);
     notifyListeners();
-    return response;
+    return userCredential;
   }
 
   Future<void> signOut() async {
     await authService.signOut();
     notifyListeners();
+  }
+
+  String? getCurrentUserId() {
+    return authService.getCurrentUserId();
   }
 }

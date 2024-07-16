@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tolentino_mini_project/models/friend_model.dart';
+import 'package:tolentino_mini_project/provider/auth_provider.dart';
 import 'package:tolentino_mini_project/provider/friends_provider.dart';
+import 'package:tolentino_mini_project/provider/users_provider.dart';
 
 class SlamBook extends StatefulWidget {
   const SlamBook({super.key});
@@ -395,11 +398,25 @@ class _SlamBookState extends State<SlamBook> {
           happinessLevel: saveHappinessLvl,
           superpower: saveSuperPower,
           motto: saveMotto);
-      context.read<FriendListProvider>().addFriend(temp);
+      appendFriend(temp);
       showSummary = true; // Show summary
     });
     // Print statement
     print("Submitted! Summary displayed");
+  }
+
+  Future<void> appendFriend(Friend temp) async {
+    String? documentID =
+        await context.read<FriendListProvider>().addFriend(temp);
+    String? uid = context.read<UserAuthProvider>().getCurrentUserId();
+    print("Friend ID: $documentID UID: $uid");
+    if (documentID != null && uid != null) {
+      await context.read<UserInfoProvider>().addFriend(uid, documentID);
+      showSummary = true; // Show summary
+    } else {
+      print("Failed to add friend.");
+      // Handle error or retry logic here
+    }
   }
 
   // Reset function

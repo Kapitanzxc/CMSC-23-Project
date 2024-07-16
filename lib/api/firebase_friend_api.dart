@@ -10,12 +10,15 @@ class FirebaseFriendsAPI {
   }
 
   // Adding a friend in the firestore
-  Future<String> addFriend(Map<String, dynamic> friend) async {
+  Future<DocumentReference?> addFriend(Map<String, dynamic> friend) async {
     try {
-      await friendList.collection("friendLists").add(friend);
-      return "Successfully added friend!";
+      DocumentReference document =
+          await friendList.collection("friendLists").add(friend);
+      print("Successfully added friend to Firestore");
+      return document; // Return the DocumentReference
     } on FirebaseException catch (e) {
-      return "Failed with error: ${e.code}";
+      print("Failed with error: ${e.code}");
+      return null; // or handle the error as per your application's logic
     }
   }
 

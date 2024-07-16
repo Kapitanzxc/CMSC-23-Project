@@ -1,0 +1,44 @@
+import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+
+class StorageAPI {
+  final FirebaseStorage storage = FirebaseStorage.instance;
+
+  // Uploads the image to Firebase Storage and returns the download URL
+  Future<String?> uploadImage(String userId, File? imageFile) async {
+    if (imageFile == null) {
+      print("Error: Image file is null.");
+      return null;
+    }
+
+    try {
+      String fileName = imageFile.path.split('/').last;
+      Reference storageRef =
+          storage.ref().child('profile_pics/$userId/$fileName');
+      await storageRef.putFile(imageFile);
+      String downloadUrl = await storageRef.getDownloadURL();
+      print("Successfully uploaded image");
+      return downloadUrl;
+    } catch (e) {
+      print("Error uploading image: $e");
+      return null;
+    }
+  }
+
+  // // Fetches the download URL of the profile picture
+  // Future<String?> getProfilePicture(String userId) async {
+  //   try {
+  //     DocumentSnapshot userDoc =
+  //         await _firestore.collection('users').doc(userId).get();
+  //     if (userDoc.exists) {
+  //       return userDoc['profile_picture'];
+  //     } else {
+  //       return null;
+  //     }
+  //   } catch (e) {
+  //     print("Error fetching profile picture: $e");
+  //     return null;
+  //   }
+  // }
+}

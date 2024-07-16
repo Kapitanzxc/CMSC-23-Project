@@ -1,8 +1,8 @@
+// Sign In Page
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tolentino_mini_project/provider/auth_provider.dart';
-
-import 'signup_page.dart';
+import 'package:tolentino_mini_project/screens/account_creation/sign-up-pages/signup_page.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -12,6 +12,7 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
+  // Variables
   final _formKey = GlobalKey<FormState>();
   String? email;
   String? password;
@@ -23,6 +24,7 @@ class _SignInPageState extends State<SignInPage> {
       body: SingleChildScrollView(
         child: Container(
             margin: const EdgeInsets.symmetric(vertical: 100, horizontal: 30),
+            // Form for text field for signing in
             child: Form(
               key: _formKey,
               child: Column(
@@ -41,6 +43,7 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
+// Sign in Text
   Widget get heading => const Padding(
         padding: EdgeInsets.only(bottom: 30),
         child: Text(
@@ -49,6 +52,7 @@ class _SignInPageState extends State<SignInPage> {
         ),
       );
 
+// Text field for email
   Widget get emailField => Padding(
         padding: const EdgeInsets.only(bottom: 30),
         child: TextFormField(
@@ -66,6 +70,7 @@ class _SignInPageState extends State<SignInPage> {
         ),
       );
 
+// Text field for password
   Widget get passwordField => Padding(
         padding: const EdgeInsets.only(bottom: 30),
         child: TextFormField(
@@ -84,6 +89,7 @@ class _SignInPageState extends State<SignInPage> {
         ),
       );
 
+// Error Message
   Widget get signInErrorMessage => const Padding(
         padding: EdgeInsets.only(bottom: 30),
         child: Text(
@@ -92,20 +98,19 @@ class _SignInPageState extends State<SignInPage> {
         ),
       );
 
+// Sign in button
   Widget get submitButton => ElevatedButton(
       onPressed: () async {
         if (_formKey.currentState!.validate()) {
           _formKey.currentState!.save();
-          String? message = await context
-              .read<UserAuthProvider>()
-              .authService
-              .signIn(email!, password!);
+          String? message =
+              await context.read<UserAuthProvider>().signIn(email!, password!);
 
           print(message);
           print(showSignInErrorMessage);
 
           setState(() {
-            if (message != null && message.isNotEmpty) {
+            if (message.isNotEmpty) {
               showSignInErrorMessage = true;
             } else {
               showSignInErrorMessage = false;
@@ -115,6 +120,7 @@ class _SignInPageState extends State<SignInPage> {
       },
       child: const Text("Sign In"));
 
+// Sign up button
   Widget get signUpButton => Padding(
         padding: const EdgeInsets.all(30),
         child: Row(

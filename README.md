@@ -20,5 +20,8 @@ The Slambook app is an application that allows users to manage a list of friends
 
 ## References
 
-https://stackoverflow.com/questions/10926853/best-way-for-conditional-variable-assignment
-https://stackoverflow.com/questions/44490622/disable-a-text-edit-field-in-flutter
+https://pub.dev/packages/image_picker
+https://stackoverflow.com/questions/59138068/how-to-save-extra-info-during-user-signup-process-using-firebase-authentication
+https://stackoverflow.com/questions/50376200/how-to-create-a-modal-bottomsheet-with-circular-corners-in-flutter/https://api.flutter.dev/flutter/material/showModalBottomSheet.html
+https://firebase.google.com/docs/storage/flutter/upload-files#upload_from_a_file
+https://stackoverflow.com/questions/51054460/how-do-you-get-the-document-id-after-adding-document-in-cloud-firestore-in-dart
