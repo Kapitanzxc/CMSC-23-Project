@@ -10,6 +10,7 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUpPage> {
+  // Variables
   final _formKey = GlobalKey<FormState>();
   String? email;
   String? password;

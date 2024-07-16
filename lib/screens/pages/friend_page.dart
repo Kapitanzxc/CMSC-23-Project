@@ -6,6 +6,7 @@ import 'package:tolentino_mini_project/provider/auth_provider.dart';
 import 'package:tolentino_mini_project/provider/friends_provider.dart';
 import 'package:tolentino_mini_project/screens/pages/modal_page.dart';
 
+// Friends page
 class FriendsPage extends StatefulWidget {
   const FriendsPage({super.key});
 
@@ -14,25 +15,68 @@ class FriendsPage extends StatefulWidget {
 }
 
 class _FriendsPageState extends State<FriendsPage> {
+  // Index for bottom navigation bar
+  int _currentIndex = 0;
+
   @override
   Widget build(BuildContext context) {
+    // Fetch friend list after signing up
+    context.read<FriendListProvider>().fetchFriendList();
     return Scaffold(
-        // Drawer and scaffold formatting
-        drawer: drawer(),
-        appBar: AppBar(
-          backgroundColor: Color.fromRGBO(26, 77, 46, 1),
-          title: Text("Friends", style: TextStyle(color: Colors.white)),
-        ),
-        backgroundColor: Color.fromRGBO(245, 239, 230, 1),
-        // Creation of UI
-        body: friendListUI(),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            // Navigate to the slambook page
-            Navigator.pushNamed(context, "/slambook");
-          },
-          child: const Icon(Icons.add_outlined),
-        ));
+      appBar: AppBar(
+        backgroundColor: Color.fromRGBO(26, 77, 46, 1),
+        title: Text("Friends", style: TextStyle(color: Colors.white)),
+      ),
+      backgroundColor: Color.fromRGBO(245, 239, 230, 1),
+      // Creates UI
+      body: friendListUI(),
+      // Button that navigates to slambook
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, "/slambook");
+        },
+        child: const Icon(Icons.add_outlined),
+      ),
+      // Bottom navigation bar
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+
+          switch (index) {
+            case 0:
+              // Friends page (current page)
+              break;
+            case 1:
+              // Navigate to Slambook page
+              Navigator.pushNamed(context, "/slambook");
+              break;
+            case 2:
+              // Profile page
+              context.read<UserAuthProvider>().signOut();
+              Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+              break;
+          }
+        },
+        // Icons
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.group),
+            label: 'Friends',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.book),
+            label: 'Slambook',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.logout),
+            label: 'Logout',
+          ),
+        ],
+      ),
+    );
   }
 
   // Function for showing the list of friends (Overall UI)
@@ -43,7 +87,6 @@ class _FriendsPageState extends State<FriendsPage> {
     return StreamBuilder(
       stream: friendList,
       builder: (context, snapshot) {
-        print('Connection State: ${snapshot.connectionState}');
         // Catching errrors
         if (snapshot.hasError) {
           return Center(
@@ -72,6 +115,7 @@ class _FriendsPageState extends State<FriendsPage> {
           ));
         }
         return ListView.builder(
+          // Iterate through the snapshot
           itemCount: snapshot.data?.docs.length,
           itemBuilder: ((context, index) {
             Friend friend = Friend.fromJson(
@@ -168,52 +212,6 @@ class _FriendsPageState extends State<FriendsPage> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  // Drawer function
-  Widget drawer() {
-    return Drawer(
-      child: ListView(
-        children: [
-          // Title bar of the drawer
-          Container(
-            color: Color.fromRGBO(26, 77, 46, 1),
-            height: 100,
-            child: const DrawerHeader(
-              child: Text(
-                "Menu",
-                style: TextStyle(
-                    fontSize: 20, color: Color.fromRGBO(243, 243, 243, 1)),
-              ),
-            ),
-          ),
-          // Friends tab (only pops the drawer since its currently on friends page)
-          ListTile(
-            title: Text("Friends"),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-          // Slambook Tab
-          ListTile(
-              title: Text("Slambook"),
-              onTap: () async {
-                // Closes the drawer
-                Navigator.pop(context);
-                // Navigate to the slambook page and also passed the friend list data
-                Navigator.pushNamed(context, "/slambook");
-                // Update the friend list data once received
-              }),
-          ListTile(
-            title: const Text('Logout'),
-            onTap: () {
-              context.read<UserAuthProvider>().signOut();
-              Navigator.pop(context);
-            },
-          ),
-        ],
       ),
     );
   }

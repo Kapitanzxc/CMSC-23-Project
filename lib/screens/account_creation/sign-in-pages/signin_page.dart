@@ -1,9 +1,9 @@
-// Sign In Page
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tolentino_mini_project/provider/auth_provider.dart';
 import 'package:tolentino_mini_project/screens/account_creation/sign-up-pages/signup_page.dart';
 
+// Sign In Page
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
 
@@ -29,6 +29,7 @@ class _SignInPageState extends State<SignInPage> {
               key: _formKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                // Text Fields and button
                 children: [
                   heading,
                   emailField,
@@ -59,7 +60,7 @@ class _SignInPageState extends State<SignInPage> {
           decoration: const InputDecoration(
               border: OutlineInputBorder(),
               label: Text("Email"),
-              hintText: "juandelacruz09@gmail.com"),
+              hintText: "juandelacruz@gmail.com"),
           onSaved: (value) => setState(() => email = value),
           validator: (value) {
             if (value == null || value.isEmpty) {
@@ -77,7 +78,7 @@ class _SignInPageState extends State<SignInPage> {
           decoration: const InputDecoration(
               border: OutlineInputBorder(),
               label: Text("Password"),
-              hintText: "******"),
+              hintText: "********"),
           obscureText: true,
           onSaved: (value) => setState(() => password = value),
           validator: (value) {

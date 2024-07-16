@@ -1,9 +1,9 @@
-// Provider class
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:tolentino_mini_project/api/firebase_friend_api.dart';
 import 'package:tolentino_mini_project/models/friend_model.dart';
 
+// Friend Lists provider
 class FriendListProvider with ChangeNotifier {
   late Stream<QuerySnapshot> _friendsStream;
   var firebaseService = FirebaseFriendsAPI();
@@ -15,7 +15,7 @@ class FriendListProvider with ChangeNotifier {
 
   // Accessing the friendLists from the firebase
   void fetchFriendList() {
-    _friendsStream = firebaseService.getAllfriends();
+    _friendsStream = firebaseService.getAllFriends();
     notifyListeners();
   }
 
@@ -23,7 +23,7 @@ class FriendListProvider with ChangeNotifier {
   Stream<QuerySnapshot> get friendList => _friendsStream;
 
   // Adding a friend and storing it in the firebase
-  Future<String?> addFriend(Friend friend) async {
+  Future<String?> addFriend(String userId, Friend friend) async {
     try {
       DocumentReference? document =
           await firebaseService.addFriend(friend.toJson(friend));

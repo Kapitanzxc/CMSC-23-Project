@@ -1,9 +1,3 @@
-/*
-  Created by: Claizel Coubeili Cepe
-  Date: updated April 26, 2023
-  Description: Sample todo app with Firebase 
-*/
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -21,17 +15,19 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+    // Checks the userStream if there is user logged in
     Stream<User?> userStream = context.watch<UserAuthProvider>().userStream;
-
     return StreamBuilder(
         stream: userStream,
         builder: (context, snapshot) {
+          // Catching error
           if (snapshot.hasError) {
             return Scaffold(
               body: Center(
                 child: Text("Error encountered! ${snapshot.error}"),
               ),
             );
+            // When connection is loading:
           } else if (snapshot.connectionState == ConnectionState.waiting) {
             return const Scaffold(
               body: Center(
@@ -41,8 +37,7 @@ class _HomePageState extends State<HomePage> {
           } else if (!snapshot.hasData) {
             return const SignInPage(); // Will go to the sign in page if user is not logged in
           }
-
-          // if user is logged in, display the scaffold containing the streambuilder for the todos
+          // if user is logged in, go to friends page
           return const FriendsPage();
         });
   }

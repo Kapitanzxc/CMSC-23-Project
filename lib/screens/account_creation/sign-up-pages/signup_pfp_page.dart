@@ -3,27 +3,31 @@ import 'package:flutter/material.dart';
 import 'package:tolentino_mini_project/android_features/camera_feat.dart';
 import 'package:tolentino_mini_project/screens/account_creation/sign-up-pages/signup_info_page.dart';
 
+// Sign un page for adding profile picture
 class SignupPfpPage extends StatefulWidget {
+  // Variables
   final String? email;
   final String? password;
 
+  // Constructor
   const SignupPfpPage({
     super.key,
     required this.email,
     required this.password,
   });
-
   @override
   _SignupPfpPageState createState() => _SignupPfpPageState();
 }
 
 class _SignupPfpPageState extends State<SignupPfpPage> {
+  // Initializing camera feature
   final CameraFeature _cameraFeature = CameraFeature();
   File? _imageFile;
 
   @override
   void initState() {
     super.initState();
+    // Asking users permission
     _cameraFeature.requestPermission();
   }
 
@@ -33,6 +37,7 @@ class _SignupPfpPageState extends State<SignupPfpPage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          // Show image if it is not null
           if (_imageFile != null)
             Padding(
               padding: const EdgeInsets.all(30),
@@ -40,9 +45,11 @@ class _SignupPfpPageState extends State<SignupPfpPage> {
                 child: Image.file(_imageFile!, fit: BoxFit.cover),
               ),
             ),
+          // Shows a button of adding profile photo and next
           Column(
             children: [
               ElevatedButton(
+                // Shows the photo options
                 onPressed: () => _photoOptions(context),
                 child: const Text('Add Profile Photo'),
               ),
@@ -70,13 +77,16 @@ class _SignupPfpPageState extends State<SignupPfpPage> {
     );
   }
 
+// Function for showing photo options
   void _photoOptions(BuildContext context) {
+    // Shows a bottom modal sheet
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // Take a picture
             ListTile(
               leading: const Icon(Icons.camera_alt),
               title: const Text('Take a picture'),
@@ -88,6 +98,7 @@ class _SignupPfpPageState extends State<SignupPfpPage> {
                 });
               },
             ),
+            // Choose from gallery
             ListTile(
               leading: const Icon(Icons.photo_library),
               title: const Text('Choose from gallery'),

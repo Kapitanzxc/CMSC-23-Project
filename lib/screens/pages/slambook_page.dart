@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tolentino_mini_project/models/friend_model.dart';
@@ -406,9 +405,9 @@ class _SlamBookState extends State<SlamBook> {
   }
 
   Future<void> appendFriend(Friend temp) async {
-    String? documentID =
-        await context.read<FriendListProvider>().addFriend(temp);
     String? uid = context.read<UserAuthProvider>().getCurrentUserId();
+    String? documentID =
+        await context.read<FriendListProvider>().addFriend(uid!, temp);
     print("Friend ID: $documentID UID: $uid");
     if (documentID != null && uid != null) {
       await context.read<UserInfoProvider>().addFriend(uid, documentID);

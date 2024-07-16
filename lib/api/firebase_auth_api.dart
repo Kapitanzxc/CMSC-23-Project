@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
+// Authentication API
 class FirebaseAuthAPI {
   final FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -12,9 +13,10 @@ class FirebaseAuthAPI {
   }
 
   String? getCurrentUserId() {
-    return auth.currentUser?.uid; // Returns UID of the current user, if any
+    return auth.currentUser?.uid; // Returns UID of the current user
   }
 
+  // Function for signing in
   Future<String> signIn(String email, String password) async {
     try {
       await auth.signInWithEmailAndPassword(email: email, password: password);
@@ -24,6 +26,7 @@ class FirebaseAuthAPI {
     }
   }
 
+  // Function for signing up
   Future<UserCredential?> signUp(String email, String password) async {
     try {
       UserCredential? userCredential = await auth
@@ -36,6 +39,7 @@ class FirebaseAuthAPI {
     }
   }
 
+  // Function for signing out
   Future<void> signOut() async {
     await auth.signOut();
   }

@@ -1,24 +1,46 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tolentino_mini_project/api/firebase_auth_api.dart';
 
 // Firebase Class
 class FirebaseFriendsAPI {
   final FirebaseFirestore friendList = FirebaseFirestore.instance;
+  // Instantiate FirebaseAuthAPI
+  final FirebaseAuthAPI authAPI = FirebaseAuthAPI();
 
   // Accessing friendlist from the firebase
-  Stream<QuerySnapshot> getAllfriends() {
-    return friendList.collection("friendLists").snapshots();
+  Stream<QuerySnapshot> getAllFriends() {
+    // Accessing current user id
+    String? userId = authAPI.getCurrentUserId();
+    if (userId != null) {
+      //Snapshots
+      return friendList
+          .collection("userIds")
+          .doc(userId)
+          .collection("friends")
+          .snapshots();
+    } else {
+      throw Exception("User ID not found.");
+    }
   }
 
   // Adding a friend in the firestore
   Future<DocumentReference?> addFriend(Map<String, dynamic> friend) async {
-    try {
-      DocumentReference document =
-          await friendList.collection("friendLists").add(friend);
-      print("Successfully added friend to Firestore");
-      return document; // Return the DocumentReference
-    } on FirebaseException catch (e) {
-      print("Failed with error: ${e.code}");
-      return null; // or handle the error as per your application's logic
+    String? userId = authAPI.getCurrentUserId(); // Get current user's ID
+    if (userId != null) {
+      try {
+        DocumentReference document = await friendList
+            .collection("userIds")
+            .doc(userId)
+            .collection("friends")
+            .add(friend);
+        print("Successfully added friend to Firestore");
+        return document; // Return the DocumentReference
+      } on FirebaseException catch (e) {
+        print("Failed with error: ${e.code}");
+        return null; // or handle the error as per your application's logic
+      }
+    } else {
+      throw Exception("User not authenticated or user ID not found.");
     }
   }
 
@@ -32,10 +54,7 @@ class FirebaseFriendsAPI {
       String newSuperPower,
       String newMotto) async {
     try {
-      await FirebaseFirestore.instance
-          .collection("friendLists")
-          .doc(id)
-          .update({
+      await friendList.collection("userIds").doc(id).update({
         "nickname": newNickname,
         "age": newAge,
         "relationshipStatus": newRelationshipStatus,
@@ -52,7 +71,7 @@ class FirebaseFriendsAPI {
   // Deleting a friend in the firestore
   Future<String> deleteFriend(String id) async {
     try {
-      await friendList.collection("friendLists").doc(id).delete();
+      await friendList.collection("userIds").doc(id).delete();
       return "Successfully removed friend!";
     } on FirebaseException catch (e) {
       return "Failed with error: ${e.code}";
