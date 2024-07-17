@@ -1,8 +1,10 @@
 import "package:flutter/material.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:provider/provider.dart";
+import "package:tolentino_mini_project/models/user_model.dart";
 import "package:tolentino_mini_project/provider/auth_provider.dart";
 import "package:tolentino_mini_project/provider/users_provider.dart";
+import "package:tolentino_mini_project/screens/pages/user-modal_page.dart";
 
 // Profile Page
 class ProfilePage extends StatefulWidget {
@@ -21,6 +23,8 @@ class _ProfilePageState extends State<ProfilePage> {
   String currentContent = "slambook";
   // Storing user personal information
   Map<String, dynamic>? userInfo;
+  // User's name
+  late String name;
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +75,7 @@ class _ProfilePageState extends State<ProfilePage> {
           // Process and display user data
           userInfo = snapshot.data!.data()!;
           // Displays the name and username
+          name = userInfo!["name"] ?? "none";
           return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -104,8 +109,8 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            // Buttons
             Row(
-              // The buttons that changes the content
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 ElevatedButton(
@@ -120,37 +125,121 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ],
             ),
-            SizedBox(height: 20),
-            // Content
-            Center(
-              // Content for personal information
-              child: currentContent == "personal"
-                  ? StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-                      stream: context.watch<UserInfoProvider>().userInfoStream,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return CircularProgressIndicator();
-                        } else if (snapshot.hasError) {
-                          return Text("Error: ${snapshot.error}");
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.data() == null) {
-                          return const Text("No user data available.");
-                        } else {
-                          // Process and display user data
-                          Map<String, dynamic> userInfo =
-                              snapshot.data!.data()!;
-                          return profileInformationContent(userInfo);
-                        }
-                      },
-                    )
-                  // Content for slambook
-                  : slambookContent(),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Center(
+                  child: currentContent == "personal"
+                      ? StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                          stream:
+                              context.watch<UserInfoProvider>().userInfoStream,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CircularProgressIndicator();
+                            } else if (snapshot.hasError) {
+                              return Text("Error: ${snapshot.error}");
+                            } else if (!snapshot.hasData ||
+                                snapshot.data!.data() == null) {
+                              return const Text("No user data available.");
+                            } else {
+                              Map<String, dynamic> userInfo =
+                                  snapshot.data!.data()!;
+                              // Shows personal information content
+                              return profileInformationContent(userInfo);
+                            }
+                          },
+                        )
+                      // Shows the slambook content
+                      : slambookContent(),
+                ),
+              ),
             ),
+            // Add slambook button
+            addSlambookButton(),
           ],
         ),
       ),
     );
+  }
+
+  // Function for showing the slambook content
+  Widget slambookContent() {
+    // Storing friend lists from the provider
+    Stream<QuerySnapshot> userSlambookData =
+        context.watch<UserInfoProvider>().slambookData;
+    return StreamBuilder(
+      stream: userSlambookData,
+      builder: (context, snapshot) {
+        // Catching errors
+        if (snapshot.hasError) {
+          return Center(
+            child: Text("Error encountered! ${snapshot.error}"),
+          );
+        } else if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
+          return const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.group,
+                  color: Color.fromRGBO(79, 111, 82, 1),
+                  size: 50,
+                ),
+                Text("No slambook data yet"),
+                SizedBox(height: 15),
+              ],
+            ),
+          );
+        }
+
+        // Extract user data
+        User user = User.fromJson(
+            snapshot.data!.docs.first.data() as Map<String, dynamic>);
+        user.id = snapshot.data!.docs.first.id;
+
+        // Display user's slambook data
+        return Column(
+          children: [
+            summary(user.toJson(user).values.toList()),
+          ],
+        );
+      },
+    );
+  }
+
+  // User's Slambook data
+  Padding summary(List<dynamic> userValues) {
+    return Padding(
+        padding: EdgeInsets.only(left: 20, right: 20),
+        child: Column(
+          children: [
+            Padding(
+                padding: EdgeInsets.only(top: 20, bottom: 20),
+                child: Text(
+                  "My Slambook Data",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromRGBO(79, 111, 82, 1),
+                  ),
+                )),
+            Column(
+              children: [
+                // Creates row of summary from the list
+                buildSummaryRow("Nickname", userValues[1]),
+                buildSummaryRow("Age", userValues[2]),
+                buildSummaryRow("Relationship Status", userValues[3]),
+                buildSummaryRow("Happiness Level", userValues[4]),
+                buildSummaryRow("Superpower", userValues[5]),
+                buildSummaryRow("Favorite Motto", userValues[6])
+              ],
+            ),
+          ],
+        ));
   }
 
   // Text creator for name and username
@@ -256,11 +345,6 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  // Function for showing the slambook content
-  Widget slambookContent() {
-    return const Text("Slambook Content");
-  }
-
   // Function for building Label: Input formatting
   Widget buildSummaryRow(String label, String input) {
     return Padding(
@@ -286,6 +370,33 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
     );
+  }
+
+  // Logout button
+  Widget addSlambookButton() {
+    return SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) =>
+                  UserModalPage(type: "Add", name: name),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Color.fromARGB(255, 97, 194, 7),
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
+            ),
+            elevation: 4,
+          ),
+          child: Text(
+            'Add Slambook Data',
+            style: TextStyle(color: Colors.white),
+          ),
+        ));
   }
 
   // Logout button
