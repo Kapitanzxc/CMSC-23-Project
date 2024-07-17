@@ -9,6 +9,7 @@ import 'package:tolentino_mini_project/provider/storage_provider.dart';
 import 'package:tolentino_mini_project/provider/users_provider.dart';
 import 'package:tolentino_mini_project/screens/pages/friend_page.dart';
 import 'package:tolentino_mini_project/screens/pages/home_page.dart';
+import 'package:tolentino_mini_project/screens/pages/profile_page.dart';
 import 'package:tolentino_mini_project/screens/pages/slambook_page.dart';
 import 'package:tolentino_mini_project/screens/pages/summary_page.dart';
 
@@ -46,7 +47,7 @@ class SplashScreen extends StatelessWidget {
         if (settings.name == "/") {
           return MaterialPageRoute(builder: (context) => const HomePage());
         }
-        if (settings.name == "friendspage") {
+        if (settings.name == "/friendspage") {
           return MaterialPageRoute(builder: (context) => const FriendsPage());
         }
 
@@ -59,6 +60,10 @@ class SplashScreen extends StatelessWidget {
           return MaterialPageRoute(
               builder: (context) =>
                   SummaryPage(friendListValues: friendListValues));
+        }
+
+        if (settings.name == "/profilepage") {
+          return MaterialPageRoute(builder: (context) => const ProfilePage());
         }
 
         return null;

@@ -40,6 +40,7 @@ class _SlamBookState extends State<SlamBook> {
   bool switchLight = false;
   double currentSliderValue = 0;
   bool showSummary = false;
+  int _currentIndex = 1;
 
   // Variables for saving the fields
   late String saveName;
@@ -62,8 +63,8 @@ class _SlamBookState extends State<SlamBook> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // Drawer
-        drawer: drawer(),
+        // Bottom Navigation Bar
+        bottomNavigationBar: bottomNavigationBar(),
         // Personalizing the appbar and background color
         backgroundColor: Color.fromRGBO(245, 239, 230, 1),
         appBar: AppBar(
@@ -260,43 +261,6 @@ class _SlamBookState extends State<SlamBook> {
             )));
   }
 
-  // Drawer Function
-  Widget drawer() {
-    return Drawer(
-      child: ListView(
-        children: [
-          // Drawer title formatting
-          Container(
-            color: Color.fromRGBO(26, 77, 46, 1),
-            height: 100,
-            child: DrawerHeader(
-                child: Text(
-              "Exercise 5: Menu, Routes, and Navigation",
-              style: TextStyle(
-                  fontSize: 20, color: Color.fromRGBO(243, 243, 243, 1)),
-            )),
-          ),
-          // Friends tab
-          ListTile(
-            title: Text("Friends"),
-            onTap: () {
-              // Pops the drawer
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-          ),
-          // Slambook Tab (closes the drawer)
-          ListTile(
-            title: Text("Slambook"),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
   // Text field formatting function
   Padding textFieldCreator(TextEditingController controller, String labelText) {
     return Padding(
@@ -474,6 +438,45 @@ class _SlamBookState extends State<SlamBook> {
           children: [Text(input ?? "")],
         ))
       ]),
+    );
+  }
+
+  Widget bottomNavigationBar() {
+    return BottomNavigationBar(
+      currentIndex: _currentIndex,
+      onTap: (index) {
+        setState(() {
+          _currentIndex = index;
+        });
+
+        switch (index) {
+          case 0:
+            Navigator.pushNamed(context, "/friendspage");
+            break;
+          case 1:
+            break;
+          case 2:
+            // Profile page
+            context.read<UserInfoProvider>().getUserInfo();
+            Navigator.pushNamed(context, "/profilepage");
+            break;
+        }
+      },
+      // Icons
+      items: [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.group),
+          label: 'Friends',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.book),
+          label: 'Slambook',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
+          label: 'Logout',
+        ),
+      ],
     );
   }
 }

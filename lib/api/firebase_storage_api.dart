@@ -30,20 +30,4 @@ class StorageAPI {
       return null;
     }
   }
-
-  // // Fetches the download URL of the profile picture
-  // Future<String?> getProfilePicture(String userId) async {
-  //   try {
-  //     DocumentSnapshot userDoc =
-  //         await _firestore.collection('users').doc(userId).get();
-  //     if (userDoc.exists) {
-  //       return userDoc['profile_picture'];
-  //     } else {
-  //       return null;
-  //     }
-  //   } catch (e) {
-  //     print("Error fetching profile picture: $e");
-  //     return null;
-  //   }
-  // }
 }

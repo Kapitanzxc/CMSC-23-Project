@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:tolentino_mini_project/models/friend_model.dart';
 import 'package:tolentino_mini_project/provider/auth_provider.dart';
 import 'package:tolentino_mini_project/provider/friends_provider.dart';
+import 'package:tolentino_mini_project/provider/users_provider.dart';
 import 'package:tolentino_mini_project/screens/pages/modal_page.dart';
 
 // Friends page
@@ -19,64 +20,33 @@ class _FriendsPageState extends State<FriendsPage> {
   int _currentIndex = 0;
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
     // Fetch friend list after signing up
-    context.read<FriendListProvider>().fetchFriendList();
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color.fromRGBO(26, 77, 46, 1),
-        title: Text("Friends", style: TextStyle(color: Colors.white)),
-      ),
-      backgroundColor: Color.fromRGBO(245, 239, 230, 1),
-      // Creates UI
-      body: friendListUI(),
-      // Button that navigates to slambook
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, "/slambook");
-        },
-        child: const Icon(Icons.add_outlined),
-      ),
-      // Bottom navigation bar
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<FriendListProvider>().fetchFriendList();
+    });
+  }
 
-          switch (index) {
-            case 0:
-              // Friends page (current page)
-              break;
-            case 1:
-              // Navigate to Slambook page
-              Navigator.pushNamed(context, "/slambook");
-              break;
-            case 2:
-              // Profile page
-              context.read<UserAuthProvider>().signOut();
-              Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
-              break;
-          }
-        },
-        // Icons
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.group),
-            label: 'Friends',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.book),
-            label: 'Slambook',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.logout),
-            label: 'Logout',
-          ),
-        ],
-      ),
-    );
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Color.fromRGBO(26, 77, 46, 1),
+          title: Text("Friends", style: TextStyle(color: Colors.white)),
+        ),
+        backgroundColor: Color.fromRGBO(245, 239, 230, 1),
+        // Creates UI
+        body: friendListUI(),
+        // Button that navigates to slambook
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.pushNamed(context, "/slambook");
+          },
+          child: const Icon(Icons.add_outlined),
+        ),
+        // Bottom navigation bar
+        bottomNavigationBar: bottomNavigationBar());
   }
 
   // Function for showing the list of friends (Overall UI)
@@ -87,7 +57,7 @@ class _FriendsPageState extends State<FriendsPage> {
     return StreamBuilder(
       stream: friendList,
       builder: (context, snapshot) {
-        // Catching errrors
+        // Catching errors
         if (snapshot.hasError) {
           return Center(
             child: Text("Error encountered! ${snapshot.error}"),
@@ -99,7 +69,7 @@ class _FriendsPageState extends State<FriendsPage> {
           // If no snapshot: Display no friends added yet
         } else if (snapshot.data!.docs.isEmpty) {
           return const Center(
-              child: const Column(
+              child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Icon
@@ -213,6 +183,47 @@ class _FriendsPageState extends State<FriendsPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget bottomNavigationBar() {
+    return BottomNavigationBar(
+      currentIndex: _currentIndex,
+      onTap: (index) {
+        setState(() {
+          _currentIndex = index;
+        });
+
+        switch (index) {
+          case 0:
+            // Friends page (current page)
+            break;
+          case 1:
+            // Navigate to Slambook page
+            Navigator.pushNamed(context, "/slambook");
+            break;
+          case 2:
+            // Profile page
+            context.read<UserInfoProvider>().getUserInfo();
+            Navigator.pushNamed(context, "/profilepage");
+            break;
+        }
+      },
+      // Icons
+      items: [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.group),
+          label: 'Friends',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.book),
+          label: 'Slambook',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
+          label: 'Logout',
+        ),
+      ],
     );
   }
 }
