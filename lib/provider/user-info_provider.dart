@@ -1,8 +1,8 @@
 // User information provider
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:tolentino_mini_project/api/firebase_userInfo_api.dart';
-import 'package:tolentino_mini_project/models/user_model.dart';
+import 'package:tolentino_mini_project/api/firebase_user-info_api.dart';
+import 'package:tolentino_mini_project/models/user-slambook_model.dart';
 
 // UserIds -> Field
 class UserInfoProvider with ChangeNotifier {
@@ -34,5 +34,13 @@ class UserInfoProvider with ChangeNotifier {
   Future<void> addFriend(String uid, String friendId) async {
     await usersInfoAPI.addFriend(uid, friendId);
     notifyListeners();
+  }
+
+  // Edit user's slambook
+  Future<String> editUserInfo(String username, String contact,
+      List<String> additionalContacts, var profilePictureUrl) async {
+    String message = await usersInfoAPI.editUserInfo(
+        username, contact, additionalContacts, profilePictureUrl);
+    return message;
   }
 }

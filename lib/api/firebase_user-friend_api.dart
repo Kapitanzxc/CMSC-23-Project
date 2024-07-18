@@ -33,7 +33,7 @@ class FirebaseFriendsAPI {
             .doc(userId)
             .collection("friends")
             .add(friend);
-        print("Successfully added friend to Firestore");
+        print("Successfully added friend to user's friend list");
         return document; // Return the DocumentReference
       } on FirebaseException catch (e) {
         print("Failed with error: ${e.code}");
@@ -62,7 +62,7 @@ class FirebaseFriendsAPI {
         "superpower": newSuperPower,
         "motto": newMotto,
       });
-      return "Successfully edited a friend!";
+      return "Successfully edited a friend from user's friend list!";
     } on FirebaseException catch (e) {
       return "Failed with error: ${e.code}";
     }
@@ -72,7 +72,7 @@ class FirebaseFriendsAPI {
   Future<String> deleteFriend(String id) async {
     try {
       await friendList.collection("userIds").doc(id).delete();
-      return "Successfully removed friend!";
+      return "Successfully removed friend from user's friend list!";
     } on FirebaseException catch (e) {
       return "Failed with error: ${e.code}";
     }

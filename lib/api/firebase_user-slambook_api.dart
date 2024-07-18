@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tolentino_mini_project/api/firebase_auth_api.dart';
-import 'package:tolentino_mini_project/models/user_model.dart';
+import 'package:tolentino_mini_project/models/user-slambook_model.dart';
 
 // API for userIds (users_provider)
 class UserSlambook {
@@ -33,7 +33,7 @@ class UserSlambook {
             .doc(userId)
             .collection("personal_slambook")
             .add(user);
-        print("Successfully added friend to Firestore");
+        print("Succesfully added slambook data to user's collection!");
       } on FirebaseException catch (e) {
         print("Failed with error: ${e.code}");
       }
@@ -43,7 +43,7 @@ class UserSlambook {
   }
 
   // Edit user's slambook
-  Future<String> editUserSlambook(User user) async {
+  Future<String> editUserSlambook(Users user) async {
     try {
       // Accessing current user id
       String? userId = authAPI.getCurrentUserId();

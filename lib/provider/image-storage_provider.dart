@@ -25,12 +25,4 @@ class StorageProvider with ChangeNotifier {
       return null;
     }
   }
-
-  // Future<void> fetchProfilePicture(String userId) async {
-  //   String? downloadUrl = await _storageAPI.getProfilePicture(userId);
-  //   if (downloadUrl != null) {
-  //     _profilePictureUrl = downloadUrl;
-  //     notifyListeners();
-  //   }
-  // }
 }

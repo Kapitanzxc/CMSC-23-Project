@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 // Storage API for images
@@ -16,12 +15,22 @@ class StorageAPI {
     try {
       // File name
       String fileName = imageFile.path.split('/').last;
-      // Creates a reference in the firebase
-      Reference storageRef =
-          storage.ref().child('profile_pics/$userId/$fileName');
-      // Uploading the image
+      // Creates a reference in the Firebase
+      Reference userFolderRef = storage.ref().child('profile_pics/$userId');
+      // List all files in the user's folder
+      ListResult result = await userFolderRef.listAll();
+
+      // Delete all files in the user's folder
+      for (Reference imageFiles in result.items) {
+        await imageFiles.delete();
+        print("Deleted existing image");
+      }
+
+      // Creates a new reference for the new image
+      Reference storageRef = userFolderRef.child(fileName);
+      // Uploading the new image
       await storageRef.putFile(imageFile);
-      // Accessing URL
+      // Accessing URL of the new image
       String downloadUrl = await storageRef.getDownloadURL();
       print("Successfully uploaded image");
       return downloadUrl;

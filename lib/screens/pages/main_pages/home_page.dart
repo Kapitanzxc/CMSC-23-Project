@@ -14,9 +14,20 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   @override
+  void initState() {
+    super.initState();
+    print("InitState: Fetching user stream.");
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<UserAuthProvider>().fetchUserStream();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     // Checks the userStream if there is user logged in
     Stream<User?> userStream = context.watch<UserAuthProvider>().userStream;
+    print("Build: Checking user stream.");
+
     return StreamBuilder(
         stream: userStream,
         builder: (context, snapshot) {
@@ -35,9 +46,11 @@ class _HomePageState extends State<HomePage> {
               ),
             );
           } else if (!snapshot.hasData) {
+            print("StreamBuilder: No user logged in.");
             return const SignInPage(); // Will go to the sign in page if user is not logged in
           }
           // if user is logged in, go to friends page
+          print("StreamBuilder: User logged in, navigating to FriendsPage.");
           return const FriendsPage();
         });
   }

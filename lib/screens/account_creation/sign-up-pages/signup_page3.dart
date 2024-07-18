@@ -2,9 +2,9 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tolentino_mini_project/models/users-info_model.dart';
 import 'package:tolentino_mini_project/provider/auth_provider.dart';
-import 'package:tolentino_mini_project/provider/user-friend_provider.dart';
-import 'package:tolentino_mini_project/provider/storage_provider.dart';
+import 'package:tolentino_mini_project/provider/image-storage_provider.dart';
 import 'package:tolentino_mini_project/provider/user-info_provider.dart';
 import 'package:tolentino_mini_project/screens/pages/main_pages/friend_page.dart';
 
@@ -188,32 +188,28 @@ class _SignupInfoPageState extends State<SignupInfoPage> {
 
   // Submit form
   submitForm(BuildContext context) async {
-    final userInfo = {
-      'email': widget.email,
-      'username': usernameController.text,
-      'name': nameController.text,
-      'contact': contactController.text,
-      'additional_contacts': contactNumberControllers
-          .map((controller) => controller.text)
-          .toList(),
-      'friends': [],
-    };
-
     // Access the uid of user upon creation
     String? uid = await getUid(widget.email!, widget.password!);
 
     if (uid != null) {
       try {
+        String? downloadURL;
         // Upload the imageFile in the storage cloud
         if (widget.imageFile != null) {
-          String? downloadURL = await context
+          downloadURL = await context
               .read<StorageProvider>()
               .uploadProfilePicture(uid, widget.imageFile!);
-          userInfo["profile-picture"] = downloadURL!;
         }
-
+        UsersInfo temp = UsersInfo(
+            name: nameController.text,
+            username: usernameController.text,
+            contact: contactController.text,
+            profilePicURL: widget.imageFile == null ? null : downloadURL,
+            additionalContacts: contactNumberControllers
+                .map((controller) => controller.text)
+                .toList());
         // Save users info on the fire store
-        await context.read<UserInfoProvider>().saveUserInfo(uid, userInfo);
+        await context.read<UserInfoProvider>().saveUserInfo(uid, temp.toJson());
         // Navigate to HomePage after signing up
         Navigator.push(
           context,

@@ -445,25 +445,34 @@ class _SlamBookState extends State<SlamBook> {
     return BottomNavigationBar(
       currentIndex: _currentIndex,
       onTap: (index) {
-        setState(() {
-          _currentIndex = index;
-        });
+        if (index == _currentIndex) {
+          // Do nothing if tapping on the current tab
+          return;
+        }
 
         switch (index) {
           case 0:
+            // Friends page
+            Navigator.popUntil(context, ModalRoute.withName("/"));
             Navigator.pushNamed(context, "/friendspage");
             break;
           case 1:
+            // Slambook page(current page)
+            Navigator.popUntil(context, ModalRoute.withName("/"));
             break;
           case 2:
             // Profile page
-            context.read<UserInfoProvider>().getUserInfo();
+            Navigator.popUntil(context, ModalRoute.withName("/"));
             Navigator.pushNamed(context, "/profilepage");
+
             break;
         }
+        setState(() {
+          _currentIndex = index;
+        });
       },
       // Icons
-      items: [
+      items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.group),
           label: 'Friends',

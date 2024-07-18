@@ -27,3 +27,5 @@ https://stackoverflow.com/questions/51054460/how-do-you-get-the-document-id-afte
 https://stackoverflow.com/questions/49466556/flutter-run-method-on-widget-build-complete
 https://stackoverflow.com/questions/49553402/how-to-determine-screen-height-and-width
 https://stackoverflow.com/questions/68313457/flutter-stack-positioning-and-overflow
+https://stackoverflow.com/questions/69299281/how-to-add-a-button-to-the-activity-of-the-appbar-in-flutter
+https://firebase.google.com/docs/storage/android/delete-files

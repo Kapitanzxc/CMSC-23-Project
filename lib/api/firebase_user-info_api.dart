@@ -36,4 +36,22 @@ class UsersInfoAPI {
       return "Failed with error: ${e.code}";
     }
   }
+
+  // Edit user's information
+  Future<String> editUserInfo(String username, String contact,
+      List<String> additionalContacts, String profilePictureUrl) async {
+    try {
+      // Accessing current user id
+      String? userId = authAPI.getCurrentUserId();
+      await userIds.collection("userIds").doc(userId).update({
+        "username": username,
+        "contact": contact,
+        "additionalContacts": additionalContacts,
+        "profilePicURL": profilePictureUrl,
+      });
+      return "Successfully edited user's personal information";
+    } on FirebaseException catch (e) {
+      return "Failed with error: ${e.code}";
+    }
+  }
 }

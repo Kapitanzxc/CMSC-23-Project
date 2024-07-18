@@ -2,7 +2,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:tolentino_mini_project/api/firebase_user-slambook_api.dart';
-import 'package:tolentino_mini_project/models/user_model.dart';
+import 'package:tolentino_mini_project/models/user-slambook_model.dart';
 
 class UserSlambookProvider with ChangeNotifier {
   final UserSlambook usersInfoAPI = UserSlambook();
@@ -24,11 +24,10 @@ class UserSlambookProvider with ChangeNotifier {
   }
 
   // Adding a friend and storing it in the firebase
-  Future<void> addSlambookData(User user) async {
+  Future<void> addSlambookData(Users user) async {
     try {
       await usersInfoAPI.addSlambookData(user.toJson(user));
       notifyListeners();
-      print("Succesfully added slambook data to user's collection!");
     } catch (e) {
       print("Error adding friend: $e");
       return null;
@@ -37,7 +36,7 @@ class UserSlambookProvider with ChangeNotifier {
 
   // Edit user's slambook
   void editUserSlambook(
-      User user,
+      Users user,
       String newNickname,
       String newAge,
       String newRelationshipStatus,

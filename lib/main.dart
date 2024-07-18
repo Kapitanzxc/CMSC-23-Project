@@ -6,7 +6,7 @@ import 'package:tolentino_mini_project/api/firebase_user-slambook_api.dart';
 import 'package:tolentino_mini_project/firebase_options.dart';
 import 'package:tolentino_mini_project/provider/auth_provider.dart';
 import 'package:tolentino_mini_project/provider/user-friend_provider.dart';
-import 'package:tolentino_mini_project/provider/storage_provider.dart';
+import 'package:tolentino_mini_project/provider/image-storage_provider.dart';
 import 'package:tolentino_mini_project/provider/user-info_provider.dart';
 import 'package:tolentino_mini_project/provider/user-slambook_provider.dart';
 import 'package:tolentino_mini_project/screens/pages/main_pages/friend_page.dart';

@@ -1,5 +1,5 @@
-// Friend Class
-class User {
+// Users Class
+class Users {
   String? id;
   String name;
   String nickname;
@@ -10,7 +10,7 @@ class User {
   String motto;
 
   // Constuctor
-  User({
+  Users({
     this.id,
     required this.name,
     required this.nickname,
@@ -22,8 +22,8 @@ class User {
   });
 
   // Factory constructor to instantiate object from json format
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
+  factory Users.fromJson(Map<String, dynamic> json) {
+    return Users(
       id: json['id'],
       name: json['name'],
       nickname: json['nickname'],
@@ -40,8 +40,8 @@ class User {
   //   return data.map<Friend>((dynamic d) => Friend.fromJson(d)).toList();
   // }
 
-  // Transforming a friend class to a map
-  Map<String, dynamic> toJson(User user) {
+  // Transforming a user slambook data to a map
+  Map<String, dynamic> toJson(Users user) {
     return {
       'name': user.name,
       'nickname': user.nickname,

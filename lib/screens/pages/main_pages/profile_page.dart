@@ -1,7 +1,8 @@
 import "package:flutter/material.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:provider/provider.dart";
-import "package:tolentino_mini_project/models/user_model.dart";
+import "package:tolentino_mini_project/models/user-slambook_model.dart";
+import "package:tolentino_mini_project/models/users-info_model.dart";
 import "package:tolentino_mini_project/provider/auth_provider.dart";
 import "package:tolentino_mini_project/provider/user-info_provider.dart";
 import "package:tolentino_mini_project/provider/user-slambook_provider.dart";
@@ -16,15 +17,16 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  late User user;
+  late Users user;
   // Get the screen height
   double get screenHeight => MediaQuery.of(context).size.height;
   // Current navigation index
-  int currentIndex = 2;
+  int _currentIndex = 2;
   // Content to be showed (default:personal page)
   String currentContent = "slambook";
   // Storing user personal information
   Map<String, dynamic>? userInfo;
+  late UsersInfo currentUser;
   // User's name
   late String name;
   // Checks if there is slambook data
@@ -40,10 +42,34 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  // Fetch user's slambook data everytime this page is initialize
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<UserSlambookProvider>().fetchSlambookData();
+      context.read<UserInfoProvider>().getUserInfo();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(245, 239, 230, 1),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        automaticallyImplyLeading: false, // Hide the back button
+        backgroundColor: Colors.transparent,
+        centerTitle: true,
+        title: const Text(
+          "Profile Page",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20.0,
+          ),
+        ),
+        actions: <Widget>[editInfoButton],
+      ),
+
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -77,7 +103,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget mainContentUI() {
     return Expanded(
       child: Container(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey),
           borderRadius: BorderRadius.circular(10),
@@ -85,22 +111,6 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            // // Buttons
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //   children: <Widget>[
-            //     ElevatedButton(
-            //       onPressed: () {
-            //         _changeContent("slambook");
-            //       },
-            //       child: Text("Button 1"),
-            //     ),
-            //     ElevatedButton(
-            //       onPressed: () => _changeContent("personal"),
-            //       child: Text("Button 2"),
-            //     ),
-            //   ],
-            // ),
             Expanded(
               child: SingleChildScrollView(
                 child: Center(
@@ -128,7 +138,7 @@ class _ProfilePageState extends State<ProfilePage> {
       stream: context.watch<UserInfoProvider>().userInfoStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
           return Text("Error: ${snapshot.error}");
         } else if (!snapshot.hasData || snapshot.data!.data() == null) {
@@ -136,6 +146,7 @@ class _ProfilePageState extends State<ProfilePage> {
         } else {
           // Process and display user data
           userInfo = snapshot.data!.data()!;
+          currentUser = UsersInfo.fromJson(userInfo!);
           if (type == 1) {
             // Displays the name and username
             name = userInfo!["name"] ?? "none";
@@ -195,7 +206,7 @@ class _ProfilePageState extends State<ProfilePage> {
         });
 
         // Extract user data
-        user = User.fromJson(
+        user = Users.fromJson(
             snapshot.data!.docs.first.data() as Map<String, dynamic>);
         user.id = snapshot.data!.docs.first.id;
 
@@ -212,7 +223,7 @@ class _ProfilePageState extends State<ProfilePage> {
   // User's Slambook data
   Padding displaySlambookData(List<dynamic> userValues) {
     return Padding(
-        padding: EdgeInsets.only(left: 20, right: 20),
+        padding: const EdgeInsets.only(left: 20, right: 20),
         child: Column(
           children: [
             const Padding(
@@ -255,15 +266,15 @@ class _ProfilePageState extends State<ProfilePage> {
             stream: context.watch<UserInfoProvider>().userInfoStream,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
                 return Center(child: Text("Error: ${snapshot.error}"));
               } else if (!snapshot.hasData || snapshot.data!.data() == null) {
-                return Center(child: Text("No user data available."));
+                return const Center(child: Text("No user data available."));
               } else {
                 // Storing image url
                 Map<String, dynamic> userInfo = snapshot.data!.data()!;
-                String imageURL = userInfo["profile-picture"] ?? "";
+                String imageURL = userInfo["profilePicURL"] ?? "";
                 return Stack(
                   // Profile picture overflow
                   clipBehavior: Clip.none,
@@ -346,14 +357,14 @@ class _ProfilePageState extends State<ProfilePage> {
   // Function for building Label: Input formatting
   Widget buildSummaryRow(String label, String input) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Expanded(
             child: Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Color.fromRGBO(79, 111, 82, 1),
                 fontWeight: FontWeight.bold,
               ),
@@ -361,7 +372,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           Text(
             input,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.black,
             ),
           ),
@@ -383,8 +394,8 @@ class _ProfilePageState extends State<ProfilePage> {
             );
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color.fromARGB(255, 97, 194, 7),
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            backgroundColor: const Color.fromARGB(255, 97, 194, 7),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5),
             ),
@@ -410,7 +421,7 @@ class _ProfilePageState extends State<ProfilePage> {
             );
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color.fromARGB(255, 19, 97, 255),
+            backgroundColor: const Color.fromARGB(255, 19, 97, 255),
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5),
@@ -424,24 +435,41 @@ class _ProfilePageState extends State<ProfilePage> {
         ));
   }
 
+  // Edit info button
+  Widget get editInfoButton => IconButton(
+        icon: const Icon(Icons.edit),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) => UserModalPage(
+                type: "Edit2", name: name, currentUser: currentUser),
+          );
+        },
+        color: Color.fromARGB(255, 36, 243, 4),
+      );
+
   // Logout button
   Widget logoutButton() {
     return SizedBox(
         width: double.infinity,
         child: ElevatedButton(
           onPressed: () {
+            setState(() {
+              slambookDataChecker = false;
+              userInfo = null;
+            });
             context.read<UserAuthProvider>().signOut();
-            Navigator.pop(context);
+            Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.red,
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5),
             ),
             elevation: 4,
           ),
-          child: Text(
+          child: const Text(
             'Logout',
             style: TextStyle(color: Colors.white),
           ),
@@ -451,39 +479,46 @@ class _ProfilePageState extends State<ProfilePage> {
   // Bottom navigation bar
   Widget bottomNavigationBar() {
     return BottomNavigationBar(
-      currentIndex: currentIndex,
+      currentIndex: _currentIndex,
       onTap: (index) {
-        setState(() {
-          currentIndex = index;
-        });
+        if (index == _currentIndex) {
+          // Do nothing if tapping on the current tab
+          return;
+        }
 
         switch (index) {
           case 0:
-            // Navigate to Friends page
+            // Friends page
+            Navigator.popUntil(context, ModalRoute.withName("/"));
             Navigator.pushNamed(context, "/friendspage");
             break;
           case 1:
-            // Navigate to Slambook page
+            // Slambook page
+            Navigator.popUntil(context, ModalRoute.withName("/"));
             Navigator.pushNamed(context, "/slambook");
             break;
           case 2:
-            // Profile page
-            _changeContent("personal"); // Set default content
+            // Profile page (current page)
+            Navigator.popUntil(context, ModalRoute.withName("/"));
             break;
         }
+        setState(() {
+          _currentIndex = index;
+        });
       },
+      // Icons
       items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.group),
-          label: "Friends",
+          label: 'Friends',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.book),
-          label: "Slambook",
+          label: 'Slambook',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.logout),
-          label: "Logout",
+          icon: Icon(Icons.person),
+          label: 'Logout',
         ),
       ],
     );

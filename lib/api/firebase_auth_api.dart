@@ -41,6 +41,7 @@ class FirebaseAuthAPI {
 
   // Function for signing out
   Future<void> signOut() async {
+    print("Successfully signed out!");
     await auth.signOut();
   }
 }
