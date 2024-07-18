@@ -2,10 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tolentino_mini_project/models/friend_model.dart';
-import 'package:tolentino_mini_project/provider/auth_provider.dart';
-import 'package:tolentino_mini_project/provider/friends_provider.dart';
-import 'package:tolentino_mini_project/provider/users_provider.dart';
-import 'package:tolentino_mini_project/screens/pages/modal_page.dart';
+import 'package:tolentino_mini_project/provider/user-friend_provider.dart';
+import 'package:tolentino_mini_project/provider/user-info_provider.dart';
+import 'package:tolentino_mini_project/screens/pages/general%20pages/modal_page.dart';
 
 // Friends page
 class FriendsPage extends StatefulWidget {

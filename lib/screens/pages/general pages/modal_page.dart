@@ -1,23 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tolentino_mini_project/models/friend_model.dart';
-import 'package:tolentino_mini_project/models/user_model.dart';
-import 'package:tolentino_mini_project/provider/friends_provider.dart';
-import 'package:tolentino_mini_project/provider/users_provider.dart';
+import 'package:tolentino_mini_project/provider/user-friend_provider.dart';
 
 // Page for editing and deleting a friend
-class UserModalPage extends StatefulWidget {
-  final User? user;
+class ModalPage extends StatefulWidget {
+  final Friend friend;
   final String? type;
-  final String name;
-  const UserModalPage(
-      {super.key, this.user, required this.type, required this.name});
+  const ModalPage({super.key, required this.friend, required this.type});
 
   @override
-  State<UserModalPage> createState() => _UserModalPageState();
+  State<ModalPage> createState() => _ModalPageState();
 }
 
-class _UserModalPageState extends State<UserModalPage> {
+class _ModalPageState extends State<ModalPage> {
   // List of superpowers
   List<String> superpowers = [
     "Super Strength",
@@ -39,27 +35,25 @@ class _UserModalPageState extends State<UserModalPage> {
   TextEditingController ageController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  // Initial values of the fields
-  String dropdownValue = "Super Strength";
-  int radioValue = 1;
-  bool switchLight = false;
-  double currentSliderValue = 0;
-  bool showSummary = false;
+  late String dropdownValue;
+  late int radioValue;
+  late bool switchLight;
+  late double currentSliderValue;
+  late bool showSummary;
+  late String friendId;
 
   @override
   void initState() {
     super.initState();
-    nameController.text = widget.name;
-
-    // // Initial values of the fields (current details of a friend)
-    // friendId = widget.friend.id!;
-    // nameController.text = widget.friend.name;
-    // nicknameController.text = widget.friend.nickname;
-    // ageController.text = widget.friend.age;
-    // dropdownValue = widget.friend.superpower;
-    // radioValue = radioValueFromMotto(widget.friend.motto);
-    // switchLight = (widget.friend.relationshipStatus == "Single");
-    // currentSliderValue = double.parse(widget.friend.happinessLevel);
+    // Initial values of the fields (current details of a friend)
+    friendId = widget.friend.id!;
+    nameController.text = widget.friend.name;
+    nicknameController.text = widget.friend.nickname;
+    ageController.text = widget.friend.age;
+    dropdownValue = widget.friend.superpower;
+    radioValue = radioValueFromMotto(widget.friend.motto);
+    switchLight = (widget.friend.relationshipStatus == "Single");
+    currentSliderValue = double.parse(widget.friend.happinessLevel);
   }
 
   @override
@@ -90,8 +84,8 @@ class _UserModalPageState extends State<UserModalPage> {
   // Method to show the title of the modal depending on the functionality
   Text _buildTitle() {
     switch (widget.type) {
-      case 'Add':
-        return const Text("My Slambook Data");
+      case 'Edit':
+        return const Text("Edit friend");
       case 'Delete':
         return const Text("Delete friend?");
       default:
@@ -102,12 +96,12 @@ class _UserModalPageState extends State<UserModalPage> {
   // Method to build the content or body depending on the functionality
   Widget _buildContent(BuildContext context) {
     switch (widget.type) {
-      // case 'Delete':
-      //   {
-      //     return Text(
-      //       "Are you sure you want to remove '${widget.friend.name}' as a friend?",
-      //     );
-      //   }
+      case 'Delete':
+        {
+          return Text(
+            "Are you sure you want to remove '${widget.friend.name}' as a friend?",
+          );
+        }
       // Edit have input field in them
       default:
         return SingleChildScrollView(
@@ -231,23 +225,22 @@ class _UserModalPageState extends State<UserModalPage> {
   // Saving/Deleting button function
   Widget _dialogAction(BuildContext context) {
     switch (widget.type) {
-      case "Add":
+      case "Edit":
         return TextButton(
           onPressed: () {
             // If the form is validated, edit the friend's details
             if (formKey.currentState!.validate()) {
-              User temp = User(
-                  name: widget.name,
-                  nickname: nicknameController.text,
-                  age: ageController.text,
-                  relationshipStatus: switchLight ? "Single" : "Not Single",
-                  happinessLevel: currentSliderValue.toString(),
-                  superpower: dropdownValue,
-                  motto: motto(radioValue));
-              context.read<UserInfoProvider>().addSlambookData(temp);
+              context.read<FriendListProvider>().editFriend(
+                  widget.friend,
+                  nicknameController.text,
+                  ageController.text,
+                  switchLight ? "Single" : "Not Single",
+                  currentSliderValue.toString(),
+                  dropdownValue,
+                  motto(radioValue));
 
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text('Succesfully added slambook data')));
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text('Succesfully edited ${widget.friend.name}')));
               // Remove dialog after editing
               Navigator.of(context).pop();
             }
@@ -260,52 +253,24 @@ class _UserModalPageState extends State<UserModalPage> {
           ),
           child: Text("Save"),
         );
-      // case "Edit":
-      //   return TextButton(
-      //     onPressed: () {
-      //       // If the form is validated, edit the friend's details
-      //       if (formKey.currentState!.validate()) {
-      //         context.read<FriendListProvider>().editFriend(
-      //             widget.friend,
-      //             nicknameController.text,
-      //             ageController.text,
-      //             switchLight ? "Single" : "Not Single",
-      //             currentSliderValue.toString(),
-      //             dropdownValue,
-      //             motto(radioValue));
-
-      //         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      //             content: Text('Succesfully edited ${widget.friend.name}')));
-      //         // Remove dialog after editing
-      //         Navigator.of(context).pop();
-      //       }
-      //     },
-      //     style: TextButton.styleFrom(
-      //       foregroundColor: Colors.white,
-      //       textStyle: Theme.of(context).textTheme.labelLarge,
-      //       backgroundColor:
-      //           Color.fromRGBO(79, 111, 82, 1), // Adjust text color here
-      //     ),
-      //     child: Text("Save"),
-      //   );
-      // case "Delete":
-      //   return TextButton(
-      //     // Delete friend through the provider
-      //     onPressed: () {
-      //       context.read<FriendListProvider>().deleteFriend(widget.friend);
-      //       ScaffoldMessenger.of(context)
-      //           .showSnackBar(SnackBar(content: Text('Succesfully deleted')));
-      //       // Remove dialog after editing
-      //       Navigator.of(context).pop();
-      //     },
-      //     style: TextButton.styleFrom(
-      //       foregroundColor: Colors.white,
-      //       textStyle: Theme.of(context).textTheme.labelLarge,
-      //       backgroundColor:
-      //           Color.fromRGBO(255, 0, 0, 1), // Adjust text color here
-      //     ),
-      //     child: Text("Delete"),
-      //   );
+      case "Delete":
+        return TextButton(
+          // Delete friend through the provider
+          onPressed: () {
+            context.read<FriendListProvider>().deleteFriend(widget.friend);
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text('Succesfully deleted')));
+            // Remove dialog after editing
+            Navigator.of(context).pop();
+          },
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.white,
+            textStyle: Theme.of(context).textTheme.labelLarge,
+            backgroundColor:
+                Color.fromRGBO(255, 0, 0, 1), // Adjust text color here
+          ),
+          child: Text("Delete"),
+        );
       default:
         return const Text("");
     }

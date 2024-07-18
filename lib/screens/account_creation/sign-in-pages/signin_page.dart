@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tolentino_mini_project/provider/auth_provider.dart';
-import 'package:tolentino_mini_project/screens/account_creation/sign-up-pages/signup_page.dart';
+import 'package:tolentino_mini_project/screens/account_creation/sign-up-pages/signup_page1.dart';
 
 // Sign In Page
 class SignInPage extends StatefulWidget {

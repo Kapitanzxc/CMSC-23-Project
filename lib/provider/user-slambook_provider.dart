@@ -1,46 +1,20 @@
 // User information provider
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:tolentino_mini_project/api/firebase_userInfo_api.dart';
+import 'package:tolentino_mini_project/api/firebase_user-slambook_api.dart';
 import 'package:tolentino_mini_project/models/user_model.dart';
 
-class UserInfoProvider with ChangeNotifier {
-  final UsersInfoAPI usersInfoAPI = UsersInfoAPI();
+class UserSlambookProvider with ChangeNotifier {
+  final UserSlambook usersInfoAPI = UserSlambook();
   late Stream<QuerySnapshot> _slambookData;
-  late Stream<DocumentSnapshot<Map<String, dynamic>>> _userInfoStream;
 
   // Constructor to initialize and fetch user info
-  UserInfoProvider() {
-    getUserInfo();
+  UserSlambookProvider() {
     fetchSlambookData();
   }
 
-  // Getter for user info stream
-  Stream<DocumentSnapshot<Map<String, dynamic>>> get userInfoStream =>
-      _userInfoStream;
-
   // Getter for user slambook stream
   Stream<QuerySnapshot<Object?>> get slambookData => _slambookData;
-
-  // Function to fetch user info
-  void getUserInfo() {
-    _userInfoStream = usersInfoAPI.getUserInfo();
-    notifyListeners();
-  }
-
-  // Function to save user info
-  Future<void> saveUserInfo(String uid, Map<String, dynamic> userInfo) async {
-    await usersInfoAPI.saveUserInfo(uid, userInfo);
-    notifyListeners();
-  }
-
-  // Function to add friend
-  Future<void> addFriend(String uid, String friendId) async {
-    await usersInfoAPI.addFriend(uid, friendId);
-    notifyListeners();
-  }
-
-  // User ID Collection -> Slambook Collection
 
   // Accessing the friendLists from the firebase
   void fetchSlambookData() {
@@ -59,5 +33,26 @@ class UserInfoProvider with ChangeNotifier {
       print("Error adding friend: $e");
       return null;
     }
+  }
+
+  // Edit user's slambook
+  void editUserSlambook(
+      User user,
+      String newNickname,
+      String newAge,
+      String newRelationshipStatus,
+      String newHappinessLevel,
+      String newSuperPower,
+      String newMotto) {
+    user.nickname = newNickname;
+    user.age = newAge;
+    user.relationshipStatus = newRelationshipStatus;
+    user.happinessLevel = newHappinessLevel;
+    user.superpower = newSuperPower;
+    user.motto = newMotto;
+    usersInfoAPI.editUserSlambook(user).then((message) {
+      print(message);
+    });
+    notifyListeners();
   }
 }

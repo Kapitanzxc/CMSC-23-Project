@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tolentino_mini_project/screens/account_creation/sign-up-pages/signup_pfp_page.dart';
+import 'package:tolentino_mini_project/screens/account_creation/sign-up-pages/signup_page2.dart';
 
 // First Signup Page
 class SignUpPage extends StatefulWidget {

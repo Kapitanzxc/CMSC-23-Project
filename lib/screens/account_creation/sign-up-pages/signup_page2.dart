@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:tolentino_mini_project/android_features/camera_feat.dart';
-import 'package:tolentino_mini_project/screens/account_creation/sign-up-pages/signup_info_page.dart';
+import 'package:tolentino_mini_project/screens/account_creation/sign-up-pages/signup_page3.dart';
 
 // Sign un page for adding profile picture
 class SignupPfpPage extends StatefulWidget {

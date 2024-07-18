@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:tolentino_mini_project/api/firebase_storage_api.dart';
+import 'package:tolentino_mini_project/api/firebase_image-storage_api.dart';
 
 // Storage provider that stores images on the cloud
 class StorageProvider with ChangeNotifier {
