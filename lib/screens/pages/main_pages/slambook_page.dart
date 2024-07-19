@@ -66,25 +66,26 @@ class _SlamBookState extends State<SlamBook> {
         // Bottom Navigation Bar
         bottomNavigationBar: bottomNavigationBar(),
         // Personalizing the appbar and background color
-        backgroundColor: Color.fromRGBO(245, 239, 230, 1),
+        backgroundColor: const Color.fromRGBO(245, 239, 230, 1),
         appBar: AppBar(
-            backgroundColor: Color.fromRGBO(26, 77, 46, 1),
-            title: Text("Slambook", style: TextStyle(color: Colors.white))),
+            backgroundColor: const Color.fromRGBO(26, 77, 46, 1),
+            title:
+                const Text("Slambook", style: TextStyle(color: Colors.white))),
         // The body is a single child scroll view
         body: SingleChildScrollView(
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             // Column composed of rows [Title, Form Widget (TextFields, Switch, Slider, Dropdown, Radio, and Submit buttons)]
             child: Column(
               children: [
                 // Title
-                Text(
+                const Text(
                   "My Friends' Slambook",
                   style: TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
                       color: Color.fromRGBO(79, 111, 82, 1)),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 // Form Widget
                 Form(
                   key: formKey,
@@ -95,7 +96,7 @@ class _SlamBookState extends State<SlamBook> {
                       textFieldCreator(nicknameController, "Nickname"),
                       // Age and Relationship Status Field
                       Padding(
-                          padding: EdgeInsets.only(bottom: 20),
+                          padding: const EdgeInsets.only(bottom: 20),
                           // Row compose of age and status
                           child: Row(children: [
                             // Age
@@ -114,19 +115,19 @@ class _SlamBookState extends State<SlamBook> {
                                 }
                               },
                               // Decoration
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                   border: OutlineInputBorder(),
                                   labelText: "Age"),
                             )),
                             // Relationship status
-                            Padding(
+                            const Padding(
                                 padding: EdgeInsets.only(left: 20, right: 20),
                                 child: Text("Are you single?")),
                             // Switch
                             Switch(
                               // Bool value that toggles the switch
                               value: switchLight,
-                              activeColor: Color.fromRGBO(79, 111, 82, 1),
+                              activeColor: const Color.fromRGBO(79, 111, 82, 1),
                               onChanged: (bool value) {
                                 // Update bool value when changed
                                 setState(() {
@@ -137,7 +138,7 @@ class _SlamBookState extends State<SlamBook> {
                           ])),
                       // Happiness Level and its slider
                       headerText("Happiness Level"),
-                      Text(
+                      const Text(
                           "On a scale of 0 (Hopeless) to 10 (Very Happy), how would you rate your current lifestyle?",
                           textAlign: TextAlign.center),
                       // Slider
@@ -147,7 +148,7 @@ class _SlamBookState extends State<SlamBook> {
                         max: 10,
                         divisions: 10,
                         label: currentSliderValue.round().toString(),
-                        activeColor: Color.fromRGBO(79, 111, 82, 1),
+                        activeColor: const Color.fromRGBO(79, 111, 82, 1),
                         onChanged: (double value) {
                           setState(() {
                             // Update slider value on change
@@ -157,19 +158,19 @@ class _SlamBookState extends State<SlamBook> {
                       ),
                       // Superpower and its dropdown
                       headerText("Superpower"),
-                      Text(
+                      const Text(
                           "If you were to have a superpower, what would it be?",
                           textAlign: TextAlign.center),
                       // Dropdown
                       Padding(
-                          padding: EdgeInsets.only(
+                          padding: const EdgeInsets.only(
                               top: 20, left: 40, right: 40, bottom: 20),
                           // Creation of drowdownbutton
                           child: DropdownButtonFormField(
                             value: dropdownValue,
                             items: superpowers.map((item) {
                               return DropdownMenuItem(
-                                  child: Text(item), value: item);
+                                  value: item, child: Text(item));
                             }).toList(),
                             onChanged: (val) {
                               setState(() {
@@ -185,25 +186,30 @@ class _SlamBookState extends State<SlamBook> {
                         children: <Widget>[
                           // Radioboxes
                           radioCreators(
-                              Text("When life gives you lemons, make lemonade"),
+                              const Text(
+                                  "When life gives you lemons, make lemonade"),
                               1),
                           radioCreators(
-                              Text("Life every day like it's your last"), 2),
+                              const Text("Life every day like it's your last"),
+                              2),
                           radioCreators(
-                              Text(
+                              const Text(
                                   "Be yourself. Everyone else is already taken"),
                               3),
                           radioCreators(
-                              Text(
+                              const Text(
                                   "Be the change you wish to see in the world"),
                               4),
                           radioCreators(
-                              Text(
+                              const Text(
                                   "If you are not obsessed with your life, change it"),
                               5),
-                          radioCreators(Text("Take small steps every day"), 6),
                           radioCreators(
-                              Text("Be a rainbow in someone else's cloud"), 7),
+                              const Text("Take small steps every day"), 6),
+                          radioCreators(
+                              const Text(
+                                  "Be a rainbow in someone else's cloud"),
+                              7),
                         ],
                       ),
                       // Show summary when submit button is pressed
@@ -215,7 +221,7 @@ class _SlamBookState extends State<SlamBook> {
                           // Button for resetting the form
                           OutlinedButton.icon(
                               style: OutlinedButton.styleFrom(
-                                side: BorderSide(
+                                side: const BorderSide(
                                     color: Color.fromRGBO(79, 111, 82, 1)),
                               ),
                               // When pressed, reset the form
@@ -228,16 +234,17 @@ class _SlamBookState extends State<SlamBook> {
                               // Reset icon
                               icon: const Icon(Icons.restart_alt,
                                   color: Color.fromRGBO(79, 111, 82, 1)),
-                              label: Text("Reset",
+                              label: const Text("Reset",
                                   style: TextStyle(
                                       color: Color.fromRGBO(0, 0, 0, 1)))),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           // Button for submitting the form
                           TextButton.icon(
                               style: TextButton.styleFrom(
                                 foregroundColor:
-                                    Color.fromRGBO(255, 255, 255, 1),
-                                backgroundColor: Color.fromRGBO(79, 111, 82, 1),
+                                    const Color.fromRGBO(255, 255, 255, 1),
+                                backgroundColor:
+                                    const Color.fromRGBO(79, 111, 82, 1),
                               ),
                               // When pressed, submit the form only if it is validated and showSummary is not displayed
                               onPressed: () {
@@ -264,17 +271,18 @@ class _SlamBookState extends State<SlamBook> {
   // Text field formatting function
   Padding textFieldCreator(TextEditingController controller, String labelText) {
     return Padding(
-        padding: EdgeInsets.only(bottom: 20),
+        padding: const EdgeInsets.only(bottom: 20),
         child: TextFormField(
           controller: controller,
           // Validation
           validator: (val) {
-            if (val == null || val.isEmpty || val.trim().isEmpty)
+            if (val == null || val.isEmpty || val.trim().isEmpty) {
               return "This is a required field";
+            }
             return null;
           },
           decoration: InputDecoration(
-              border: OutlineInputBorder(), labelText: labelText),
+              border: const OutlineInputBorder(), labelText: labelText),
         ));
   }
 
@@ -282,7 +290,7 @@ class _SlamBookState extends State<SlamBook> {
   Text headerText(String title) {
     return Text(
       title,
-      style: TextStyle(
+      style: const TextStyle(
           fontSize: 17,
           fontWeight: FontWeight.bold,
           color: Color.fromRGBO(79, 111, 82, 1)),
@@ -308,13 +316,13 @@ class _SlamBookState extends State<SlamBook> {
   // Show summary function
   Padding summary() {
     return Padding(
-        padding: EdgeInsets.only(left: 20, right: 20),
+        padding: const EdgeInsets.only(left: 20, right: 20),
         child: Column(
           children: [
-            Divider(
+            const Divider(
               color: Color.fromRGBO(79, 111, 82, 1),
             ),
-            Padding(
+            const Padding(
                 padding: EdgeInsets.only(bottom: 20),
                 child: Text(
                   "Summary",
@@ -420,14 +428,14 @@ class _SlamBookState extends State<SlamBook> {
   // Creates a summary row (Label: Value)
   Widget buildSummaryRow(String label, String? input) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Row(children: [
         // Label Formatting
         Expanded(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(label,
-              style: TextStyle(
+              style: const TextStyle(
                   color: Color.fromRGBO(79, 111, 82, 1),
                   fontWeight: FontWeight.bold)),
         ])),

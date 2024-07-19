@@ -2,7 +2,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tolentino_mini_project/api/firebase_user-slambook_api.dart';
 import 'package:tolentino_mini_project/firebase_options.dart';
 import 'package:tolentino_mini_project/provider/auth_provider.dart';
 import 'package:tolentino_mini_project/provider/user-friend_provider.dart';

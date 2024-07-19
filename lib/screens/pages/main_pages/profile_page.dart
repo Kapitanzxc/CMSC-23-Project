@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:provider/provider.dart";
+import "package:qr_flutter/qr_flutter.dart";
 import "package:tolentino_mini_project/models/user-slambook_model.dart";
 import "package:tolentino_mini_project/models/users-info_model.dart";
 import "package:tolentino_mini_project/provider/auth_provider.dart";
@@ -113,55 +114,30 @@ class _ProfilePageState extends State<ProfilePage> {
           children: [
             Expanded(
               child: SingleChildScrollView(
-                child: Center(
-                  child: currentContent == "personal"
-                      ? createStreamBuilder(context, 2)
-                      // Shows the slambook content
-                      : slambookContent(),
+                child: Container(
+                  width: double.infinity, // Ensure the width is constrained
+                  child: Center(
+                    child: currentContent == "personal"
+                        ? createStreamBuilder(context, 2)
+                        : slambookContent(),
+                  ),
                 ),
               ),
             ),
             // Buttons
-            currentContent == "slambook" && slambookDataChecker
-                ? editSlambookButton()
-                : addSlambookButton(),
+            if (slambookDataChecker)
+              Row(
+                children: [
+                  Expanded(child: editSlambookButton()),
+                  const SizedBox(width: 10), // Space between buttons
+                  Expanded(child: generateQrButton(context)),
+                ],
+              )
+            else
+              addSlambookButton(),
           ],
         ),
       ),
-    );
-  }
-
-  // Displays the name and username
-  Widget createStreamBuilder(BuildContext context, int type) {
-    // Streambuilder to access the data
-    return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-      stream: context.watch<UserInfoProvider>().userInfoStream,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text("Error: ${snapshot.error}");
-        } else if (!snapshot.hasData || snapshot.data!.data() == null) {
-          return const Text("No user data available.");
-        } else {
-          // Process and display user data
-          userInfo = snapshot.data!.data()!;
-          currentUser = UsersInfo.fromJson(userInfo!);
-          if (type == 1) {
-            // Displays the name and username
-            name = userInfo!["name"] ?? "none";
-            return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(userInfo!["name"] ?? "none"),
-                  Text(userInfo!["username"] ?? "none")
-                ]);
-          } else {
-            // Shows personal information content
-            return profileInformationContent(userInfo!);
-          }
-        }
-      },
     );
   }
 
@@ -220,6 +196,97 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+// Add slambook button
+  Widget addSlambookButton() {
+    return SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) =>
+                  UserModalPage(type: "Add", name: name),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color.fromARGB(255, 97, 194, 7),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
+            ),
+            elevation: 4,
+          ),
+          child: const Text(
+            'Add Slambook Data',
+            style: TextStyle(color: Colors.white),
+          ),
+        ));
+  }
+
+  // Generate qr code button
+  Widget generateQrButton(BuildContext context) {
+    return SizedBox(
+        child: ElevatedButton(
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            // Shows an alert dialog showing an qr image of user's slambook data
+            return AlertDialog(
+              content: SizedBox(
+                  width: 320,
+                  height: 320,
+                  child: QrImageView(
+                    data: user.toJsonString(user),
+                    version: QrVersions.auto,
+                    size: 320,
+                    gapless: false,
+                  )),
+            );
+          },
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5),
+        ),
+        elevation: 4,
+      ),
+      child: const Text(
+        'Generate Qr Code',
+        style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+      ),
+    ));
+  }
+
+  // Edit slambook button
+  Widget editSlambookButton() {
+    return SizedBox(
+        child: ElevatedButton(
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) =>
+              UserModalPage(type: "Edit", name: name, user: user),
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color.fromARGB(255, 19, 97, 255),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5),
+        ),
+        elevation: 4,
+      ),
+      child: const Text(
+        'Edit Slambook Data',
+        style: TextStyle(color: Colors.white),
+      ),
+    ));
+  }
+
   // User's Slambook data
   Padding displaySlambookData(List<dynamic> userValues) {
     return Padding(
@@ -249,6 +316,40 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ],
         ));
+  }
+
+  // Function for creating a stream builder
+  Widget createStreamBuilder(BuildContext context, int type) {
+    // Streambuilder to access the data
+    return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+      stream: context.watch<UserInfoProvider>().userInfoStream,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text("Error: ${snapshot.error}");
+        } else if (!snapshot.hasData || snapshot.data!.data() == null) {
+          return const Text("No user data available.");
+        } else {
+          // Process and display user data
+          userInfo = snapshot.data!.data()!;
+          currentUser = UsersInfo.fromJson(userInfo!);
+          if (type == 1) {
+            // Displays the name and username
+            name = userInfo!["name"] ?? "none";
+            return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(userInfo!["name"] ?? "none"),
+                  Text(userInfo!["username"] ?? "none")
+                ]);
+          } else {
+            // Shows personal information content
+            return profileInformationContent(userInfo!);
+          }
+        }
+      },
+    );
   }
 
   // Text creator for name and username
@@ -381,60 +482,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Add slambook button
-  Widget addSlambookButton() {
-    return SizedBox(
-        width: double.infinity,
-        child: ElevatedButton(
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) =>
-                  UserModalPage(type: "Add", name: name),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(255, 97, 194, 7),
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5),
-            ),
-            elevation: 4,
-          ),
-          child: const Text(
-            'Add Slambook Data',
-            style: TextStyle(color: Colors.white),
-          ),
-        ));
-  }
-
-  // Edit slambook button
-  Widget editSlambookButton() {
-    return SizedBox(
-        width: double.infinity,
-        child: ElevatedButton(
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) =>
-                  UserModalPage(type: "Edit", name: name, user: user),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(255, 19, 97, 255),
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5),
-            ),
-            elevation: 4,
-          ),
-          child: const Text(
-            'Edit Slambook Data',
-            style: TextStyle(color: Colors.white),
-          ),
-        ));
-  }
-
   // Edit info button
   Widget get editInfoButton => IconButton(
         icon: const Icon(Icons.edit),
@@ -445,7 +492,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 type: "Edit2", name: name, currentUser: currentUser),
           );
         },
-        color: Color.fromARGB(255, 36, 243, 4),
+        color: const Color.fromARGB(255, 36, 243, 4),
       );
 
   // Logout button

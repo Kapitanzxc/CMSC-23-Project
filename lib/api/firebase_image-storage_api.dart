@@ -20,10 +20,12 @@ class StorageAPI {
       // List all files in the user's folder
       ListResult result = await userFolderRef.listAll();
 
-      // Delete all files in the user's folder
-      for (Reference imageFiles in result.items) {
-        await imageFiles.delete();
-        print("Deleted existing image");
+      if (result.items.length != 0) {
+        // Delete all files in the user's folder
+        for (Reference imageFiles in result.items) {
+          await imageFiles.delete();
+          print("Deleted existing image");
+        }
       }
 
       // Creates a new reference for the new image

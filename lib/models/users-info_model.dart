@@ -20,7 +20,7 @@ class UsersInfo {
       name: json['name'],
       username: json['username'],
       contact: json['contact'],
-      profilePicURL: json?['profilePicURL'] ?? "",
+      profilePicURL: json['profilePicURL'] ?? "",
       additionalContacts: List<String>.from(json['additionalContacts'] ?? []),
     );
   }

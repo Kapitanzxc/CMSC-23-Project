@@ -2,7 +2,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:tolentino_mini_project/api/firebase_user-info_api.dart';
-import 'package:tolentino_mini_project/models/user-slambook_model.dart';
 
 // UserIds -> Field
 class UserInfoProvider with ChangeNotifier {

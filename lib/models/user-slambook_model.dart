@@ -1,4 +1,6 @@
 // Users Class
+import 'dart:convert';
+
 class Users {
   String? id;
   String name;
@@ -35,10 +37,10 @@ class Users {
     );
   }
 
-  // static List<Friend> fromJsonArray(String jsonData) {
-  //   final Iterable<dynamic> data = jsonDecode(jsonData);
-  //   return data.map<Friend>((dynamic d) => Friend.fromJson(d)).toList();
-  // }
+  String toJsonString(Users user) {
+    Map<String, dynamic> userMap = toJson(user);
+    return jsonEncode(userMap);
+  }
 
   // Transforming a user slambook data to a map
   Map<String, dynamic> toJson(Users user) {
