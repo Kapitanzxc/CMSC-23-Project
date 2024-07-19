@@ -24,20 +24,18 @@ class FirebaseFriendsAPI {
   }
 
   // Adding a friend in the firestore
-  Future<DocumentReference?> addFriend(Map<String, dynamic> friend) async {
+  Future<void> addFriend(Map<String, dynamic> friend) async {
     String? userId = authAPI.getCurrentUserId(); // Get current user's ID
     if (userId != null) {
       try {
-        DocumentReference document = await friendList
+        await friendList
             .collection("userIds")
             .doc(userId)
             .collection("friends")
             .add(friend);
         print("Successfully added friend to user's friend list");
-        return document; // Return the DocumentReference
       } on FirebaseException catch (e) {
         print("Failed with error: ${e.code}");
-        return null; // or handle the error as per your application's logic
       }
     } else {
       throw Exception("User not authenticated or user ID not found.");
@@ -71,7 +69,13 @@ class FirebaseFriendsAPI {
   // Deleting a friend in the firestore
   Future<String> deleteFriend(String id) async {
     try {
-      await friendList.collection("userIds").doc(id).delete();
+      String? userId = authAPI.getCurrentUserId(); // Get current user's ID
+      await friendList
+          .collection("userIds")
+          .doc(userId)
+          .collection("friends")
+          .doc(id)
+          .delete();
       return "Successfully removed friend from user's friend list!";
     } on FirebaseException catch (e) {
       return "Failed with error: ${e.code}";

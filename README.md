@@ -29,3 +29,4 @@ https://stackoverflow.com/questions/49553402/how-to-determine-screen-height-and-
 https://stackoverflow.com/questions/68313457/flutter-stack-positioning-and-overflow
 https://stackoverflow.com/questions/69299281/how-to-add-a-button-to-the-activity-of-the-appbar-in-flutter
 https://firebase.google.com/docs/storage/android/delete-files
+https://pub.dev/packages/qr_code_scanner

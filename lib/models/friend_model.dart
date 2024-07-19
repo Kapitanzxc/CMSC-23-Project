@@ -1,6 +1,7 @@
 // Friend Class
 class Friend {
   String? id;
+  String verified;
   String name;
   String nickname;
   String age;
@@ -12,6 +13,7 @@ class Friend {
   // Constuctor
   Friend({
     this.id,
+    required this.verified,
     required this.name,
     required this.nickname,
     required this.age,
@@ -25,6 +27,7 @@ class Friend {
   factory Friend.fromJson(Map<String, dynamic> json) {
     return Friend(
       id: json['id'],
+      verified: json['verified'],
       name: json['name'],
       nickname: json['nickname'],
       age: json['age'],
@@ -43,6 +46,7 @@ class Friend {
   // Transforming a friend class to a map
   Map<String, dynamic> toJson(Friend friend) {
     return {
+      'verified': friend.verified,
       'name': friend.name,
       'nickname': friend.nickname,
       'age': friend.age,

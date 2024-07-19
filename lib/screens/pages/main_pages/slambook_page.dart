@@ -72,245 +72,82 @@ class _SlamBookState extends State<SlamBook> {
             title:
                 const Text("Slambook", style: TextStyle(color: Colors.white))),
         // The body is a single child scroll view
-        body: SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            // Column composed of rows [Title, Form Widget (TextFields, Switch, Slider, Dropdown, Radio, and Submit buttons)]
-            child: Column(
-              children: [
-                // Title
-                const Text(
-                  "My Friends' Slambook",
-                  style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromRGBO(79, 111, 82, 1)),
-                ),
-                const SizedBox(height: 20),
-                // Form Widget
-                Form(
-                  key: formKey,
-                  child: Column(
+        body: buildContent());
+  }
+
+  Widget buildContent() {
+    return SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        // Column composed of rows [Title, Form Widget (TextFields, Switch, Slider, Dropdown, Radio, and Submit buttons)]
+        child: Column(
+          children: [
+            // Title
+            const Text(
+              "My Friends' Slambook",
+              style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromRGBO(79, 111, 82, 1)),
+            ),
+            const SizedBox(height: 20),
+            // Form Widget
+            Form(
+              key: formKey,
+              child: Column(
+                children: [
+                  const SizedBox(height: 10),
+                  // Name and Nickname Field
+                  textFieldCreator(nameController, "Name"),
+                  textFieldCreator(nicknameController, "Nickname"),
+                  // Age and Relationship Status Field
+                  Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      // Row compose of age and status
+                      child: Row(children: [
+                        // Age
+                        ageFormField(),
+                        // Relationship status
+                        const Padding(
+                            padding: EdgeInsets.only(left: 20, right: 20),
+                            child: Text("Are you single?")),
+                        // Switch
+                        relationshipFormField(),
+                      ])),
+                  // Happiness Level and its slider
+                  headerText("Happiness Level"),
+                  const Text(
+                      "On a scale of 0 (Hopeless) to 10 (Very Happy), how would you rate your current lifestyle?",
+                      textAlign: TextAlign.center),
+                  // Slider
+                  happinessFormField(),
+                  // Superpower and its dropdown
+                  headerText("Superpower"),
+                  const Text(
+                      "If you were to have a superpower, what would it be?",
+                      textAlign: TextAlign.center),
+                  // Dropdown
+                  superpowerFormField(),
+                  // Motto and radioboxes
+                  headerText("Motto"),
+                  radioFormFields(),
+                  // Show summary when submit button is pressed
+                  if (showSummary) summary(),
+                  // Buttons for resetting and submitting form
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Name and Nickname Field
-                      textFieldCreator(nameController, "Name"),
-                      textFieldCreator(nicknameController, "Nickname"),
-                      // Age and Relationship Status Field
-                      Padding(
-                          padding: const EdgeInsets.only(bottom: 20),
-                          // Row compose of age and status
-                          child: Row(children: [
-                            // Age
-                            Flexible(
-                                child: TextFormField(
-                              controller: ageController,
-                              validator: (val) {
-                                // Validators
-                                if (val == null || val.isEmpty) {
-                                  return "This is a required field";
-                                } else if (int.tryParse(val) == null ||
-                                    int.parse(val) <= 0) {
-                                  return "Please enter a valid age";
-                                } else {
-                                  return null;
-                                }
-                              },
-                              // Decoration
-                              decoration: const InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  labelText: "Age"),
-                            )),
-                            // Relationship status
-                            const Padding(
-                                padding: EdgeInsets.only(left: 20, right: 20),
-                                child: Text("Are you single?")),
-                            // Switch
-                            Switch(
-                              // Bool value that toggles the switch
-                              value: switchLight,
-                              activeColor: const Color.fromRGBO(79, 111, 82, 1),
-                              onChanged: (bool value) {
-                                // Update bool value when changed
-                                setState(() {
-                                  switchLight = value;
-                                });
-                              },
-                            )
-                          ])),
-                      // Happiness Level and its slider
-                      headerText("Happiness Level"),
-                      const Text(
-                          "On a scale of 0 (Hopeless) to 10 (Very Happy), how would you rate your current lifestyle?",
-                          textAlign: TextAlign.center),
-                      // Slider
-                      Slider(
-                        value: currentSliderValue,
-                        // From 0: 10
-                        max: 10,
-                        divisions: 10,
-                        label: currentSliderValue.round().toString(),
-                        activeColor: const Color.fromRGBO(79, 111, 82, 1),
-                        onChanged: (double value) {
-                          setState(() {
-                            // Update slider value on change
-                            currentSliderValue = value;
-                          });
-                        },
-                      ),
-                      // Superpower and its dropdown
-                      headerText("Superpower"),
-                      const Text(
-                          "If you were to have a superpower, what would it be?",
-                          textAlign: TextAlign.center),
-                      // Dropdown
-                      Padding(
-                          padding: const EdgeInsets.only(
-                              top: 20, left: 40, right: 40, bottom: 20),
-                          // Creation of drowdownbutton
-                          child: DropdownButtonFormField(
-                            value: dropdownValue,
-                            items: superpowers.map((item) {
-                              return DropdownMenuItem(
-                                  value: item, child: Text(item));
-                            }).toList(),
-                            onChanged: (val) {
-                              setState(() {
-                                // Updates dropdown value on changed
-                                dropdownValue = val!;
-                              });
-                            },
-                            // decoration: InputDecoration(fillColor: )
-                          )),
-                      // Motto and radioboxes
-                      headerText("Motto"),
-                      Column(
-                        children: <Widget>[
-                          // Radioboxes
-                          radioCreators(
-                              const Text(
-                                  "When life gives you lemons, make lemonade"),
-                              1),
-                          radioCreators(
-                              const Text("Life every day like it's your last"),
-                              2),
-                          radioCreators(
-                              const Text(
-                                  "Be yourself. Everyone else is already taken"),
-                              3),
-                          radioCreators(
-                              const Text(
-                                  "Be the change you wish to see in the world"),
-                              4),
-                          radioCreators(
-                              const Text(
-                                  "If you are not obsessed with your life, change it"),
-                              5),
-                          radioCreators(
-                              const Text("Take small steps every day"), 6),
-                          radioCreators(
-                              const Text(
-                                  "Be a rainbow in someone else's cloud"),
-                              7),
-                        ],
-                      ),
-                      // Show summary when submit button is pressed
-                      if (showSummary) summary(),
-                      // Buttons for resetting and submitting form
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // Button for resetting the form
-                          OutlinedButton.icon(
-                              style: OutlinedButton.styleFrom(
-                                side: const BorderSide(
-                                    color: Color.fromRGBO(79, 111, 82, 1)),
-                              ),
-                              // When pressed, reset the form
-                              onPressed: () {
-                                formKey.currentState!.reset();
-                                setState(() {
-                                  resetForm();
-                                });
-                              },
-                              // Reset icon
-                              icon: const Icon(Icons.restart_alt,
-                                  color: Color.fromRGBO(79, 111, 82, 1)),
-                              label: const Text("Reset",
-                                  style: TextStyle(
-                                      color: Color.fromRGBO(0, 0, 0, 1)))),
-                          const SizedBox(width: 10),
-                          // Button for submitting the form
-                          TextButton.icon(
-                              style: TextButton.styleFrom(
-                                foregroundColor:
-                                    const Color.fromRGBO(255, 255, 255, 1),
-                                backgroundColor:
-                                    const Color.fromRGBO(79, 111, 82, 1),
-                              ),
-                              // When pressed, submit the form only if it is validated and showSummary is not displayed
-                              onPressed: () {
-                                if (formKey.currentState!.validate() &&
-                                    !showSummary) {
-                                  submitForm();
-                                }
-                              },
-                              // Submit icon
-                              icon: const Icon(Icons.send, size: 20),
-                              label: const Text("Submit",
-                                  style: TextStyle(
-                                      color:
-                                          Color.fromRGBO(255, 255, 255, 1)))),
-                        ],
-                      )
+                      // Button for resetting the form
+                      resetFormButtom(),
+                      const SizedBox(width: 10),
+                      // Button for submitting the form
+                      submitFormButton()
                     ],
-                  ),
-                )
-              ],
-            )));
-  }
-
-  // Text field formatting function
-  Padding textFieldCreator(TextEditingController controller, String labelText) {
-    return Padding(
-        padding: const EdgeInsets.only(bottom: 20),
-        child: TextFormField(
-          controller: controller,
-          // Validation
-          validator: (val) {
-            if (val == null || val.isEmpty || val.trim().isEmpty) {
-              return "This is a required field";
-            }
-            return null;
-          },
-          decoration: InputDecoration(
-              border: const OutlineInputBorder(), labelText: labelText),
+                  )
+                ],
+              ),
+            )
+          ],
         ));
-  }
-
-  // Header formatting function
-  Text headerText(String title) {
-    return Text(
-      title,
-      style: const TextStyle(
-          fontSize: 17,
-          fontWeight: FontWeight.bold,
-          color: Color.fromRGBO(79, 111, 82, 1)),
-    );
-  }
-
-  // Radio creator function
-  ListTile radioCreators(Widget motto, int value) {
-    return ListTile(
-      title: motto,
-      leading: Radio<int>(
-        value: value,
-        groupValue: radioValue,
-        onChanged: (int? value) {
-          setState(() {
-            radioValue = value!;
-          });
-        },
-      ),
-    );
   }
 
   // Show summary function
@@ -348,6 +185,25 @@ class _SlamBookState extends State<SlamBook> {
         ));
   }
 
+  Widget submitFormButton() {
+    // Button for submitting the form
+    return TextButton.icon(
+        style: TextButton.styleFrom(
+          foregroundColor: const Color.fromRGBO(255, 255, 255, 1),
+          backgroundColor: const Color.fromRGBO(79, 111, 82, 1),
+        ),
+        // When pressed, submit the form only if it is validated and showSummary is not displayed
+        onPressed: () {
+          if (formKey.currentState!.validate() && !showSummary) {
+            submitForm();
+          }
+        },
+        // Submit icon
+        icon: const Icon(Icons.send, size: 20),
+        label: const Text("Submit",
+            style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1))));
+  }
+
   // Function for saving the form
   void submitForm() {
     // Saving the variables from the form
@@ -360,8 +216,8 @@ class _SlamBookState extends State<SlamBook> {
       saveSuperPower = dropdownValue;
       saveMotto = motto(radioValue);
       // Assigning the new values in the friendList
-      // Instantiate a todo objeect to be inserted, default userID will be 1, the id will be the next id in the list
       Friend temp = Friend(
+          verified: "No",
           name: saveName,
           nickname: saveNickname,
           age: saveAge,
@@ -369,25 +225,39 @@ class _SlamBookState extends State<SlamBook> {
           happinessLevel: saveHappinessLvl,
           superpower: saveSuperPower,
           motto: saveMotto);
-      appendFriend(temp);
+      addFriend(temp);
       showSummary = true; // Show summary
     });
     // Print statement
     print("Submitted! Summary displayed");
   }
 
-  Future<void> appendFriend(Friend temp) async {
+  // Appending friend Id to the user's friendlist array
+  Future<void> addFriend(Friend temp) async {
     String? uid = context.read<UserAuthProvider>().getCurrentUserId();
-    String? documentID =
-        await context.read<FriendListProvider>().addFriend(uid!, temp);
-    print("Friend ID: $documentID UID: $uid");
-    if (documentID != null && uid != null) {
-      await context.read<UserInfoProvider>().addFriend(uid, documentID);
-      showSummary = true; // Show summary
-    } else {
-      print("Failed to add friend.");
-      // Handle error or retry logic here
-    }
+    await context.read<FriendListProvider>().addFriend(uid!, temp);
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Succesfully added ${temp.name}')));
+  }
+
+  Widget resetFormButtom() {
+    // Button for resetting the form
+    return OutlinedButton.icon(
+        style: OutlinedButton.styleFrom(
+          side: const BorderSide(color: Color.fromRGBO(79, 111, 82, 1)),
+        ),
+        // When pressed, reset the form
+        onPressed: () {
+          formKey.currentState!.reset();
+          setState(() {
+            resetForm();
+          });
+        },
+        // Reset icon
+        icon: const Icon(Icons.restart_alt,
+            color: Color.fromRGBO(79, 111, 82, 1)),
+        label: const Text("Reset",
+            style: TextStyle(color: Color.fromRGBO(0, 0, 0, 1))));
   }
 
   // Reset function
@@ -446,6 +316,144 @@ class _SlamBookState extends State<SlamBook> {
           children: [Text(input ?? "")],
         ))
       ]),
+    );
+  }
+
+  Widget ageFormField() {
+    return Flexible(
+        child: TextFormField(
+      controller: ageController,
+      validator: (val) {
+        // Validators
+        if (val == null || val.isEmpty) {
+          return "This is a required field";
+        } else if (int.tryParse(val) == null || int.parse(val) <= 0) {
+          return "Please enter a valid age";
+        } else {
+          return null;
+        }
+      },
+      // Decoration
+      decoration:
+          const InputDecoration(border: OutlineInputBorder(), labelText: "Age"),
+    ));
+  }
+
+  Widget relationshipFormField() {
+    return Switch(
+      // Bool value that toggles the switch
+      value: switchLight,
+      activeColor: const Color.fromRGBO(79, 111, 82, 1),
+      onChanged: (bool value) {
+        // Update bool value when changed
+        setState(() {
+          switchLight = value;
+        });
+      },
+    );
+  }
+
+  Widget happinessFormField() {
+    return Slider(
+      value: currentSliderValue,
+      // From 0: 10
+      max: 10,
+      divisions: 10,
+      label: currentSliderValue.round().toString(),
+      activeColor: const Color.fromRGBO(79, 111, 82, 1),
+      onChanged: (double value) {
+        setState(() {
+          // Update slider value on change
+          currentSliderValue = value;
+        });
+      },
+    );
+  }
+
+  Widget superpowerFormField() {
+    return Padding(
+        padding:
+            const EdgeInsets.only(top: 20, left: 40, right: 40, bottom: 20),
+        // Creation of drowdownbutton
+        child: DropdownButtonFormField(
+            value: dropdownValue,
+            items: superpowers.map((item) {
+              return DropdownMenuItem(
+                value: item,
+                child: Text(item),
+              );
+            }).toList(),
+            onChanged: (val) {
+              setState(() {
+                // Updates dropdown value on changed
+                dropdownValue = val!;
+              });
+            }
+            // decoration: InputDecoration(fillColor: )
+            ));
+  }
+
+  // Text field formatting function
+  Padding textFieldCreator(TextEditingController controller, String labelText) {
+    return Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: TextFormField(
+          controller: controller,
+          // Validation
+          validator: (val) {
+            if (val == null || val.isEmpty || val.trim().isEmpty) {
+              return "This is a required field";
+            }
+            return null;
+          },
+          decoration: InputDecoration(
+              border: const OutlineInputBorder(), labelText: labelText),
+        ));
+  }
+
+  // Header formatting function
+  Text headerText(String title) {
+    return Text(
+      title,
+      style: const TextStyle(
+          fontSize: 17,
+          fontWeight: FontWeight.bold,
+          color: Color.fromRGBO(79, 111, 82, 1)),
+    );
+  }
+
+  // Radio creator function
+  ListTile radioCreators(Widget motto, int value) {
+    return ListTile(
+      title: motto,
+      leading: Radio<int>(
+        value: value,
+        groupValue: radioValue,
+        onChanged: (int? value) {
+          setState(() {
+            radioValue = value!;
+          });
+        },
+      ),
+    );
+  }
+
+  Widget radioFormFields() {
+    return Column(
+      children: <Widget>[
+        // Radioboxes
+        radioCreators(
+            const Text("When life gives you lemons, make lemonade"), 1),
+        radioCreators(const Text("Life every day like it's your last"), 2),
+        radioCreators(
+            const Text("Be yourself. Everyone else is already taken"), 3),
+        radioCreators(
+            const Text("Be the change you wish to see in the world"), 4),
+        radioCreators(
+            const Text("If you are not obsessed with your life, change it"), 5),
+        radioCreators(const Text("Take small steps every day"), 6),
+        radioCreators(const Text("Be a rainbow in someone else's cloud"), 7),
+      ],
     );
   }
 

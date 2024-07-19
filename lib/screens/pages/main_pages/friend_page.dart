@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tolentino_mini_project/models/friend_model.dart';
+import 'package:tolentino_mini_project/provider/auth_provider.dart';
 import 'package:tolentino_mini_project/provider/user-friend_provider.dart';
 import 'package:tolentino_mini_project/screens/pages/general%20pages/modal_page.dart';
+import 'package:tolentino_mini_project/screens/pages/general%20pages/qr-code_page.dart';
 
 // Friends page
 class FriendsPage extends StatefulWidget {
@@ -37,12 +41,7 @@ class _FriendsPageState extends State<FriendsPage> {
         // Creates UI
         body: friendListUI(),
         // Button that navigates to slambook
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.pushNamed(context, "/slambook");
-          },
-          child: const Icon(Icons.add_outlined),
-        ),
+        floatingActionButton: qrCodeScanner(),
         // Bottom navigation bar
         bottomNavigationBar: bottomNavigationBar());
   }
@@ -182,6 +181,44 @@ class _FriendsPageState extends State<FriendsPage> {
         ),
       ),
     );
+  }
+
+  Widget qrCodeScanner() {
+    return FloatingActionButton(
+      onPressed: () async {
+        // Navigate to the QR Scanner page and wait for the result
+        final result = await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const QRCodeScannerPage()),
+        );
+        if (result != null) {
+          // Turn the result to a Map
+          Map<String, dynamic> dataMap = jsonDecode(result);
+          // Instantiate a friend
+          Friend temp = Friend(
+            verified: "Yes",
+            name: dataMap["name"],
+            nickname: dataMap["nickname"],
+            age: dataMap["age"],
+            relationshipStatus: dataMap["relationshipStatus"],
+            happinessLevel: dataMap["happinessLevel"],
+            superpower: dataMap["superpower"],
+            motto: dataMap["motto"],
+          );
+          // Add friend to the firestore
+          addFriend(temp);
+        }
+      },
+      child: const Icon(Icons.qr_code_scanner),
+    );
+  }
+
+  // Appending friend Id to the user's friendlist array
+  Future<void> addFriend(Friend temp) async {
+    String? uid = context.read<UserAuthProvider>().getCurrentUserId();
+    await context.read<FriendListProvider>().addFriend(uid!, temp);
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Succesfully added ${temp.name}')));
   }
 
   Widget bottomNavigationBar() {
