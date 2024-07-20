@@ -30,3 +30,10 @@ https://stackoverflow.com/questions/68313457/flutter-stack-positioning-and-overf
 https://stackoverflow.com/questions/69299281/how-to-add-a-button-to-the-activity-of-the-appbar-in-flutter
 https://firebase.google.com/docs/storage/android/delete-files
 https://pub.dev/packages/qr_code_scanner
+https://stackoverflow.com/questions/73885781/button-disabled-state-bases-on-multiple-textformfields
+https://ph.pinterest.com/pin/449093394106811851/
+https://stackoverflow.com/questions/44179889/how-do-i-set-background-image-in-flutter
+https://stackoverflow.com/questions/65622166/background-image-is-moving-when-keyboards-appears-flutter
+https://docs.flutter.dev/cookbook/design/themes
+https://stackoverflow.com/questions/16800540/how-should-i-check-if-the-input-is-an-email-address-in-flutter
+https://api.flutter.dev/flutter/dart-core/List/List.generate.html

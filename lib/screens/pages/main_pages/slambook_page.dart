@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:tolentino_mini_project/models/friend_model.dart';
 import 'package:tolentino_mini_project/provider/auth_provider.dart';
 import 'package:tolentino_mini_project/provider/user-friend_provider.dart';
-import 'package:tolentino_mini_project/provider/user-info_provider.dart';
 
 class SlamBook extends StatefulWidget {
   const SlamBook({super.key});
