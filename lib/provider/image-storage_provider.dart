@@ -25,4 +25,22 @@ class StorageProvider with ChangeNotifier {
       return null;
     }
   }
+
+  // Uploads friends imagefile to the cloud
+  Future<String?> uploadFriendProfilePicture(
+      String userId, String name, File? imageFile) async {
+    if (imageFile == null) {
+      print("No image file provided.");
+      return null;
+    }
+    // Return url after uploading
+    String? downloadUrl =
+        await _storageAPI.uploadFriendImage(userId, name, imageFile);
+    if (downloadUrl != null) {
+      notifyListeners();
+      return downloadUrl;
+    } else {
+      return null;
+    }
+  }
 }

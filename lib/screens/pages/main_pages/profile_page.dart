@@ -316,6 +316,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget logoutButton() {
     return Container(
         margin: const EdgeInsets.symmetric(horizontal: 16),
+        padding: EdgeInsets.symmetric(horizontal: 100),
         child: ElevatedButton(
           onPressed: () {
             setState(() {
@@ -432,27 +433,20 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // Motto
   Widget motto(String motto) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // If text overflows, create another line
-        Text(
-          '"${motto.length > 20 ? motto.substring(0, 20) : "$motto'"}',
-          style: Formatting.italicStyle.copyWith(
-            fontSize: 10,
-            color: Formatting.black,
-          ),
-        ),
-        if (motto.length > 20)
-          Text(
-            '${motto.substring(20)}"',
-            style: Formatting.italicStyle.copyWith(
-              fontSize: 10,
-              color: Formatting.black,
-            ),
-          ),
-      ],
-    );
+    return SizedBox(
+        width: 200,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // If text overflows, create another line
+            Text(
+              motto,
+              style: Formatting.italicStyle
+                  .copyWith(fontSize: 10, color: Formatting.black),
+              softWrap: true,
+            )
+          ],
+        ));
   }
 
   // Frog image with age
@@ -488,6 +482,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // Happiness Level
   Widget happinessLevel(String happinessLevel) {
+    List happinessLevelList = happinessLevel.split(".");
     return Row(
       children: [
         SizedBox(
@@ -501,7 +496,7 @@ class _ProfilePageState extends State<ProfilePage> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(happinessLevel,
+            Text(happinessLevelList[0],
                 style: Formatting.semiBoldStyle.copyWith(
                   fontSize: 16,
                   color: Formatting.black,
@@ -853,7 +848,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 type: "Edit2", name: name, currentUser: currentUser),
           );
         },
-        color: Color.fromARGB(255, 255, 255, 255),
+        color: const Color.fromARGB(255, 255, 255, 255),
       );
 
   // Bottom navigation bar

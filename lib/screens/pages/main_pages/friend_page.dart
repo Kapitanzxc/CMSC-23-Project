@@ -124,13 +124,15 @@ class _FriendsPageState extends State<FriendsPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // Name Formatting
-              Text(
+              Expanded(
+                  child: Text(
                 name,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                     fontSize: 20,
                     color: Color.fromRGBO(79, 111, 82, 1),
                     fontWeight: FontWeight.bold),
-              ),
+              )),
               Row(
                 children: [
                   // Icon button for showing the summary or details page
@@ -196,15 +198,15 @@ class _FriendsPageState extends State<FriendsPage> {
           Map<String, dynamic> dataMap = jsonDecode(result);
           // Instantiate a friend
           Friend temp = Friend(
-            verified: "Yes",
-            name: dataMap["name"],
-            nickname: dataMap["nickname"],
-            age: dataMap["age"],
-            relationshipStatus: dataMap["relationshipStatus"],
-            happinessLevel: dataMap["happinessLevel"],
-            superpower: dataMap["superpower"],
-            motto: dataMap["motto"],
-          );
+              verified: "Yes",
+              name: dataMap["name"],
+              nickname: dataMap["nickname"],
+              age: dataMap["age"],
+              relationshipStatus: dataMap["relationshipStatus"],
+              happinessLevel: dataMap["happinessLevel"],
+              superpower: dataMap["superpower"],
+              motto: dataMap["motto"],
+              profilePictureURL: dataMap["profilePictureURL"]);
           // Add friend to the firestore
           addFriend(temp);
         }

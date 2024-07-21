@@ -1,7 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tolentino_mini_project/android_features/camera_feat.dart';
+import 'package:tolentino_mini_project/formatting/formatting.dart';
 import 'package:tolentino_mini_project/models/friend_model.dart';
 import 'package:tolentino_mini_project/provider/auth_provider.dart';
+import 'package:tolentino_mini_project/provider/image-storage_provider.dart';
 import 'package:tolentino_mini_project/provider/user-friend_provider.dart';
 
 class SlamBook extends StatefulWidget {
@@ -40,6 +45,10 @@ class _SlamBookState extends State<SlamBook> {
   double currentSliderValue = 0;
   bool showSummary = false;
   int _currentIndex = 1;
+  Color selectedTileColor = Formatting.primary;
+  // disable button
+  bool isButtonEnabled = false;
+  File? _imageFile;
 
   // Variables for saving the fields
   late String saveName;
@@ -49,6 +58,22 @@ class _SlamBookState extends State<SlamBook> {
   late String saveHappinessLvl;
   late String saveSuperPower;
   late String saveMotto;
+
+  // Initializing camera feature
+  final CameraFeature _cameraFeature = CameraFeature();
+
+  // Updates the button if fields are empty
+  void _checkFields() {
+    setState(() {
+      if (nameController.text.isNotEmpty &&
+          nicknameController.text.isNotEmpty &&
+          ageController.text.isNotEmpty) {
+        isButtonEnabled = true;
+      } else {
+        isButtonEnabled = false;
+      }
+    });
+  }
 
   // Disposing controllers
   @override
@@ -60,41 +85,49 @@ class _SlamBookState extends State<SlamBook> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    // Listeners to the controllers
+    nameController.addListener(_checkFields);
+    nicknameController.addListener(_checkFields);
+    ageController.addListener(_checkFields);
+    // Asking user's permission
+    _cameraFeature.requestPermission();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        // Bottom Navigation Bar
-        bottomNavigationBar: bottomNavigationBar(),
-        // Personalizing the appbar and background color
-        backgroundColor: const Color.fromRGBO(245, 239, 230, 1),
-        appBar: AppBar(
-            backgroundColor: const Color.fromRGBO(26, 77, 46, 1),
-            title:
-                const Text("Slambook", style: TextStyle(color: Colors.white))),
-        // The body is a single child scroll view
-        body: buildContent());
+    return Theme(
+        data: theme(),
+        child: Scaffold(
+            // Bottom Navigation Bar
+            bottomNavigationBar: bottomNavigationBar(),
+            // Personalizing the appbar and background color
+            backgroundColor: const Color.fromARGB(255, 244, 244, 244),
+            // The body is a single child scroll view
+            body: buildContent()));
   }
 
   Widget buildContent() {
     return SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.only(left: 24, right: 24),
         // Column composed of rows [Title, Form Widget (TextFields, Switch, Slider, Dropdown, Radio, and Submit buttons)]
         child: Column(
           children: [
+            const SizedBox(height: 60),
             // Title
-            const Text(
-              "My Friends' Slambook",
-              style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromRGBO(79, 111, 82, 1)),
-            ),
-            const SizedBox(height: 20),
+            Text("Add a Friend",
+                style: Formatting.semiBoldStyle.copyWith(
+                  fontSize: 24,
+                  color: Formatting.black,
+                )),
+            const SizedBox(height: 24),
             // Form Widget
             Form(
               key: formKey,
               child: Column(
                 children: [
-                  const SizedBox(height: 10),
+                  profilePicture,
                   // Name and Nickname Field
                   textFieldCreator(nameController, "Name"),
                   textFieldCreator(nicknameController, "Nickname"),
@@ -106,157 +139,380 @@ class _SlamBookState extends State<SlamBook> {
                         // Age
                         ageFormField(),
                         // Relationship status
-                        const Padding(
-                            padding: EdgeInsets.only(left: 20, right: 20),
-                            child: Text("Are you single?")),
+                        Padding(
+                            padding: const EdgeInsets.only(left: 20, right: 20),
+                            child: Text("Are you single?",
+                                style: Formatting.regularStyle.copyWith(
+                                    fontSize: 16, color: Formatting.black))),
                         // Switch
                         relationshipFormField(),
                       ])),
                   // Happiness Level and its slider
                   headerText("Happiness Level"),
-                  const Text(
+                  Text(
                       "On a scale of 0 (Hopeless) to 10 (Very Happy), how would you rate your current lifestyle?",
+                      style: Formatting.regularStyle
+                          .copyWith(fontSize: 12, color: Formatting.black),
                       textAlign: TextAlign.center),
                   // Slider
                   happinessFormField(),
                   // Superpower and its dropdown
                   headerText("Superpower"),
-                  const Text(
-                      "If you were to have a superpower, what would it be?",
+                  Text("If you were to have a superpower, what would it be?",
+                      style: Formatting.regularStyle
+                          .copyWith(fontSize: 12, color: Formatting.black),
                       textAlign: TextAlign.center),
                   // Dropdown
                   superpowerFormField(),
                   // Motto and radioboxes
                   headerText("Motto"),
                   radioFormFields(),
-                  // Show summary when submit button is pressed
-                  if (showSummary) summary(),
                   // Buttons for resetting and submitting form
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Button for resetting the form
-                      resetFormButtom(),
-                      const SizedBox(width: 10),
-                      // Button for submitting the form
-                      submitFormButton()
-                    ],
-                  )
                 ],
               ),
-            )
-          ],
-        ));
-  }
-
-  // Show summary function
-  Padding summary() {
-    return Padding(
-        padding: const EdgeInsets.only(left: 20, right: 20),
-        child: Column(
-          children: [
-            const Divider(
-              color: Color.fromRGBO(79, 111, 82, 1),
             ),
-            const Padding(
-                padding: EdgeInsets.only(bottom: 20),
-                child: Text(
-                  "Summary",
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromRGBO(79, 111, 82, 1),
-                  ),
-                )),
-            Column(
+            const SizedBox(height: 16),
+            Row(
               children: [
-                // Creates row of summary
-                buildSummaryRow("Name", saveName),
-                buildSummaryRow("Nickname", saveNickname),
-                buildSummaryRow("Age", saveAge),
-                buildSummaryRow("Relationship Status", saveRelationshipStatus),
-                buildSummaryRow("Happiness Level", saveHappinessLvl),
-                buildSummaryRow("Superpower", saveSuperPower),
-                buildSummaryRow("Favorite Motto", saveMotto)
+                // Button for resetting the form
+                Expanded(child: resetFormButtom()),
+                const SizedBox(width: 8),
+                // Button for submitting the form
+                Expanded(child: submitFormButton()),
               ],
             ),
+            const SizedBox(height: 16)
           ],
         ));
   }
 
+  // Show summary dialog
+  void summaryDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Title
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Text(
+                    "Frog-tastic! Friend Added!",
+                    textAlign: TextAlign.center,
+                    style: Formatting.boldStyle.copyWith(
+                      fontSize: 24,
+                      color: Formatting.black,
+                    ),
+                  ),
+                ),
+                // Creates row of label and value
+                Row(children: [
+                  Expanded(child: buildSummaryRow("Name", saveName))
+                ]),
+                Row(children: [
+                  Expanded(child: buildSummaryRow("Nickname", saveNickname))
+                ]),
+                Row(children: [
+                  Expanded(child: buildSummaryRow("Age", saveAge)),
+                  Expanded(
+                      child:
+                          buildSummaryRow("Happiness Level", saveHappinessLvl)),
+                ]),
+                Row(children: [
+                  Expanded(
+                      child: buildSummaryRow(
+                          "Relationship Status", saveRelationshipStatus))
+                ]),
+                Row(children: [
+                  Expanded(child: buildSummaryRow("Superpower", saveSuperPower))
+                ]),
+                Row(children: [
+                  Expanded(child: buildSummaryRow("Favorite Motto", saveMotto))
+                ]),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            // Add more friend button
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                onPressed: () {
+                  formKey.currentState!.reset();
+                  setState(() {
+                    resetForm();
+                  });
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  elevation: 4,
+                ),
+                child: Text(
+                  'Add more friends',
+                  style: Formatting.mediumStyle.copyWith(
+                      fontSize: 16, color: const Color.fromARGB(255, 0, 0, 0)),
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            // Go to friends page button
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                onPressed: () {
+                  // Pop the context then navigate to the friends page
+                  Navigator.pop(context);
+                  Navigator.popUntil(context, ModalRoute.withName("/"));
+                  Navigator.pushNamed(context, "/friendspage");
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Formatting.primary,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  elevation: 4,
+                ),
+                child: Text(
+                  'Go to friends page',
+                  style: Formatting.mediumStyle.copyWith(
+                      fontSize: 16,
+                      color: const Color.fromRGBO(255, 255, 255, 1)),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Creates a summary row (Label: Value)
+  Widget buildSummaryRow(String label, String? input) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      // Value Formatting
+      Text(input ?? "",
+          softWrap: true,
+          style: Formatting.semiBoldStyle
+              .copyWith(fontSize: 16, color: Formatting.black)),
+
+      // Label Formatting
+      Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: Text(label,
+              style: Formatting.regularStyle
+                  .copyWith(fontSize: 12, color: Formatting.black)))
+    ]);
+  }
+
+  // Button for submitting the form
   Widget submitFormButton() {
-    // Button for submitting the form
-    return TextButton.icon(
-        style: TextButton.styleFrom(
-          foregroundColor: const Color.fromRGBO(255, 255, 255, 1),
-          backgroundColor: const Color.fromRGBO(79, 111, 82, 1),
-        ),
-        // When pressed, submit the form only if it is validated and showSummary is not displayed
-        onPressed: () {
-          if (formKey.currentState!.validate() && !showSummary) {
-            submitForm();
-          }
-        },
-        // Submit icon
-        icon: const Icon(Icons.send, size: 20),
-        label: const Text("Submit",
-            style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1))));
+    return SizedBox(
+        height: 48,
+        child: ElevatedButton(
+          // Show button if enabled
+          onPressed: isButtonEnabled
+              ? () {
+                  if (formKey.currentState!.validate() && !showSummary) {
+                    submitForm();
+                  }
+                }
+              : null,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Formatting.primary,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            elevation: 4,
+          ),
+          child: Text(
+            'Submit',
+            style: Formatting.mediumStyle.copyWith(
+                fontSize: 16, color: const Color.fromRGBO(255, 255, 255, 1)),
+          ),
+        ));
+  }
+
+  // Profile picture
+  Widget get profilePicture => Stack(
+        children: [
+          // If no image file existing, show the default pfp
+          _imageFile != null
+              ? Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: SizedBox(
+                      width: 140,
+                      height: 140,
+                      child: ClipOval(
+                        child: Image.file(_imageFile!, fit: BoxFit.cover),
+                      )))
+              : Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: SizedBox(
+                      width: 140,
+                      height: 140,
+                      child: ClipOval(
+                        child: Image.asset("assets/default_pfp.jpg",
+                            fit: BoxFit.cover),
+                      ))),
+          // Add Button
+          Positioned(
+            top: 100,
+            right: 0,
+            child: IconButton(
+              // Calls photoOptions/camera
+              onPressed: () => _photoOptions(context),
+              icon: Container(
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.all(1),
+                  child: Icon(Icons.add, color: Colors.black),
+                ),
+              ),
+            ),
+          )
+        ],
+      );
+
+  // Function for showing photo options
+  void _photoOptions(BuildContext context) {
+    // Shows a bottom modal sheet
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Take a picture
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('Take a picture'),
+              onTap: () async {
+                Navigator.of(context).pop();
+                final image = await _cameraFeature.takePicture();
+                setState(() {
+                  _imageFile = image;
+                });
+              },
+            ),
+            // Choose from gallery
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('Choose from gallery'),
+              onTap: () async {
+                Navigator.of(context).pop();
+                final image = await _cameraFeature.chooseFromGallery();
+                setState(() {
+                  _imageFile = image;
+                });
+              },
+            ),
+            // Delete option
+            if (_imageFile != null)
+              ListTile(
+                leading: const Icon(Icons.delete),
+                title: const Text('Remove Photo'),
+                onTap: () async {
+                  Navigator.of(context).pop();
+                  setState(() {
+                    _imageFile = null;
+                  });
+                },
+              )
+          ],
+        );
+      },
+    );
   }
 
   // Function for saving the form
-  void submitForm() {
+  void submitForm() async {
     // Saving the variables from the form
+    saveName = nameController.text;
+    saveNickname = nicknameController.text;
+    saveAge = ageController.text;
+    saveRelationshipStatus = switchLight ? "Single" : "Not Single";
+    saveHappinessLvl = currentSliderValue.toString();
+    saveSuperPower = dropdownValue;
+    saveMotto = motto(radioValue);
+    String? downloadURL;
+
+    // Upload profile picture to the cloud
+    if (_imageFile != null) {
+      String? uid = context.read<UserAuthProvider>().getCurrentUserId();
+      downloadURL = await context
+          .read<StorageProvider>()
+          .uploadFriendProfilePicture(uid!, saveName, _imageFile);
+    }
+
+    // Assigning the new values in the friendList
+    Friend temp = Friend(
+        verified: "No",
+        name: saveName,
+        nickname: saveNickname,
+        age: saveAge,
+        relationshipStatus: saveRelationshipStatus,
+        happinessLevel: saveHappinessLvl,
+        superpower: saveSuperPower,
+        motto: saveMotto,
+        profilePictureURL: downloadURL);
+
+    // Adding the friend to the user's firebase
+    String? uid = context.read<UserAuthProvider>().getCurrentUserId();
+    await context.read<FriendListProvider>().addFriend(uid!, temp);
+
     setState(() {
-      saveName = nameController.text;
-      saveNickname = nicknameController.text;
-      saveAge = ageController.text;
-      saveRelationshipStatus = switchLight ? "Single" : "Not Single";
-      saveHappinessLvl = currentSliderValue.toString();
-      saveSuperPower = dropdownValue;
-      saveMotto = motto(radioValue);
-      // Assigning the new values in the friendList
-      Friend temp = Friend(
-          verified: "No",
-          name: saveName,
-          nickname: saveNickname,
-          age: saveAge,
-          relationshipStatus: saveRelationshipStatus,
-          happinessLevel: saveHappinessLvl,
-          superpower: saveSuperPower,
-          motto: saveMotto);
-      addFriend(temp);
-      showSummary = true; // Show summary
+      summaryDialog(context);
+      // Show summary
+      showSummary = true;
     });
+
     // Print statement
     print("Submitted! Summary displayed");
   }
 
-  // Appending friend Id to the user's friendlist array
-  Future<void> addFriend(Friend temp) async {
-    String? uid = context.read<UserAuthProvider>().getCurrentUserId();
-    await context.read<FriendListProvider>().addFriend(uid!, temp);
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Succesfully added ${temp.name}')));
-  }
-
+  // Button for resetting the form
   Widget resetFormButtom() {
-    // Button for resetting the form
-    return OutlinedButton.icon(
-        style: OutlinedButton.styleFrom(
-          side: const BorderSide(color: Color.fromRGBO(79, 111, 82, 1)),
-        ),
-        // When pressed, reset the form
-        onPressed: () {
-          formKey.currentState!.reset();
-          setState(() {
-            resetForm();
-          });
-        },
-        // Reset icon
-        icon: const Icon(Icons.restart_alt,
-            color: Color.fromRGBO(79, 111, 82, 1)),
-        label: const Text("Reset",
-            style: TextStyle(color: Color.fromRGBO(0, 0, 0, 1))));
+    return SizedBox(
+        height: 48,
+        child: ElevatedButton(
+          // Show button if enabled
+          onPressed: () {
+            formKey.currentState!.reset();
+            setState(() {
+              resetForm();
+            });
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            elevation: 4,
+          ),
+          child: Text(
+            'Reset',
+            style: Formatting.mediumStyle.copyWith(
+                fontSize: 16, color: const Color.fromARGB(255, 0, 0, 0)),
+          ),
+        ));
   }
 
   // Reset function
@@ -294,30 +550,7 @@ class _SlamBookState extends State<SlamBook> {
     }
   }
 
-  // Creates a summary row (Label: Value)
-  Widget buildSummaryRow(String label, String? input) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(children: [
-        // Label Formatting
-        Expanded(
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(label,
-              style: const TextStyle(
-                  color: Color.fromRGBO(79, 111, 82, 1),
-                  fontWeight: FontWeight.bold)),
-        ])),
-        // Value Formatting
-        Expanded(
-            child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [Text(input ?? "")],
-        ))
-      ]),
-    );
-  }
-
+  // Age form field
   Widget ageFormField() {
     return Flexible(
         child: TextFormField(
@@ -338,11 +571,12 @@ class _SlamBookState extends State<SlamBook> {
     ));
   }
 
+  // Relationship form field
   Widget relationshipFormField() {
     return Switch(
       // Bool value that toggles the switch
       value: switchLight,
-      activeColor: const Color.fromRGBO(79, 111, 82, 1),
+      activeColor: Formatting.primary,
       onChanged: (bool value) {
         // Update bool value when changed
         setState(() {
@@ -352,6 +586,7 @@ class _SlamBookState extends State<SlamBook> {
     );
   }
 
+  // Happiness level form field
   Widget happinessFormField() {
     return Slider(
       value: currentSliderValue,
@@ -359,7 +594,7 @@ class _SlamBookState extends State<SlamBook> {
       max: 10,
       divisions: 10,
       label: currentSliderValue.round().toString(),
-      activeColor: const Color.fromRGBO(79, 111, 82, 1),
+      activeColor: Formatting.primary,
       onChanged: (double value) {
         setState(() {
           // Update slider value on change
@@ -369,10 +604,10 @@ class _SlamBookState extends State<SlamBook> {
     );
   }
 
+// Superpower form field
   Widget superpowerFormField() {
     return Padding(
-        padding:
-            const EdgeInsets.only(top: 20, left: 40, right: 40, bottom: 20),
+        padding: const EdgeInsets.only(top: 16, bottom: 16),
         // Creation of drowdownbutton
         child: DropdownButtonFormField(
             value: dropdownValue,
@@ -395,7 +630,7 @@ class _SlamBookState extends State<SlamBook> {
   // Text field formatting function
   Padding textFieldCreator(TextEditingController controller, String labelText) {
     return Padding(
-        padding: const EdgeInsets.only(bottom: 20),
+        padding: const EdgeInsets.only(bottom: 16),
         child: TextFormField(
           controller: controller,
           // Validation
@@ -412,13 +647,11 @@ class _SlamBookState extends State<SlamBook> {
 
   // Header formatting function
   Text headerText(String title) {
-    return Text(
-      title,
-      style: const TextStyle(
-          fontSize: 17,
-          fontWeight: FontWeight.bold,
-          color: Color.fromRGBO(79, 111, 82, 1)),
-    );
+    return Text(title,
+        style: Formatting.semiBoldStyle.copyWith(
+          fontSize: 20,
+          color: Formatting.black,
+        ));
   }
 
   // Radio creator function
@@ -428,6 +661,7 @@ class _SlamBookState extends State<SlamBook> {
       leading: Radio<int>(
         value: value,
         groupValue: radioValue,
+        activeColor: Formatting.primary, // Set the active color here
         onChanged: (int? value) {
           setState(() {
             radioValue = value!;
@@ -442,17 +676,58 @@ class _SlamBookState extends State<SlamBook> {
       children: <Widget>[
         // Radioboxes
         radioCreators(
-            const Text("When life gives you lemons, make lemonade"), 1),
-        radioCreators(const Text("Life every day like it's your last"), 2),
+            Text("When life gives you lemons, make lemonade",
+                style: Formatting.regularStyle
+                    .copyWith(fontSize: 16, color: Formatting.black)),
+            1),
         radioCreators(
-            const Text("Be yourself. Everyone else is already taken"), 3),
+            Text("Live every day like it's your last",
+                style: Formatting.regularStyle
+                    .copyWith(fontSize: 16, color: Formatting.black)),
+            2),
         radioCreators(
-            const Text("Be the change you wish to see in the world"), 4),
+            Text("Be yourself. Everyone else is already taken",
+                style: Formatting.regularStyle
+                    .copyWith(fontSize: 16, color: Formatting.black)),
+            3),
         radioCreators(
-            const Text("If you are not obsessed with your life, change it"), 5),
-        radioCreators(const Text("Take small steps every day"), 6),
-        radioCreators(const Text("Be a rainbow in someone else's cloud"), 7),
+            Text("Be the change you wish to see in the world",
+                style: Formatting.regularStyle
+                    .copyWith(fontSize: 16, color: Formatting.black)),
+            4),
+        radioCreators(
+            Text("If you are not obsessed with your life, change it",
+                style: Formatting.regularStyle
+                    .copyWith(fontSize: 16, color: Formatting.black)),
+            5),
+        radioCreators(
+            Text("Take small steps every day",
+                style: Formatting.regularStyle
+                    .copyWith(fontSize: 16, color: Formatting.black)),
+            6),
+        radioCreators(
+            Text("Be a rainbow in someone else's cloud",
+                style: Formatting.regularStyle
+                    .copyWith(fontSize: 16, color: Formatting.black)),
+            7),
       ],
+    );
+  }
+
+  // Themes
+  ThemeData theme() {
+    return ThemeData(
+      inputDecorationTheme: InputDecorationTheme(
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20.0),
+          borderSide: const BorderSide(color: Colors.grey),
+        ),
+        labelStyle: const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+        errorStyle: const TextStyle(color: Colors.red),
+      ),
     );
   }
 

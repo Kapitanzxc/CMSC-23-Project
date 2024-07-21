@@ -9,6 +9,7 @@ class Friend {
   String happinessLevel;
   String superpower;
   String motto;
+  String? profilePictureURL;
 
   // Constuctor
   Friend({
@@ -21,21 +22,22 @@ class Friend {
     required this.happinessLevel,
     required this.superpower,
     required this.motto,
+    required this.profilePictureURL,
   });
 
   // Factory constructor to instantiate object from json format
   factory Friend.fromJson(Map<String, dynamic> json) {
     return Friend(
-      id: json['id'],
-      verified: json['verified'],
-      name: json['name'],
-      nickname: json['nickname'],
-      age: json['age'],
-      relationshipStatus: json['relationshipStatus'],
-      happinessLevel: json['happinessLevel'],
-      superpower: json['superpower'],
-      motto: json['motto'],
-    );
+        id: json['id'],
+        verified: json['verified'],
+        name: json['name'],
+        nickname: json['nickname'],
+        age: json['age'],
+        relationshipStatus: json['relationshipStatus'],
+        happinessLevel: json['happinessLevel'],
+        superpower: json['superpower'],
+        motto: json['motto'],
+        profilePictureURL: json['profilePictureURL']);
   }
 
   // static List<Friend> fromJsonArray(String jsonData) {
@@ -53,7 +55,8 @@ class Friend {
       'relationshipStatus': friend.relationshipStatus,
       'happinessLevel': friend.happinessLevel,
       'superpower': friend.superpower,
-      'motto': friend.motto
+      'motto': friend.motto,
+      'profilePictureURL': friend.profilePictureURL
     };
   }
 }

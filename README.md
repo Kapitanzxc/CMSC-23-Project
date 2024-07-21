@@ -40,3 +40,4 @@ https://api.flutter.dev/flutter/dart-core/List/List.generate.html
 https://stackoverflow.com/questions/51652134/check-if-an-email-already-exists-in-firebase-auth-in-flutter-app
 https://ph.pinterest.com/pin/625015254566607927/
 https://www.istockphoto.com/vector/rating-satisfaction-feedback-in-form-of-emotions-gm1160344267-317584172
+https://www.educative.io/answers/how-to-break-a-text---string-into-multiple-lines-in-flutter

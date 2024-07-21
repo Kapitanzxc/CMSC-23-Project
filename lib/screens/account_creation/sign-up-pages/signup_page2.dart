@@ -232,7 +232,6 @@ class _SignupInfoPageState extends State<SignupInfoPage> {
       height: 48,
       child: ElevatedButton(
         // Show button if enabled
-        // Show button if enabled
         onPressed: isButtonEnabled
             ? () {
                 if (formKey.currentState!.validate()) {
@@ -446,15 +445,18 @@ class _SignupInfoPageState extends State<SignupInfoPage> {
     );
   }
 
-// Themes
+  // Themes
   ThemeData theme() {
     return ThemeData(
       inputDecorationTheme: InputDecorationTheme(
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20.0),
           borderSide: const BorderSide(color: Colors.grey),
         ),
-        labelStyle: const TextStyle(color: Formatting.black),
+        labelStyle: const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
         errorStyle: const TextStyle(color: Colors.red),
       ),
     );
