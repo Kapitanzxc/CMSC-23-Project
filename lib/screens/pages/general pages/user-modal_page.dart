@@ -493,7 +493,7 @@ class _UserModalPageState extends State<UserModalPage> {
       // From 0: 10
       max: 10,
       divisions: 10,
-      label: currentSliderValue.round().toString(),
+      label: currentSliderValue.toString(),
       activeColor: const Color.fromRGBO(79, 111, 82, 1),
       onChanged: (double value) {
         setState(() {

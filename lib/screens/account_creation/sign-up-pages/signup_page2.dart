@@ -35,6 +35,35 @@ class _SignupInfoPageState extends State<SignupInfoPage> {
   final List<TextEditingController> contactNumberControllers = [];
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
+  // disable button
+  bool isButtonEnabled = false;
+
+  // Updates the button if fields are empty
+  void _checkFields() {
+    setState(() {
+      if (usernameController.text.isNotEmpty &&
+          contactController.text.isNotEmpty) {
+        bool controllersChecker = true;
+        for (var controller in contactNumberControllers) {
+          if (controller.text.isEmpty) {
+            controllersChecker = false;
+          }
+        }
+        if (controllersChecker) isButtonEnabled = true;
+      } else {
+        isButtonEnabled = false;
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Listeners to the controllers
+    usernameController.addListener(_checkFields);
+    contactController.addListener(_checkFields);
+  }
+
   @override
   void dispose() {
     // Disposing controllers
@@ -100,14 +129,14 @@ class _SignupInfoPageState extends State<SignupInfoPage> {
       child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
         Text(
           "Almost there...",
-          style: Formatting.semiBoldStyle.copyWith(fontSize: 32),
+          style: Formatting.semiBoldStyle
+              .copyWith(fontSize: 32, color: Formatting.black),
         ),
         Text(
           textAlign: TextAlign.center,
           "Onti nalang! Just complete your details to join and start connecting with friends!",
-          style: Formatting.regularStyle.copyWith(
-            fontSize: 14,
-          ),
+          style: Formatting.regularStyle
+              .copyWith(fontSize: 14, color: Formatting.black),
         )
       ]));
 
@@ -123,7 +152,11 @@ class _SignupInfoPageState extends State<SignupInfoPage> {
           // Adds contact controller
           onPressed: () {
             setState(() {
-              contactNumberControllers.add(TextEditingController());
+              final controller = TextEditingController();
+              controller.addListener(_checkFields);
+              setState(() {
+                contactNumberControllers.add(controller);
+              });
             });
           },
           child: const Icon(
@@ -134,7 +167,7 @@ class _SignupInfoPageState extends State<SignupInfoPage> {
         const SizedBox(width: 1),
         const Text(
           'Contact Number',
-          style: TextStyle(fontSize: 16),
+          style: TextStyle(fontSize: 16, color: Formatting.black),
         ),
       ]);
 
@@ -183,6 +216,7 @@ class _SignupInfoPageState extends State<SignupInfoPage> {
         IconButton(
           icon: const Icon(Icons.delete),
           onPressed: () {
+            contactNumberControllers[index].removeListener(_checkFields);
             setState(() {
               contactNumberControllers.removeAt(index);
             });
@@ -198,12 +232,14 @@ class _SignupInfoPageState extends State<SignupInfoPage> {
       height: 48,
       child: ElevatedButton(
         // Show button if enabled
-        onPressed: () {
-          // When validated, submit the form
-          if (formKey.currentState!.validate()) {
-            submitForm(context);
-          }
-        },
+        // Show button if enabled
+        onPressed: isButtonEnabled
+            ? () {
+                if (formKey.currentState!.validate()) {
+                  submitForm(context);
+                }
+              }
+            : null,
         style: ElevatedButton.styleFrom(
           backgroundColor: Formatting.primary,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -242,11 +278,7 @@ class _SignupInfoPageState extends State<SignupInfoPage> {
                 .map((controller) => controller.text)
                 .toList());
         await context.read<UserInfoProvider>().saveUserInfo(uid, temp.toJson());
-        // Proceed to the friends page
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const FriendsPage()),
-        );
+        showSignInDialog(context);
       } catch (e) {
         print("Error saving user info: $e");
       }
@@ -266,23 +298,163 @@ class _SignupInfoPageState extends State<SignupInfoPage> {
       return uid;
     } catch (e) {
       print("Error signing up: $e");
+      if (mounted) {
+        // Check if the widget is still mounted
+        showSignInErrorDialog(context);
+      }
       return null;
     }
+  }
+
+  // Show error dialog
+  void showSignInErrorDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Flexible(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 10),
+                // Image
+                Container(
+                  width: 150,
+                  height: 150,
+                  child: Image.asset("assets/frog_sad.png"),
+                ),
+                const SizedBox(height: 10),
+                // Text
+                Text(
+                  "Oops something went wrong!",
+                  style: Formatting.boldStyle
+                      .copyWith(fontSize: 24, color: Formatting.black),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 10),
+                // Text
+                Text(
+                  "This email is already in use. Please log in or use a different email.",
+                  style: Formatting.mediumStyle
+                      .copyWith(fontSize: 12, color: Formatting.black),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            // Try again button
+            SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Formatting.primary,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    elevation: 4,
+                  ),
+                  child: Text(
+                    'Try Again',
+                    style: Formatting.mediumStyle.copyWith(
+                        fontSize: 16,
+                        color: const Color.fromRGBO(255, 255, 255, 1)),
+                  ),
+                )),
+          ],
+        );
+      },
+    );
+  }
+
+  // Show error dialog
+  void showSignInDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Flexible(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 10),
+                // Image
+                Container(
+                  width: 150,
+                  height: 150,
+                  child: Image.asset("assets/frog_happy.png"),
+                ),
+                const SizedBox(height: 10),
+                // Text
+                Text(
+                  "Ribbit! You're In!",
+                  style: Formatting.boldStyle
+                      .copyWith(fontSize: 24, color: Formatting.black),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 10),
+                // Text
+                Text(
+                  "You’ve hopped right in. Start making friends and filling your slambook!",
+                  style: Formatting.mediumStyle
+                      .copyWith(fontSize: 12, color: Formatting.black),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            // Jump in button
+            SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  // Show button if enabled
+                  onPressed: () {
+                    // Proceed to the friends page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const FriendsPage()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Formatting.primary,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    elevation: 4,
+                  ),
+                  child: Text(
+                    'Jump In!',
+                    style: Formatting.mediumStyle.copyWith(
+                        fontSize: 16,
+                        color: const Color.fromRGBO(255, 255, 255, 1)),
+                  ),
+                )),
+          ],
+        );
+      },
+    );
   }
 
 // Themes
   ThemeData theme() {
     return ThemeData(
       inputDecorationTheme: InputDecorationTheme(
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20.0),
-          borderSide: const BorderSide(color: Formatting.primary),
-        ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20.0),
           borderSide: const BorderSide(color: Colors.grey),
         ),
-        labelStyle: const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+        labelStyle: const TextStyle(color: Formatting.black),
         errorStyle: const TextStyle(color: Colors.red),
       ),
     );

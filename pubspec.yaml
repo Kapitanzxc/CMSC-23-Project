@@ -72,7 +72,21 @@ flutter:
     - assets/kaibigan_logo.png
     - assets/kaibigan_logo2.png
     - assets/kaibigan_logo3.png
-    - assets/background_signin.jpg
+    - assets/frog_happy.png
+    - assets/frog_sad.png
+    - assets/frog_angry.png
+    - assets/frog_age.png
+    - assets/frog_happiness.png
+    - assets/frog_superpower.png
+    - assets/frog_relationship.png
+    - assets/verified.png
+    - assets/super_happy.png
+    - assets/happy.png
+    - assets/neutral.png
+    - assets/sad.png
+    - assets/super_sad.png
+    - assets/crying.png
+    - assets/cover_photo.jpg
     - assets/default_pfp.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -96,6 +110,8 @@ flutter:
         - asset: assets/fonts/Poppins-Medium.ttf
           weight: 500
         - asset: assets/fonts/Poppins-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Poppins-Italic.ttf
           weight: 400
         
   

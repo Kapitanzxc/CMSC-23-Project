@@ -37,3 +37,6 @@ https://stackoverflow.com/questions/65622166/background-image-is-moving-when-key
 https://docs.flutter.dev/cookbook/design/themes
 https://stackoverflow.com/questions/16800540/how-should-i-check-if-the-input-is-an-email-address-in-flutter
 https://api.flutter.dev/flutter/dart-core/List/List.generate.html
+https://stackoverflow.com/questions/51652134/check-if-an-email-already-exists-in-firebase-auth-in-flutter-app
+https://ph.pinterest.com/pin/625015254566607927/
+https://www.istockphoto.com/vector/rating-satisfaction-feedback-in-form-of-emotions-gm1160344267-317584172

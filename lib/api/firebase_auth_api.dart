@@ -17,12 +17,14 @@ class FirebaseAuthAPI {
   }
 
   // Function for signing in
-  Future<String> signIn(String email, String password) async {
+  Future<bool> signIn(String email, String password) async {
     try {
       await auth.signInWithEmailAndPassword(email: email, password: password);
-      return "Successfully signed in!";
+      print("Successfully signed in!");
+      return true;
     } on FirebaseAuthException catch (e) {
-      return "Failed at error: ${e.code}";
+      print("Failed at error: ${e.code}");
+      return false;
     }
   }
 
@@ -43,5 +45,15 @@ class FirebaseAuthAPI {
   Future<void> signOut() async {
     print("Successfully signed out!");
     await auth.signOut();
+  }
+
+  Future<bool> emailExists(String email) async {
+    try {
+      final methods =
+          await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
+      return methods.isNotEmpty;
+    } catch (e) {
+      return false;
+    }
   }
 }

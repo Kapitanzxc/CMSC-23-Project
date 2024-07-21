@@ -22,17 +22,20 @@ class _SignInPageState extends State<SignInPage> {
   String? email;
   String? password;
   bool showSignInErrorMessage = false;
+  // button disabler
   bool isButtonEnabled = false;
-  bool obscurePassword = false;
+  // password visibility
+  bool obscurePassword = true;
 
   @override
   void initState() {
     super.initState();
+    // adding listeners to the controllers
     emailController.addListener(_checkFields);
     passwordController.addListener(_checkFields);
   }
 
-  // Updates the button if email and password field is not empty
+  // Updates the button if the fields is not empty
   void _checkFields() {
     setState(() {
       if (emailController.text.isNotEmpty &&
@@ -46,6 +49,7 @@ class _SignInPageState extends State<SignInPage> {
 
   @override
   void dispose() {
+    // Disposing controllers
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
@@ -54,22 +58,16 @@ class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     return Theme(
+        // Theme
         data: theme(),
         child: Scaffold(
             resizeToAvoidBottomInset: false,
             backgroundColor: const Color.fromARGB(255, 255, 255, 255),
             body: Stack(children: [
-              // Container(
-              //     decoration: const BoxDecoration(
-              //   image: DecorationImage(
-              //     image: AssetImage("assets/background_signin.jpg"),
-              //     fit: BoxFit.cover,
-              //   ),
-              // )),
               Container(
                 margin:
                     const EdgeInsets.symmetric(vertical: 48, horizontal: 48),
-                // Form for text field for signing in
+                // Form for text fields for signing in
                 child: Form(
                     key: _formKey,
                     child: SingleChildScrollView(
@@ -78,6 +76,7 @@ class _SignInPageState extends State<SignInPage> {
                         // Text Fields and buttons
                         children: [
                           const SizedBox(height: 80),
+                          // Logo
                           Container(
                             padding: const EdgeInsets.only(bottom: 80),
                             width: 80,
@@ -98,23 +97,6 @@ class _SignInPageState extends State<SignInPage> {
             ])));
   }
 
-  ThemeData theme() {
-    return ThemeData(
-      inputDecorationTheme: InputDecorationTheme(
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20.0),
-          borderSide: BorderSide(color: Formatting.primary),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20.0),
-          borderSide: BorderSide(color: Colors.grey),
-        ),
-        labelStyle: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
-        errorStyle: TextStyle(color: Colors.red),
-      ),
-    );
-  }
-
   // Sign in Text
   Widget get heading => Padding(
         padding: const EdgeInsets.only(bottom: 24),
@@ -123,11 +105,13 @@ class _SignInPageState extends State<SignInPage> {
           children: [
             Text(
               "Hello, kumusta ka?",
-              style: Formatting.boldStyle.copyWith(fontSize: 32),
+              style: Formatting.boldStyle
+                  .copyWith(fontSize: 32, color: Formatting.black),
             ),
             Text(
               "Sign in to your account",
-              style: Formatting.regularStyle.copyWith(fontSize: 12),
+              style: Formatting.regularStyle
+                  .copyWith(fontSize: 12, color: Formatting.black),
             )
           ],
         ),
@@ -142,7 +126,7 @@ class _SignInPageState extends State<SignInPage> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20.0),
               ),
-              label: Text("Email")),
+              label: const Text("Email")),
           onSaved: (value) => email = value,
           validator: (value) {
             if (value == null || value.isEmpty) {
@@ -162,7 +146,8 @@ class _SignInPageState extends State<SignInPage> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(20.0),
             ),
-            label: Text("Password"),
+            label: const Text("Password"),
+            // Show password when enabled
             suffixIcon: IconButton(
               icon: Icon(
                 obscurePassword ? Icons.visibility : Icons.visibility_off,
@@ -185,16 +170,7 @@ class _SignInPageState extends State<SignInPage> {
         ),
       );
 
-  // Error Message
-  Widget get signInErrorMessage => const Padding(
-        padding: EdgeInsets.only(bottom: 24),
-        child: Text(
-          "Invalid email or password",
-          style: TextStyle(color: Colors.red),
-        ),
-      );
-
-  // Sign in
+  // Sign in button
   Widget get submitButton => SizedBox(
       width: double.infinity,
       height: 48,
@@ -204,18 +180,14 @@ class _SignInPageState extends State<SignInPage> {
             ? () async {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
-                  String? message = await context
+                  bool signinChecker = await context
                       .read<UserAuthProvider>()
                       .signIn(email!, password!);
 
-                  print(message);
-                  print(showSignInErrorMessage);
-
                   setState(() {
-                    if (message.isNotEmpty) {
-                      showSignInErrorMessage = true;
-                    } else {
-                      showSignInErrorMessage = false;
+                    // If message is not empty (error): show the error dialog
+                    if (!signinChecker) {
+                      showSignInErrorDialog(context);
                     }
                   });
                 }
@@ -236,6 +208,74 @@ class _SignInPageState extends State<SignInPage> {
         ),
       ));
 
+// Show error dialog
+  void showSignInErrorDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Flexible(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 10),
+                // Image
+                Container(
+                  width: 150,
+                  height: 150,
+                  child: Image.asset("assets/frog_sad.png"),
+                ),
+                const SizedBox(height: 10),
+                // Text
+                Text(
+                  "Oops something went wrong!",
+                  style: Formatting.boldStyle
+                      .copyWith(fontSize: 24, color: Formatting.black),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 10),
+                // Text
+                Text(
+                  "We couldn’t sign you in. Please check your username and password and try again.",
+                  style: Formatting.mediumStyle
+                      .copyWith(fontSize: 12, color: Formatting.black),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            // Try again button
+            SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  // Show button if enabled
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Formatting.primary,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    elevation: 4,
+                  ),
+                  child: Text(
+                    'Try Again',
+                    style: Formatting.mediumStyle.copyWith(
+                        fontSize: 16,
+                        color: const Color.fromRGBO(255, 255, 255, 1)),
+                  ),
+                )),
+          ],
+        );
+      },
+    );
+  }
+
   // Sign up button
   Widget get signUpButton => Padding(
         padding: const EdgeInsets.only(bottom: 16),
@@ -244,9 +284,11 @@ class _SignInPageState extends State<SignInPage> {
           children: [
             Text(
               "No account yet?",
-              style: Formatting.regularStyle.copyWith(fontSize: 12),
+              style: Formatting.regularStyle
+                  .copyWith(fontSize: 12, color: Formatting.black),
             ),
             TextButton(
+                // Navigate to the sign up page when pressed
                 onPressed: () {
                   Navigator.push(
                       context,
@@ -256,19 +298,20 @@ class _SignInPageState extends State<SignInPage> {
                 child: Text(
                   "Sign Up",
                   style: Formatting.semiBoldStyle
-                      .copyWith(fontSize: 12, color: Colors.black),
+                      .copyWith(fontSize: 12, color: Formatting.black),
                 ))
           ],
         ),
       );
 
-  // Sign up button
+  // Or text below
   Widget get orText => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // Divider
           Container(
-            decoration: BoxDecoration(color: Color.fromRGBO(0, 0, 0, 0.105)),
+            decoration:
+                const BoxDecoration(color: Color.fromRGBO(0, 0, 0, 0.105)),
             height: 2,
             width: screenWidth * 0.32,
           ),
@@ -284,10 +327,27 @@ class _SignInPageState extends State<SignInPage> {
           ),
           // Divider
           Container(
-            decoration: BoxDecoration(color: Color.fromRGBO(0, 0, 0, 0.105)),
+            decoration:
+                const BoxDecoration(color: Color.fromRGBO(0, 0, 0, 0.105)),
             height: 2,
             width: screenWidth * 0.32,
           ),
         ],
       );
+
+  ThemeData theme() {
+    return ThemeData(
+      inputDecorationTheme: InputDecorationTheme(
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20.0),
+          borderSide: const BorderSide(color: Colors.grey),
+        ),
+        labelStyle: const TextStyle(color: Formatting.black),
+        errorStyle: const TextStyle(color: Colors.red),
+      ),
+    );
+  }
 }

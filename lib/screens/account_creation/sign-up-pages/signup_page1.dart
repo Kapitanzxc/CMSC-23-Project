@@ -176,6 +176,8 @@ class _SignUpState extends State<SignUpPage> {
           validator: (value) {
             if (value == null || value.isEmpty) {
               return "Please enter a name";
+            } else if (value.trim().isEmpty || int.tryParse(value) != null) {
+              return "Please enter a valid name";
             }
             return null;
           },
@@ -191,6 +193,7 @@ class _SignUpState extends State<SignUpPage> {
               border: OutlineInputBorder(),
               label: Text("Email"),
               hintText: "Enter a valid email"),
+          // Validators
           validator: (value) {
             if (value == null || value.isEmpty) {
               return "Please enter a valid email format";
@@ -334,7 +337,6 @@ class _SignUpState extends State<SignUpPage> {
       inputDecorationTheme: InputDecorationTheme(
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20.0),
-          borderSide: const BorderSide(color: Formatting.primary),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20.0),
