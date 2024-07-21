@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tolentino_mini_project/formatting/formatting.dart';
 import 'package:tolentino_mini_project/models/friend_model.dart';
 import 'package:tolentino_mini_project/provider/auth_provider.dart';
 import 'package:tolentino_mini_project/provider/user-friend_provider.dart';
@@ -32,18 +33,16 @@ class _FriendsPageState extends State<FriendsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: const Color.fromRGBO(26, 77, 46, 1),
-          title: const Text("Friends", style: TextStyle(color: Colors.white)),
-        ),
-        backgroundColor: const Color.fromRGBO(245, 239, 230, 1),
-        // Creates UI
-        body: friendListUI(),
-        // Button that navigates to slambook
-        floatingActionButton: qrCodeScanner(),
-        // Bottom navigation bar
-        bottomNavigationBar: bottomNavigationBar());
+    return Theme(
+        data: theme(),
+        child: Scaffold(
+            backgroundColor: const Color.fromARGB(255, 244, 244, 244),
+            // Creates UI
+            body: friendListUI(),
+            // Button that navigates to slambook
+            floatingActionButton: qrCodeScanner(),
+            // Bottom navigation bar
+            bottomNavigationBar: bottomNavigationBar()));
   }
 
   // Function for showing the list of friends (Overall UI)
@@ -51,6 +50,7 @@ class _FriendsPageState extends State<FriendsPage> {
     // Storing friend lists from the provider
     Stream<QuerySnapshot> friendList =
         context.watch<FriendListProvider>().friendList;
+
     return StreamBuilder(
       stream: friendList,
       builder: (context, snapshot) {
@@ -63,128 +63,97 @@ class _FriendsPageState extends State<FriendsPage> {
           return const Center(
             child: CircularProgressIndicator(),
           );
-          // If no snapshot: Display no friends added yet
-        } else if (snapshot.data!.docs.isEmpty) {
-          return const Center(
-              child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Icon
-              Icon(
-                Icons.group,
-                color: Color.fromRGBO(79, 111, 82, 1),
-                size: 50,
-              ),
-              // Text statement
-              Text("No friends added yet"),
-              SizedBox(height: 15),
-            ],
-          ));
+        } else if (snapshot.data?.docs.isEmpty ?? true) {
+          // If no slambook data, display this:
+          return noSlambookData;
         }
-        return ListView.builder(
-          // Iterate through the snapshot
-          itemCount: snapshot.data?.docs.length,
-          itemBuilder: ((context, index) {
-            Friend friend = Friend.fromJson(
-                snapshot.data?.docs[index].data() as Map<String, dynamic>);
-            friend.id = snapshot.data?.docs[index].id;
-            return SingleChildScrollView(
-                child: Column(
-              children: [
-                const SizedBox(height: 10),
-                // Display the friend name using friendRowCreator
-                friendRowCreator(
-                    friend.name, friend.toJson(friend).values.toList(), friend),
-              ],
-            ));
-          }),
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(height: 60),
+              // Title
+              Padding(
+                padding: const EdgeInsets.only(left: 24, right: 24),
+                child: heading,
+              ),
+              const SizedBox(height: 20),
+              // List of friends
+              Column(
+                children: [
+                  for (var doc in snapshot.data?.docs ?? [])
+                    // Display the friend name using friendRowCreator
+                    friendRowCreator(
+                        // Map to friend to name
+                        Friend.fromJson(doc.data() as Map<String, dynamic>),
+                        doc),
+                ],
+              ),
+            ],
+          ),
         );
       },
     );
   }
 
   // Function for displaying a friend
-  Padding friendRowCreator(String name, List values, Friend friend) {
+  Padding friendRowCreator(Friend friend, var doc) {
+    // Assigning the id to the friend.id
+    friend.id = doc.id;
     return Padding(
-      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
-      child: Container(
-        // Container formatting
-        height: 80,
-        decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 255, 255, 255),
-          border: Border.all(
-            color: const Color.fromARGB(255, 0, 0, 0),
-          ),
-          borderRadius: const BorderRadius.all(Radius.circular(20)),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20),
-          // Row that contains the name and  the button
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Name Formatting
-              Expanded(
-                  child: Text(
-                name,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                    fontSize: 20,
-                    color: Color.fromRGBO(79, 111, 82, 1),
-                    fontWeight: FontWeight.bold),
-              )),
-              Row(
-                children: [
-                  // Icon button for showing the summary or details page
-                  IconButton(
-                    style: TextButton.styleFrom(
-                      foregroundColor: const Color.fromRGBO(79, 111, 82, 1),
-                    ),
-                    icon: const Icon(Icons.visibility),
-                    onPressed: () {
-                      Navigator.pushNamed(context, "/summary",
-                          arguments: values);
-                    },
-                  ),
-                  // Icon button for editing a friend
-                  IconButton(
-                    style: TextButton.styleFrom(
-                      foregroundColor: const Color.fromRGBO(79, 111, 82, 1),
-                    ),
-                    icon: const Icon(Icons.edit),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) =>
-                            ModalPage(friend: friend, type: "Edit"),
-                      );
-                    },
-                  ),
-                  // Icon button for deleting a friend
-                  IconButton(
-                    style: TextButton.styleFrom(
-                      foregroundColor: const Color.fromRGBO(79, 111, 82, 1),
-                    ),
-                    icon: const Icon(Icons.delete),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) => ModalPage(
-                          friend: friend,
-                          type: 'Delete',
-                        ),
-                      );
-                    },
-                  )
-                ],
+      padding: const EdgeInsets.only(left: 24, right: 24, bottom: 20),
+      child: GestureDetector(
+        onTap: () {
+          // Navigate to the summary page when container is clicked
+          Navigator.pushNamed(context, "/summary", arguments: friend);
+        },
+        child: Container(
+          // Container formatting
+          height: 80,
+          decoration: const BoxDecoration(
+            color: Color.fromARGB(255, 255, 255, 255),
+            borderRadius: BorderRadius.all(Radius.circular(20)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey,
+                blurRadius: 6.0,
+                offset: Offset(0, 1),
               ),
             ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 20, right: 20),
+            // Row that contains picture, name and the buttons
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Profile picture
+                    profilePicture(friend),
+                    const SizedBox(width: 12),
+                    // Name and nickname Formatting
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        nameAndverified(friend),
+                        nickname(friend),
+                      ],
+                    ),
+                  ],
+                ),
+                // Button for pop up menu
+                popUpMenu(friend)
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
+  // Floating qrCodeScanner
   Widget qrCodeScanner() {
     return FloatingActionButton(
       onPressed: () async {
@@ -221,6 +190,217 @@ class _FriendsPageState extends State<FriendsPage> {
     await context.read<FriendListProvider>().addFriend(uid!, temp);
     ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Succesfully added ${temp.name}')));
+  }
+
+  // Heading/Title
+  Widget get heading => Row(
+        children: [
+          const Spacer(),
+          const SizedBox(width: 24),
+          Text(
+            "Friends",
+            style: Formatting.semiBoldStyle.copyWith(
+              fontSize: 24,
+              color: Formatting.black,
+            ),
+          ),
+          const Spacer(),
+          // Button for adding a friend
+          IconButton(
+              onPressed: () {
+                // Navigate to Slambook page
+                Navigator.popUntil(context, ModalRoute.withName("/"));
+                Navigator.pushNamed(context, "/slambook");
+              },
+              icon: const Icon(Icons.add))
+        ],
+      );
+
+  // Display this when no slambook data
+  Widget get noSlambookData => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const SizedBox(height: 60),
+            // Title
+            Padding(
+              padding: const EdgeInsets.only(left: 24, right: 24),
+              child: Row(
+                children: [
+                  const Spacer(),
+                  const SizedBox(width: 24),
+                  Text(
+                    "Friends",
+                    style: Formatting.semiBoldStyle.copyWith(
+                      fontSize: 24,
+                      color: Formatting.black,
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                      onPressed: () {
+                        // Navigate to Slambook page
+                        Navigator.popUntil(context, ModalRoute.withName("/"));
+                        Navigator.pushNamed(context, "/slambook");
+                      },
+                      icon: const Icon(Icons.add))
+                ],
+              ),
+            ),
+            const Spacer(),
+            // Image
+            Center(
+                child: Column(
+              children: [
+                SizedBox(
+                    width: 200, child: Image.asset("assets/frog_sleep.png")),
+                const SizedBox(height: 12),
+                // Text statement
+                Text("No friends added yet",
+                    style: Formatting.mediumStyle.copyWith(
+                      fontSize: 16,
+                      color: Formatting.black,
+                    )),
+                const SizedBox(height: 15),
+              ],
+            )),
+            const Spacer(flex: 2),
+          ],
+        ),
+      );
+
+  // Profile picture
+  Widget profilePicture(Friend friend) {
+    return ClipOval(
+      child: Container(
+        height: 60,
+        width: 60,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+        ),
+        child: friend.profilePictureURL != null
+            ? Image.network(
+                friend.profilePictureURL!,
+                fit: BoxFit.cover,
+              )
+            : Image.asset(
+                'assets/default_pfp.jpg',
+                fit: BoxFit.cover,
+              ),
+      ),
+    );
+  }
+
+  // Name and verified formatting
+  Widget nameAndverified(Friend friend) {
+    return SizedBox(
+      width: 150,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Flexible(
+            child: Text(
+              friend.name,
+              overflow: TextOverflow.ellipsis,
+              style: Formatting.mediumStyle.copyWith(
+                fontSize: 18,
+                color: Formatting.black,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          if (friend.verified != "No")
+            SizedBox(
+              width: 20,
+              child: Image.asset("assets/verified.png"),
+            ),
+        ],
+      ),
+    );
+  }
+
+  // Nickname
+  Widget nickname(Friend friend) {
+    return SizedBox(
+      width: 150,
+      child: Text(
+        friend.name,
+        overflow: TextOverflow.ellipsis,
+        style: Formatting.regularStyle.copyWith(
+          fontSize: 12,
+          color: Formatting.black,
+        ),
+      ),
+    );
+  }
+
+  // Popup Menu
+  Widget popUpMenu(Friend friend) {
+    return Row(
+      children: [
+        PopupMenuButton<int>(
+          surfaceTintColor: const Color.fromARGB(255, 255, 255, 255),
+          onSelected: (item) => handleClick(item, friend),
+          itemBuilder: (context) => [
+            // Edit
+            const PopupMenuItem<int>(
+                value: 0,
+                child: Row(children: [
+                  Icon(Icons.edit),
+                  SizedBox(width: 12),
+                  Text('Edit')
+                ])),
+            // Delete
+            const PopupMenuItem<int>(
+                value: 1,
+                child: Row(children: [
+                  Icon(Icons.delete),
+                  SizedBox(width: 12),
+                  Text('Delete')
+                ])),
+          ],
+        ),
+      ],
+    );
+  }
+
+  // Handles the pop up menu when clicked
+  void handleClick(int item, Friend friend) {
+    switch (item) {
+      case 0:
+        showDialog(
+          context: context,
+          // Navigate to edit modal page
+          builder: (BuildContext context) =>
+              ModalPage(friend: friend, type: "Edit"),
+        );
+        break;
+      case 1:
+        showDialog(
+          context: context,
+          builder: (BuildContext context) =>
+              // Navigate to delete modal page
+              ModalPage(friend: friend, type: 'Delete'),
+        );
+        break;
+    }
+  }
+
+  // Themes
+  ThemeData theme() {
+    return ThemeData(
+      inputDecorationTheme: InputDecorationTheme(
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20.0),
+          borderSide: const BorderSide(color: Colors.grey),
+        ),
+        labelStyle: const TextStyle(color: Formatting.black),
+        errorStyle: const TextStyle(color: Colors.red),
+      ),
+    );
   }
 
   Widget bottomNavigationBar() {

@@ -41,3 +41,6 @@ https://stackoverflow.com/questions/51652134/check-if-an-email-already-exists-in
 https://ph.pinterest.com/pin/625015254566607927/
 https://www.istockphoto.com/vector/rating-satisfaction-feedback-in-form-of-emotions-gm1160344267-317584172
 https://www.educative.io/answers/how-to-break-a-text---string-into-multiple-lines-in-flutter
+https://stackoverflow.com/questions/43692923/flutter-container-onpressed
+https://stackoverflow.com/questions/58144948/easiest-way-to-add-3-dot-pop-up-menu-appbar-in-flutter
+https://stackoverflow.com/questions/52227846/how-can-i-add-shadow-to-the-widget-in-flutter

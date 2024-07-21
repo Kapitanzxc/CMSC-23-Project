@@ -109,13 +109,13 @@ class _ModalPageState extends State<ModalPage> {
           key: formKey,
           child: Column(
             children: [
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               // Name and Nickname Field
               textFieldCreator(nameController, "Name"),
               textFieldCreator(nicknameController, "Nickname"),
               // Age and Relationship Status Field
               Padding(
-                  padding: EdgeInsets.only(bottom: 20),
+                  padding: const EdgeInsets.only(bottom: 20),
                   // Row compose of age and status
                   child: Row(children: [
                     // Age
@@ -134,18 +134,18 @@ class _ModalPageState extends State<ModalPage> {
                         }
                       },
                       // Decoration
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                           border: OutlineInputBorder(), labelText: "Age"),
                     )),
                     // Relationship status
-                    Padding(
+                    const Padding(
                         padding: EdgeInsets.only(left: 20, right: 20),
                         child: Text("Are you single?")),
                     // Switch
                     Switch(
                       // Bool value that toggles the switch
                       value: switchLight,
-                      activeColor: Color.fromRGBO(79, 111, 82, 1),
+                      activeColor: const Color.fromRGBO(79, 111, 82, 1),
                       onChanged: (bool value) {
                         // Update bool value when changed
                         setState(() {
@@ -156,7 +156,7 @@ class _ModalPageState extends State<ModalPage> {
                   ])),
               // Happiness Level and its slider
               headerText("Happiness Level"),
-              Text(
+              const Text(
                   "On a scale of 0 (Hopeless) to 10 (Very Happy), how would you rate your current lifestyle?",
                   textAlign: TextAlign.center),
               // Slider
@@ -166,7 +166,7 @@ class _ModalPageState extends State<ModalPage> {
                 max: 10,
                 divisions: 10,
                 label: currentSliderValue.round().toString(),
-                activeColor: Color.fromRGBO(79, 111, 82, 1),
+                activeColor: const Color.fromRGBO(79, 111, 82, 1),
                 onChanged: (double value) {
                   setState(() {
                     // Update slider value on change
@@ -176,12 +176,12 @@ class _ModalPageState extends State<ModalPage> {
               ),
               // Superpower and its dropdown
               headerText("Superpower"),
-              Text("If you were to have a superpower, what would it be?",
+              const Text("If you were to have a superpower, what would it be?",
                   textAlign: TextAlign.center),
               // Dropdown
               Padding(
-                  padding:
-                      EdgeInsets.only(top: 20, left: 40, right: 40, bottom: 20),
+                  padding: const EdgeInsets.only(
+                      top: 20, left: 40, right: 40, bottom: 20),
                   // Creation of drowdownbutton
                   child: DropdownButtonFormField(
                     value: dropdownValue,
@@ -202,18 +202,23 @@ class _ModalPageState extends State<ModalPage> {
                 children: <Widget>[
                   // Radioboxes
                   radioCreators(
-                      Text("When life gives you lemons, make lemonade"), 1),
-                  radioCreators(Text("Life every day like it's your last"), 2),
+                      const Text("When life gives you lemons, make lemonade"),
+                      1),
                   radioCreators(
-                      Text("Be yourself. Everyone else is already taken"), 3),
+                      const Text("Life every day like it's your last"), 2),
                   radioCreators(
-                      Text("Be the change you wish to see in the world"), 4),
+                      const Text("Be yourself. Everyone else is already taken"),
+                      3),
                   radioCreators(
-                      Text("If you are not obsessed with your life, change it"),
+                      const Text("Be the change you wish to see in the world"),
+                      4),
+                  radioCreators(
+                      const Text(
+                          "If you are not obsessed with your life, change it"),
                       5),
-                  radioCreators(Text("Take small steps every day"), 6),
+                  radioCreators(const Text("Take small steps every day"), 6),
                   radioCreators(
-                      Text("Be a rainbow in someone else's cloud"), 7),
+                      const Text("Be a rainbow in someone else's cloud"), 7),
                 ],
               ),
             ],
@@ -249,17 +254,17 @@ class _ModalPageState extends State<ModalPage> {
             foregroundColor: Colors.white,
             textStyle: Theme.of(context).textTheme.labelLarge,
             backgroundColor:
-                Color.fromRGBO(79, 111, 82, 1), // Adjust text color here
+                const Color.fromRGBO(79, 111, 82, 1), // Adjust text color here
           ),
-          child: Text("Save"),
+          child: const Text("Save"),
         );
       case "Delete":
         return TextButton(
           // Delete friend through the provider
           onPressed: () {
             context.read<FriendListProvider>().deleteFriend(widget.friend);
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text('Succesfully deleted')));
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Succesfully deleted')));
             // Remove dialog after editing
             Navigator.of(context).pop();
           },
@@ -267,9 +272,9 @@ class _ModalPageState extends State<ModalPage> {
             foregroundColor: Colors.white,
             textStyle: Theme.of(context).textTheme.labelLarge,
             backgroundColor:
-                Color.fromRGBO(255, 0, 0, 1), // Adjust text color here
+                const Color.fromRGBO(255, 0, 0, 1), // Adjust text color here
           ),
-          child: Text("Delete"),
+          child: const Text("Delete"),
         );
       default:
         return const Text("");
@@ -279,7 +284,7 @@ class _ModalPageState extends State<ModalPage> {
   // Text field formatting function
   Padding textFieldCreator(TextEditingController controller, String labelText) {
     return Padding(
-        padding: EdgeInsets.only(bottom: 20),
+        padding: const EdgeInsets.only(bottom: 20),
         child: TextFormField(
           readOnly: labelText == "Name" ? true : false,
           controller: controller,
@@ -290,7 +295,7 @@ class _ModalPageState extends State<ModalPage> {
             return null;
           },
           decoration: InputDecoration(
-              border: OutlineInputBorder(), labelText: labelText),
+              border: const OutlineInputBorder(), labelText: labelText),
         ));
   }
 
@@ -298,7 +303,7 @@ class _ModalPageState extends State<ModalPage> {
   Text headerText(String title) {
     return Text(
       title,
-      style: TextStyle(
+      style: const TextStyle(
           fontSize: 17,
           fontWeight: FontWeight.bold,
           color: Color.fromRGBO(79, 111, 82, 1)),

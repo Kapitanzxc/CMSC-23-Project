@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tolentino_mini_project/firebase_options.dart';
+import 'package:tolentino_mini_project/models/friend_model.dart';
 import 'package:tolentino_mini_project/provider/auth_provider.dart';
 import 'package:tolentino_mini_project/provider/user-friend_provider.dart';
 import 'package:tolentino_mini_project/provider/image-storage_provider.dart';
@@ -58,10 +59,9 @@ class SplashScreen extends StatelessWidget {
         }
 
         if (settings.name == "/summary") {
-          final friendListValues = settings.arguments as List;
+          Friend friend = settings.arguments as Friend;
           return MaterialPageRoute(
-              builder: (context) =>
-                  SummaryPage(friendListValues: friendListValues));
+              builder: (context) => SummaryPage(friend: friend));
         }
 
         if (settings.name == "/profilepage") {

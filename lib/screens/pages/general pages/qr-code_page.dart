@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:tolentino_mini_project/formatting/formatting.dart';
 
 // QR Code Scanner Page from the flutter documentation
 class QRCodeScannerPage extends StatefulWidget {
@@ -39,20 +40,41 @@ class _QRCodeScannerPageState extends State<QRCodeScannerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('QR Code Scanner'),
+        centerTitle: true,
+        title: Text('QR Code Scanner',
+            style: Formatting.semiBoldStyle.copyWith(
+              fontSize: 24,
+              color: Formatting.black,
+            )),
       ),
       body: Column(
         children: <Widget>[
           Expanded(
             flex: 5,
-            // Creates the QR Code
-            child: QRView(
-              key: qrKey,
-              onQRViewCreated: _onQRViewCreated,
-            ),
+            // Creates the QR Code Scanner
+            child: _buildQrView(context),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildQrView(BuildContext context) {
+    // Scanning area based on screen dimenions
+    var scanArea = (MediaQuery.of(context).size.width < 400 ||
+            MediaQuery.of(context).size.height < 400)
+        ? 150.0
+        : 300.0;
+    // To ensure the Scanner view is properly sizes after rotation
+    return QRView(
+      key: qrKey,
+      onQRViewCreated: _onQRViewCreated,
+      overlay: QrScannerOverlayShape(
+          borderColor: Colors.red,
+          borderRadius: 10,
+          borderLength: 30,
+          borderWidth: 10,
+          cutOutSize: scanArea),
     );
   }
 

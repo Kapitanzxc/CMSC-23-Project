@@ -290,7 +290,7 @@ class _ProfilePageState extends State<ProfilePage> {
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(255, 19, 97, 255),
+              backgroundColor: Formatting.primary,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5),
@@ -315,41 +315,36 @@ class _ProfilePageState extends State<ProfilePage> {
   // Logout button
   Widget logoutButton() {
     return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16),
-        padding: EdgeInsets.symmetric(horizontal: 100),
-        child: ElevatedButton(
-          onPressed: () {
-            setState(() {
-              // Reseting variables
-              slambookDataChecker = false;
-              userInfo = null;
-            });
-            // Sign out and exit
-            context.read<UserAuthProvider>().signOut();
-            Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.red,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5),
-            ),
-            elevation: 4,
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 100),
+      child: TextButton(
+        onPressed: () {
+          // Reseting variables
+          setState(() {
+            slambookDataChecker = false;
+            userInfo = null;
+          });
+          // Sign out and exit
+          context.read<UserAuthProvider>().signOut();
+          Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
+        },
+        style: TextButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          foregroundColor: Colors.red, // Text color
+          textStyle: Formatting.mediumStyle.copyWith(
+            fontSize: 14,
           ),
-          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            const Icon(Icons.logout, color: Color.fromARGB(255, 255, 255, 255)),
-            const SizedBox(
-              width: 10,
-            ),
-            Text(
-              'Logout',
-              style: Formatting.mediumStyle.copyWith(
-                fontSize: 14,
-                color: const Color.fromRGBO(255, 255, 255, 1),
-              ),
-            )
-          ]),
-        ));
+        ),
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.logout, color: Colors.red),
+            SizedBox(width: 10),
+            Text('Logout'),
+          ],
+        ),
+      ),
+    );
   }
 
   // Shows an alert dialog of qr mimage
@@ -368,7 +363,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 // Text
                 Text(
-                  "${name}'s slambook",
+                  "$name's slambook",
                   style: Formatting.boldStyle
                       .copyWith(fontSize: 24, color: Formatting.primary),
                   textAlign: TextAlign.center,
@@ -710,16 +705,21 @@ class _ProfilePageState extends State<ProfilePage> {
                     // App bar
                     Positioned(
                       top: 60,
-                      left: screenWidth / 2 - 60,
-                      child: Text(
-                        "Profile Page",
-                        style: Formatting.semiBoldStyle.copyWith(
-                          fontSize: 20,
-                          color: const Color.fromRGBO(255, 255, 255, 1),
+                      left: 0,
+                      right: 0,
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          "Profile Page",
+                          style: Formatting.semiBoldStyle.copyWith(
+                            fontSize: 24,
+                            color: const Color.fromRGBO(255, 255, 255, 1),
+                          ),
                         ),
                       ),
                     ),
-                    Positioned(top: 50, right: 16, child: editInfoButton),
+
+                    Positioned(top: 55, right: 16, child: editInfoButton),
                     // Profile picture
                     Positioned(
                       top: 210,
