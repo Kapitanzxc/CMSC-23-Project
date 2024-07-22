@@ -113,7 +113,7 @@ class _SignUpState extends State<SignUpPage> {
         ),
         Text(
           textAlign: TextAlign.center,
-          "Halika na! Enter your credentials to start making friends!",
+          "Join the pond! Input your details to start making froggy friends!",
           style: Formatting.regularStyle.copyWith(
             fontSize: 14,
           ),

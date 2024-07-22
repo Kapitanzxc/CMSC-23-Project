@@ -145,7 +145,7 @@ class _ProfilePageState extends State<ProfilePage> {
             child: CircularProgressIndicator(),
           );
         } else if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
-          return Center(child: noSlambookData);
+          return noSlambookData;
         }
 
         // Slambook data is fetched
@@ -502,7 +502,8 @@ class _ProfilePageState extends State<ProfilePage> {
       await file.writeAsBytes(pngBytes);
 
       if (!mounted) return;
-      const snackBar = SnackBar(content: Text('QR code saved to gallery'));
+      const snackBar =
+          SnackBar(content: Text('QR code safely hopped to the gallery!'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } catch (e) {
       print(e);
@@ -722,8 +723,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // Display no slambook data
   Widget get noSlambookData => Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
+          const SizedBox(height: 10),
           // Image
           SizedBox(
             width: 150,
@@ -821,7 +824,12 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                     ),
-
+                    Positioned(
+                        top: 65,
+                        left: 20,
+                        child: SizedBox(
+                            width: 50,
+                            child: Image.asset("assets/ribbit_logo3.png"))),
                     Positioned(top: 55, right: 16, child: editInfoButton),
                     // Profile picture
                     Positioned(

@@ -313,7 +313,8 @@ class _UserModalPageState extends State<UserModalPage> {
                   profilePictureURL: widget.currentUser!.profilePicURL);
               context.read<UserSlambookProvider>().addSlambookData(temp);
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text('Succesfully added slambook data')));
+                  content: Text(
+                      'Successfully added slambook data to the froggy file!')));
               // Remove dialog after editing
               Navigator.of(context).pop();
             }
@@ -340,7 +341,8 @@ class _UserModalPageState extends State<UserModalPage> {
                   motto(radioValue));
 
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text('Succesfully edited your slambook data')));
+                  content: Text(
+                      'Your slambook data has been splashed with updates!')));
               // Remove dialog after editing
               Navigator.of(context).pop();
             }
@@ -389,8 +391,8 @@ class _UserModalPageState extends State<UserModalPage> {
                   .editUserPicture(profilePicURL, widget.user!);
 
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content:
-                      Text('Succesfully edited your personal information')));
+                  content: Text(
+                      'Successfully splashed your personal info into place!')));
               Navigator.of(context).pop();
             }
           },

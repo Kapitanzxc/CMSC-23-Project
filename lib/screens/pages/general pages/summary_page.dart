@@ -156,7 +156,8 @@ class _SummaryPageState extends State<SummaryPage> {
                       setState(() {});
                     }
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text('Succesfully edited. Please Refresh!')));
+                        content:
+                            Text('All set! Give it a splash to refresh!')));
                   }
                 : null,
             style: ElevatedButton.styleFrom(
@@ -194,7 +195,8 @@ class _SummaryPageState extends State<SummaryPage> {
                     ModalPage(friend: widget.friend, type: "Delete"),
               );
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text('Succesfully deleted. Please Refresh!')));
+                  content: Text(
+                      'Successfully hopped out! Please refresh the pond!')));
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Formatting.red,

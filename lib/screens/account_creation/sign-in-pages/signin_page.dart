@@ -75,12 +75,12 @@ class _SignInPageState extends State<SignInPage> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         // Text Fields and buttons
                         children: [
-                          const SizedBox(height: 80),
+                          const SizedBox(height: 100),
                           // Logo
                           Container(
                             padding: const EdgeInsets.only(bottom: 80),
-                            width: 80,
-                            child: Image.asset("assets/kaibigan_logo3.png"),
+                            width: 200,
+                            child: Image.asset("assets/ribbit_logo.png"),
                           ),
                           Row(children: [
                             heading,
@@ -104,14 +104,14 @@ class _SignInPageState extends State<SignInPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Hello, kumusta ka?",
+              "Hop hop, how are you?",
               style: Formatting.boldStyle
-                  .copyWith(fontSize: 32, color: Formatting.black),
+                  .copyWith(fontSize: 28, color: Formatting.black),
             ),
             Text(
               "Sign in to your account",
               style: Formatting.regularStyle
-                  .copyWith(fontSize: 12, color: Formatting.black),
+                  .copyWith(fontSize: 14, color: Formatting.black),
             )
           ],
         ),

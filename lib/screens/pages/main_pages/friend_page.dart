@@ -194,23 +194,25 @@ class _FriendsPageState extends State<FriendsPage> {
   Future<void> addFriend(Friend temp) async {
     String? uid = context.read<UserAuthProvider>().getCurrentUserId();
     await context.read<FriendListProvider>().addFriend(uid!, temp);
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Succesfully added ${temp.name}')));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('${temp.name} has joined the pond successfully!')));
   }
 
   // Heading/Title
   Widget get heading => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Spacer(),
-          const SizedBox(width: 24),
-          Text(
-            "Friends",
-            style: Formatting.semiBoldStyle.copyWith(
-              fontSize: 24,
-              color: Formatting.black,
+          SizedBox(width: 50, child: Image.asset("assets/ribbit_logo2.png")),
+          Align(
+            alignment: Alignment.center,
+            child: Text(
+              "Friends",
+              style: Formatting.semiBoldStyle.copyWith(
+                fontSize: 24,
+                color: Formatting.black,
+              ),
             ),
           ),
-          const Spacer(),
           // Button for adding a friend
           IconButton(
               onPressed: () {
@@ -231,27 +233,7 @@ class _FriendsPageState extends State<FriendsPage> {
             // Title
             Padding(
               padding: const EdgeInsets.only(left: 24, right: 24),
-              child: Row(
-                children: [
-                  const Spacer(),
-                  const SizedBox(width: 24),
-                  Text(
-                    "Friends",
-                    style: Formatting.semiBoldStyle.copyWith(
-                      fontSize: 24,
-                      color: Formatting.black,
-                    ),
-                  ),
-                  const Spacer(),
-                  IconButton(
-                      onPressed: () {
-                        // Navigate to Slambook page
-                        Navigator.popUntil(context, ModalRoute.withName("/"));
-                        Navigator.pushNamed(context, "/slambook");
-                      },
-                      icon: const Icon(Icons.add))
-                ],
-              ),
+              child: heading,
             ),
             const Spacer(),
             // Image
@@ -380,31 +362,37 @@ class _FriendsPageState extends State<FriendsPage> {
   }
 
   // Handles the pop up menu when clicked
-  void handleClick(int item, Friend friend) {
+  Future<void> handleClick(int item, Friend friend) async {
     switch (item) {
       case 0:
-        showDialog(
+        await showDialog(
           context: context,
           // Navigate to edit modal page
           builder: (BuildContext context) =>
               ModalPage(friend: friend, type: "Edit"),
         );
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('${friend.name} has been adjusted in the pond!')));
         break;
       case 1:
-        showDialog(
+        await showDialog(
           context: context,
           // Navigate to change modal page
           builder: (BuildContext context) =>
               ModalPage(friend: friend, type: "Change"),
         );
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Successfully splashed a new profile pic')));
         break;
       case 2:
-        showDialog(
+        await showDialog(
           context: context,
           builder: (BuildContext context) =>
               // Navigate to delete modal page
               ModalPage(friend: friend, type: 'Delete'),
         );
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('A friend leapt out of the pond!')));
         break;
     }
   }

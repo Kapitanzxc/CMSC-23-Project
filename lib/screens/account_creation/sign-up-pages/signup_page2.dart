@@ -134,7 +134,7 @@ class _SignupInfoPageState extends State<SignupInfoPage> {
         ),
         Text(
           textAlign: TextAlign.center,
-          "Onti nalang! Just complete your details to join and start connecting with friends!",
+          "Just a jump away! Complete your info to join and start hopping with pals!",
           style: Formatting.regularStyle
               .copyWith(fontSize: 14, color: Formatting.black),
         )
