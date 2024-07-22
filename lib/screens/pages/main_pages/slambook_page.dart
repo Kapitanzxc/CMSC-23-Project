@@ -734,6 +734,7 @@ class _SlamBookState extends State<SlamBook> {
   Widget bottomNavigationBar() {
     return BottomNavigationBar(
       currentIndex: _currentIndex,
+      selectedItemColor: Formatting.primary,
       onTap: (index) {
         if (index == _currentIndex) {
           // Do nothing if tapping on the current tab

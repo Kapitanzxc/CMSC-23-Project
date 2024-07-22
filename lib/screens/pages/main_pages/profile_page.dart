@@ -1,5 +1,10 @@
+import "dart:io";
+import "dart:typed_data";
+import "dart:ui";
+
 import "package:flutter/material.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
+import "package:flutter/rendering.dart";
 import "package:provider/provider.dart";
 import "package:qr_flutter/qr_flutter.dart";
 import "package:tolentino_mini_project/formatting/formatting.dart";
@@ -32,6 +37,10 @@ class _ProfilePageState extends State<ProfilePage> {
   late String name;
   // Checks if there is slambook data
   bool slambookDataChecker = false;
+  // Saving qr code variables
+  final GlobalKey _qrkey = GlobalKey();
+  bool dirExists = false;
+  dynamic externalDir = '/storage/emulated/0/Download/Qr_code';
 
   // Fetch user's slambook data everytime this page is initialize
   @override
@@ -351,15 +360,20 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget get slambookQrImage => AlertDialog(
         content: SizedBox(
             width: 320,
-            height: 300,
+            height: 350,
             child: Column(
               children: [
                 // Qr code
-                QrImageView(
-                  data: user.toJsonString(user),
-                  version: QrVersions.auto,
-                  size: 200,
-                  gapless: false,
+                RepaintBoundary(
+                    key: _qrkey,
+                    child: QrImageView(
+                      data: user.toJsonString(user),
+                      version: QrVersions.auto,
+                      size: 250,
+                      gapless: false,
+                    )),
+                const SizedBox(
+                  height: 12,
                 ),
                 // Text
                 Text(
@@ -368,7 +382,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       .copyWith(fontSize: 24, color: Formatting.primary),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 10),
                 // Text
                 Text(
                   "Show this QR code to your friends so they can easily add you to their slambook. Just let them scan it with their device!",
@@ -379,32 +392,122 @@ class _ProfilePageState extends State<ProfilePage> {
               ],
             )),
         actions: <Widget>[
-          //  Exit button
-          SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Formatting.primary,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  elevation: 4,
-                ),
-                child: Text(
-                  'Exit',
-                  style: Formatting.mediumStyle.copyWith(
-                      fontSize: 16,
-                      color: const Color.fromRGBO(255, 255, 255, 1)),
-                ),
-              )),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              //  Exit button
+              SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Formatting.primary,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      elevation: 4,
+                    ),
+                    child: Text(
+                      'Exit',
+                      style: Formatting.mediumStyle.copyWith(
+                          fontSize: 16,
+                          color: const Color.fromRGBO(255, 255, 255, 1)),
+                    ),
+                  )),
+              saveToGalleryButton()
+            ],
+          ),
         ],
       );
+
+// Save to gallery button
+  Widget saveToGalleryButton() {
+    return Container(
+      padding: const EdgeInsets.only(top: 8),
+      child: TextButton(
+        onPressed: () {
+          _captureAndSavePng();
+        },
+        style: TextButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          foregroundColor: Formatting.black, // Text color
+          textStyle: Formatting.mediumStyle.copyWith(
+            fontSize: 14,
+          ),
+        ),
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.logout, color: Formatting.black),
+            SizedBox(width: 10),
+            Text('Save to gallery'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _captureAndSavePng() async {
+    try {
+      // Translate the QR image widget to an image
+      RenderRepaintBoundary boundary =
+          _qrkey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      var image = await boundary.toImage(pixelRatio: 3.0);
+
+      //Drawing white background because QR code is black
+      final whitePaint = Paint()..color = Colors.white;
+      // Starts the picture recorder
+      final recorder = PictureRecorder();
+      // Creates Canvas
+      final canvas = Canvas(recorder,
+          Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()));
+      // Draw a whtie rectangle canvas
+      canvas.drawRect(
+          Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()),
+          whitePaint);
+      // Draws the image (qr code) to the canvas
+      canvas.drawImage(image, Offset.zero, Paint());
+      // End recording
+      final picture = recorder.endRecording();
+      // Translate the drawing to an image
+      final img = await picture.toImage(image.width, image.height);
+      // Saving the image to png format
+      ByteData? byteData = await img.toByteData(format: ImageByteFormat.png);
+      Uint8List pngBytes = byteData!.buffer.asUint8List();
+
+      //Check for duplicate file name to avoid overwriting
+      String fileName = currentUser.name;
+      int i = 1;
+      while (await File('$externalDir/$fileName.png').exists()) {
+        fileName = '${currentUser.name}_$i';
+        i++;
+      }
+
+      // Check if Directory Path exists or not
+      dirExists = await File(externalDir).exists();
+      //if not then create the path
+      if (!dirExists) {
+        await Directory(externalDir).create(recursive: true);
+        dirExists = true;
+      }
+
+      // Creates a file
+      final file = await File('$externalDir/$fileName.png').create();
+      // Write the byte data format of the qr image
+      await file.writeAsBytes(pngBytes);
+
+      if (!mounted) return;
+      const snackBar = SnackBar(content: Text('QR code saved to gallery'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } catch (e) {
+      print(e);
+    }
+  }
 
 // Heading
   Widget get heading => Text(
@@ -792,6 +895,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget bottomNavigationBar() {
     return BottomNavigationBar(
       currentIndex: _currentIndex,
+      selectedItemColor: Formatting.primary,
       onTap: (index) {
         if (index == _currentIndex) {
           return;

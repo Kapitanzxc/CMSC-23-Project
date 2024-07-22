@@ -429,12 +429,12 @@ class _FriendsPageState extends State<FriendsPage> {
   Widget bottomNavigationBar() {
     return BottomNavigationBar(
       currentIndex: _currentIndex,
+      selectedItemColor: Formatting.primary,
       onTap: (index) {
         if (index == _currentIndex) {
           // Do nothing if tapping on the current tab
           return;
         }
-
         switch (index) {
           case 0:
             // Friends page (current page)
@@ -449,7 +449,6 @@ class _FriendsPageState extends State<FriendsPage> {
             // Profile page
             Navigator.popUntil(context, ModalRoute.withName("/"));
             Navigator.pushNamed(context, "/profilepage");
-            // Optionally, navigate to login page or perform logout logic
             break;
         }
         setState(() {

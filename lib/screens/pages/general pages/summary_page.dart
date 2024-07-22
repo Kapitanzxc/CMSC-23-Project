@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:tolentino_mini_project/formatting/formatting.dart';
 import 'package:tolentino_mini_project/models/friend_model.dart';
-import 'package:tolentino_mini_project/provider/user-friend_provider.dart';
 import 'package:tolentino_mini_project/screens/pages/general%20pages/friend_modal.dart';
 
 // Page for showing the summary/details

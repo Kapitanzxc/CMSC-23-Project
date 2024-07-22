@@ -44,3 +44,4 @@ https://www.educative.io/answers/how-to-break-a-text---string-into-multiple-line
 https://stackoverflow.com/questions/43692923/flutter-container-onpressed
 https://stackoverflow.com/questions/58144948/easiest-way-to-add-3-dot-pop-up-menu-appbar-in-flutter
 https://stackoverflow.com/questions/52227846/how-can-i-add-shadow-to-the-widget-in-flutter
+https://github.com/FLDevelopers/Qr_Code_Generator/tree/main
