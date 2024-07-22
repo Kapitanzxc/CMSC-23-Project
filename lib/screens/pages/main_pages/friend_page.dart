@@ -5,11 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tolentino_mini_project/formatting/formatting.dart';
 import 'package:tolentino_mini_project/models/friend_model.dart';
+import 'package:tolentino_mini_project/models/user-slambook_model.dart';
 import 'package:tolentino_mini_project/provider/auth_provider.dart';
 import 'package:tolentino_mini_project/provider/user-friend_provider.dart';
+import 'package:tolentino_mini_project/provider/user-slambook_provider.dart';
 import 'package:tolentino_mini_project/screens/pages/general%20pages/friend_modal.dart';
 import 'package:tolentino_mini_project/screens/pages/general%20pages/qr-code_page.dart';
 import 'package:tolentino_mini_project/screens/pages/general%20pages/summary_page.dart';
+import 'package:tolentino_mini_project/screens/pages/main_pages/profile_page.dart';
 
 // Friends page
 class FriendsPage extends StatefulWidget {
@@ -169,21 +172,29 @@ class _FriendsPageState extends State<FriendsPage> {
           MaterialPageRoute(builder: (context) => const QRCodeScannerPage()),
         );
         if (result != null) {
-          // Turn the result to a Map
-          Map<String, dynamic> dataMap = jsonDecode(result);
-          // Instantiate a friend
-          Friend temp = Friend(
-              verified: "Yes",
-              name: dataMap["name"],
-              nickname: dataMap["nickname"],
-              age: dataMap["age"],
-              relationshipStatus: dataMap["relationshipStatus"],
-              happinessLevel: dataMap["happinessLevel"],
-              superpower: dataMap["superpower"],
-              motto: dataMap["motto"],
-              profilePictureURL: dataMap["profilePictureURL"]);
-          // Add friend to the firestore
-          addFriend(temp);
+          Users user = context.read<UserSlambookProvider>().user!;
+          String temp = user.toJsonString(user);
+          print(temp + "   " + result);
+          if (temp != result) {
+            // Turn the result to a Map
+            Map<String, dynamic> dataMap = jsonDecode(result);
+            // Instantiate a friend
+            Friend temp = Friend(
+                verified: "Yes",
+                name: dataMap["name"],
+                nickname: dataMap["nickname"],
+                age: dataMap["age"],
+                relationshipStatus: dataMap["relationshipStatus"],
+                happinessLevel: dataMap["happinessLevel"],
+                superpower: dataMap["superpower"],
+                motto: dataMap["motto"],
+                profilePictureURL: dataMap["profilePictureURL"]);
+            // Add friend to the firestore
+            addFriend(temp);
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text("Uh-oh, you can’t leap in with yourself!")));
+          }
         }
       },
       child: const Icon(Icons.qr_code_scanner),

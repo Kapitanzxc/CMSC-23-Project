@@ -95,9 +95,17 @@ class _ProfilePageState extends State<ProfilePage> {
         margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-            border: Border.all(color: const Color.fromARGB(65, 97, 97, 97)),
-            borderRadius: BorderRadius.circular(20),
-            color: Colors.white),
+          border: Border.all(color: const Color.fromARGB(65, 97, 97, 97)),
+          borderRadius: BorderRadius.circular(20),
+          color: Colors.white,
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.grey,
+              blurRadius: 6.0,
+              offset: Offset(0, 6),
+            ),
+          ],
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -151,6 +159,7 @@ class _ProfilePageState extends State<ProfilePage> {
         // Slambook data is fetched
         WidgetsBinding.instance.addPostFrameCallback((_) {
           setState(() {
+            context.read<UserSlambookProvider>().setUser(user);
             slambookDataChecker = true;
           });
         });
@@ -297,6 +306,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 builder: (BuildContext context) =>
                     UserModalPage(type: "Edit", name: name, user: user),
               );
+              context.read<UserSlambookProvider>().setUser(user);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Formatting.primary,

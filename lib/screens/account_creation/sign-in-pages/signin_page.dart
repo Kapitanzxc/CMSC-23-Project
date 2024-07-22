@@ -89,7 +89,6 @@ class _SignInPageState extends State<SignInPage> {
                           passwordField,
                           submitButton,
                           signUpButton,
-                          orText
                         ],
                       ),
                     )),
@@ -302,37 +301,6 @@ class _SignInPageState extends State<SignInPage> {
                 ))
           ],
         ),
-      );
-
-  // Or text below
-  Widget get orText => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // Divider
-          Container(
-            decoration:
-                const BoxDecoration(color: Color.fromRGBO(0, 0, 0, 0.105)),
-            height: 2,
-            width: screenWidth * 0.32,
-          ),
-          // Text
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'Or',
-              style: Formatting.regularStyle.copyWith(
-                  fontSize: 12,
-                  color: const Color.fromARGB(255, 102, 102, 102)),
-            ),
-          ),
-          // Divider
-          Container(
-            decoration:
-                const BoxDecoration(color: Color.fromRGBO(0, 0, 0, 0.105)),
-            height: 2,
-            width: screenWidth * 0.32,
-          ),
-        ],
       );
 
   ThemeData theme() {

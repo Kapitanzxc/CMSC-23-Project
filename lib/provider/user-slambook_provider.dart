@@ -7,6 +7,9 @@ import 'package:tolentino_mini_project/models/user-slambook_model.dart';
 class UserSlambookProvider with ChangeNotifier {
   final UserSlambook usersInfoAPI = UserSlambook();
   late Stream<QuerySnapshot> _slambookData;
+  Users? _user;
+
+  Users? get user => _user;
 
   // Constructor to initialize and fetch user info
   UserSlambookProvider() {
@@ -65,5 +68,10 @@ class UserSlambookProvider with ChangeNotifier {
     } on FirebaseException catch (e) {
       print("Failed with error: ${e.code}");
     }
+  }
+
+  void setUser(Users user) {
+    _user = user;
+    notifyListeners();
   }
 }
