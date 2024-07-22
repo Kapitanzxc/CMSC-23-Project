@@ -8,7 +8,7 @@ import "package:tolentino_mini_project/models/users-info_model.dart";
 import "package:tolentino_mini_project/provider/auth_provider.dart";
 import "package:tolentino_mini_project/provider/user-info_provider.dart";
 import "package:tolentino_mini_project/provider/user-slambook_provider.dart";
-import "package:tolentino_mini_project/screens/pages/general%20pages/profile-page_modal.dart";
+import "package:tolentino_mini_project/screens/pages/general%20pages/user_modal.dart";
 
 // Profile Page
 class ProfilePage extends StatefulWidget {
@@ -558,7 +558,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   fontSize: 16,
                   color: Formatting.black,
                 )),
-            Text("Relationship",
+            Text("Relationship Status",
                 style: Formatting.mediumStyle.copyWith(
                   fontSize: 12,
                   color: const Color.fromARGB(255, 90, 90, 90),
@@ -723,23 +723,27 @@ class _ProfilePageState extends State<ProfilePage> {
                     // Profile picture
                     Positioned(
                       top: 210,
-                      right: screenWidth / 2 - 75,
-                      child: ClipOval(
-                        child: Container(
-                          height: 150,
-                          width: 150,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
+                      right: 0,
+                      left: 0,
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: ClipOval(
+                          child: Container(
+                            height: 150,
+                            width: 150,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                            ),
+                            child: imageURL != null
+                                ? Image.network(
+                                    imageURL,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Image.asset(
+                                    'assets/default_pfp.jpg',
+                                    fit: BoxFit.cover,
+                                  ),
                           ),
-                          child: imageURL != null
-                              ? Image.network(
-                                  imageURL,
-                                  fit: BoxFit.cover,
-                                )
-                              : Image.asset(
-                                  'assets/default_pfp.jpg',
-                                  fit: BoxFit.cover,
-                                ),
                         ),
                       ),
                     ),

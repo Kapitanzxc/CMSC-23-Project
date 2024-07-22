@@ -60,6 +60,7 @@ class UserSlambookProvider with ChangeNotifier {
     try {
       usersInfoAPI.editUserPicture(downloadURL, user).then((message) {
         print(message);
+        notifyListeners();
       });
     } on FirebaseException catch (e) {
       print("Failed with error: ${e.code}");

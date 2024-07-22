@@ -7,6 +7,7 @@ class Formatting {
   static const Color darkerGreen = Color.fromRGBO(26, 83, 25, 1);
   static const Color white = Color.fromRGBO(242, 242, 242, 1);
   static const Color black = Color.fromRGBO(27, 28, 30, 1);
+  static const Color red = Color.fromRGBO(217, 30, 24, 1);
 
   static const String fontFamily = 'Poppins';
 

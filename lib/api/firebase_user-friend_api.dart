@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tolentino_mini_project/api/firebase_auth_api.dart';
+import 'package:tolentino_mini_project/models/friend_model.dart';
 
 // Firebase Class
 class FirebaseFriendsAPI {
@@ -52,7 +53,13 @@ class FirebaseFriendsAPI {
       String newSuperPower,
       String newMotto) async {
     try {
-      await friendList.collection("userIds").doc(id).update({
+      String? userId = authAPI.getCurrentUserId(); // Get current user's ID
+      await friendList
+          .collection("userIds")
+          .doc(userId)
+          .collection("friends")
+          .doc(id)
+          .update({
         "nickname": newNickname,
         "age": newAge,
         "relationshipStatus": newRelationshipStatus,
@@ -63,6 +70,22 @@ class FirebaseFriendsAPI {
       return "Successfully edited a friend from user's friend list!";
     } on FirebaseException catch (e) {
       return "Failed with error: ${e.code}";
+    }
+  }
+
+  // Function for editing friend profile picture
+  Future<void> editFriendProfilePicture(
+      Friend friend, String? profilePictureURL) async {
+    try {
+      String? userId = authAPI.getCurrentUserId(); // Get current user's ID
+      await friendList
+          .collection("userIds")
+          .doc(userId)
+          .collection("friends")
+          .doc(friend.id)
+          .update({"profilePictureURL": profilePictureURL});
+    } on FirebaseException catch (e) {
+      print("Failed with error: ${e.code}");
     }
   }
 

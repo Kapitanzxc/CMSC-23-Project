@@ -1,7 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tolentino_mini_project/android_features/camera_feat.dart';
 import 'package:tolentino_mini_project/formatting/formatting.dart';
 import 'package:tolentino_mini_project/models/friend_model.dart';
+import 'package:tolentino_mini_project/provider/auth_provider.dart';
+import 'package:tolentino_mini_project/provider/image-storage_provider.dart';
 import 'package:tolentino_mini_project/provider/user-friend_provider.dart';
 
 // Page for editing and deleting a friend
@@ -15,6 +20,9 @@ class ModalPage extends StatefulWidget {
 }
 
 class _ModalPageState extends State<ModalPage> {
+  // Iniitializing camera feature
+  final CameraFeature _cameraFeature = CameraFeature();
+
   // List of superpowers
   List<String> superpowers = [
     "Super Strength",
@@ -44,6 +52,8 @@ class _ModalPageState extends State<ModalPage> {
   late bool showSummary;
   late String friendId;
   Color selectedTileColor = Formatting.primary;
+  File? _imagePath;
+  String? profilePictureURL;
 
   @override
   void initState() {
@@ -57,6 +67,7 @@ class _ModalPageState extends State<ModalPage> {
     radioValue = radioValueFromMotto(widget.friend.motto);
     switchLight = (widget.friend.relationshipStatus == "Single");
     currentSliderValue = double.parse(widget.friend.happinessLevel);
+    profilePictureURL = widget.friend.profilePictureURL;
   }
 
   @override
@@ -64,29 +75,54 @@ class _ModalPageState extends State<ModalPage> {
     return Theme(
         // themes
         data: theme(),
-        child: AlertDialog(
-          title: _buildTitle(),
-          content: Flexible(child: _buildContent(context)),
-          // Contains two buttons - edit/delete, and cancel
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
-              ),
-              child: Text(
-                "Cancel",
-                style: Formatting.regularStyle.copyWith(
-                  fontSize: 12,
-                  color: Formatting.black,
-                ),
-              ),
+        child: widget.type == "Delete" || widget.type == "Change"
+            ? buildDialog()
+            : buildScaffold());
+  }
+
+  Widget buildDialog() {
+    return AlertDialog(
+      title: _buildTitle(),
+      content: _buildContent(context),
+      // Contains two buttons - save/delete, and cancel
+      actions: <Widget>[
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          style: TextButton.styleFrom(
+            textStyle: Theme.of(context).textTheme.labelLarge,
+          ),
+          child: Text(
+            "Cancel",
+            style: Formatting.regularStyle.copyWith(
+              fontSize: 12,
+              color: Formatting.black,
             ),
-            _dialogAction(context),
-          ],
-        ));
+          ),
+        ),
+        _dialogAction(context),
+      ],
+    );
+  }
+
+  Widget buildScaffold() {
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        // Title
+        title: _buildTitle(),
+        // Save button
+        actions: <Widget>[
+          Padding(
+              padding: const EdgeInsets.only(right: 24),
+              child: _dialogAction(context)),
+        ],
+      ),
+      body: Padding(
+          padding: const EdgeInsets.only(left: 24, right: 24),
+          child: _buildContent(context)),
+    );
   }
 
   // Method to show the title of the modal depending on the functionality
@@ -95,17 +131,18 @@ class _ModalPageState extends State<ModalPage> {
       case 'Edit':
         return Center(
             child: Text("Edit friend",
-                style: Formatting.semiBoldStyle.copyWith(
-                  fontSize: 24,
-                  color: Formatting.black,
-                )));
+                style: Formatting.boldStyle
+                    .copyWith(fontSize: 18, color: Formatting.black)));
       case 'Delete':
         return Center(
             child: Text("Froggy Farewell? ",
-                style: Formatting.semiBoldStyle.copyWith(
-                  fontSize: 24,
-                  color: Formatting.black,
-                )));
+                style: Formatting.boldStyle
+                    .copyWith(fontSize: 18, color: Formatting.black)));
+      case 'Change':
+        return Center(
+            child: Text("Change Profile Picture ",
+                style: Formatting.boldStyle
+                    .copyWith(fontSize: 18, color: Formatting.black)));
       default:
         return const Text("");
     }
@@ -121,7 +158,7 @@ class _ModalPageState extends State<ModalPage> {
             children: [
               const SizedBox(height: 10),
               // Image
-              Container(
+              SizedBox(
                 width: 200,
                 height: 200,
                 child: Image.asset("assets/frog_cry.png"),
@@ -138,6 +175,69 @@ class _ModalPageState extends State<ModalPage> {
             ],
           );
         }
+
+      case 'Change':
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 12),
+            Stack(
+              // If no image file existing, show the default pfp
+              children: [
+                if (_imagePath != null)
+                  Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: SizedBox(
+                          width: 140,
+                          height: 140,
+                          child: ClipOval(
+                            child: Image.file(_imagePath!, fit: BoxFit.cover),
+                          )))
+                else if (profilePictureURL != null &&
+                    profilePictureURL!.isNotEmpty)
+                  Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: SizedBox(
+                          width: 140,
+                          height: 140,
+                          child: ClipOval(
+                            child: Image.network(profilePictureURL!,
+                                fit: BoxFit.cover),
+                          )))
+                else
+                  Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: SizedBox(
+                          width: 140,
+                          height: 140,
+                          child: ClipOval(
+                            child: Image.asset("assets/default_pfp.jpg",
+                                fit: BoxFit.cover),
+                          ))),
+                // Add Button
+                Positioned(
+                  top: 100,
+                  right: 0,
+                  child: IconButton(
+                    // Calls photoOptions/camera
+                    onPressed: () => _photoOptions(context),
+                    icon: Container(
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.all(1),
+                        child: Icon(Icons.add, color: Colors.black),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            )
+          ],
+        );
+
       // Edit have input field in them
       default:
         return SingleChildScrollView(
@@ -208,10 +308,8 @@ class _ModalPageState extends State<ModalPage> {
                   dropdownValue,
                   motto(radioValue));
 
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text('Succesfully edited ${widget.friend.name}')));
               // Remove dialog after editing
-              Navigator.of(context).pop();
+              Navigator.pop(context, 'refresh');
             }
           },
           style: TextButton.styleFrom(
@@ -229,8 +327,6 @@ class _ModalPageState extends State<ModalPage> {
           // Delete friend through the provider
           onPressed: () {
             context.read<FriendListProvider>().deleteFriend(widget.friend);
-            ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Succesfully deleted')));
             // Remove dialog after editing
             Navigator.of(context).pop();
           },
@@ -245,9 +341,105 @@ class _ModalPageState extends State<ModalPage> {
                   fontSize: 12,
                   color: const Color.fromARGB(255, 255, 255, 255))),
         );
+
+      case "Change":
+        return TextButton(
+          onPressed: () async {
+            // Get current user's id
+            String? userId =
+                context.read<UserAuthProvider>().getCurrentUserId();
+            String? profilePicURL = widget.friend.profilePictureURL;
+
+            // If user added a new picture, upload it to the cloud
+            if (_imagePath != null && userId != null) {
+              profilePicURL = await context
+                  .read<StorageProvider>()
+                  .uploadFriendProfilePicture(
+                      userId, widget.friend.name, _imagePath!);
+            } else {
+              profilePicURL = null;
+            }
+
+            // Edit friend profile picture
+            await context
+                .read<FriendListProvider>()
+                .editFriendProfilePicture(
+                  widget.friend,
+                  profilePicURL,
+                )
+                .then((value) {
+              Navigator.pop(context, 'refresh');
+            });
+          },
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.white,
+            textStyle: Theme.of(context).textTheme.labelLarge,
+            backgroundColor: Formatting.primary, // Adjust text color here
+          ),
+          child: Text("Save",
+              style: Formatting.regularStyle.copyWith(
+                  fontSize: 12,
+                  color: const Color.fromARGB(255, 255, 255, 255))),
+        );
       default:
         return const Text("");
     }
+  }
+
+  // Modal bottom sheet for photo options
+  void _photoOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Camera
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('Take a picture'),
+              onTap: () async {
+                Navigator.of(context).pop();
+                final imagePath = await _cameraFeature.takePicture();
+                if (imagePath != null) {
+                  setState(() {
+                    _imagePath = imagePath;
+                  });
+                }
+              },
+            ),
+            // Gallery
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('Choose from gallery'),
+              onTap: () async {
+                Navigator.of(context).pop();
+                final imagePath = await _cameraFeature.chooseFromGallery();
+                if (imagePath != null) {
+                  setState(() {
+                    _imagePath = imagePath;
+                  });
+                }
+              },
+            ),
+            // Delete option
+            if (_imagePath != null ||
+                (profilePictureURL != null && profilePictureURL!.isNotEmpty))
+              ListTile(
+                leading: const Icon(Icons.delete),
+                title: const Text('Remove Photo'),
+                onTap: () async {
+                  Navigator.of(context).pop();
+                  setState(() {
+                    _imagePath = null;
+                    profilePictureURL = null;
+                  });
+                },
+              )
+          ],
+        );
+      },
+    );
   }
 
   // Age form field

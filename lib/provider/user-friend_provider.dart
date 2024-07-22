@@ -56,6 +56,17 @@ class FriendListProvider with ChangeNotifier {
     notifyListeners();
   }
 
+// Function for editing friend profile picture
+  Future<String> editFriendProfilePicture(
+      Friend friend, String? profilePictureURL) async {
+    try {
+      firebaseService.editFriendProfilePicture(friend, profilePictureURL);
+      return "Successfully edited a friend from user's friend list!";
+    } on FirebaseException catch (e) {
+      return "Failed with error: ${e.code}";
+    }
+  }
+
   // Delete a friendand update it in Firestore
   void deleteFriend(Friend friend) {
     firebaseService.deleteFriend(friend.id!).then((message) {

@@ -7,8 +7,9 @@ import 'package:tolentino_mini_project/formatting/formatting.dart';
 import 'package:tolentino_mini_project/models/friend_model.dart';
 import 'package:tolentino_mini_project/provider/auth_provider.dart';
 import 'package:tolentino_mini_project/provider/user-friend_provider.dart';
-import 'package:tolentino_mini_project/screens/pages/general%20pages/slambook_modal.dart';
+import 'package:tolentino_mini_project/screens/pages/general%20pages/friend_modal.dart';
 import 'package:tolentino_mini_project/screens/pages/general%20pages/qr-code_page.dart';
+import 'package:tolentino_mini_project/screens/pages/general%20pages/summary_page.dart';
 
 // Friends page
 class FriendsPage extends StatefulWidget {
@@ -104,7 +105,12 @@ class _FriendsPageState extends State<FriendsPage> {
       child: GestureDetector(
         onTap: () {
           // Navigate to the summary page when container is clicked
-          Navigator.pushNamed(context, "/summary", arguments: friend);
+          showDialog(
+            context: context,
+            builder: (BuildContext context) =>
+                // Navigate to delete modal page
+                SummaryPage(friend: friend),
+          );
         },
         child: Container(
           // Container formatting
@@ -343,16 +349,25 @@ class _FriendsPageState extends State<FriendsPage> {
           onSelected: (item) => handleClick(item, friend),
           itemBuilder: (context) => [
             // Edit
+            if (friend.verified != "Yes")
+              const PopupMenuItem<int>(
+                  value: 0,
+                  child: Row(children: [
+                    Icon(Icons.edit),
+                    SizedBox(width: 12),
+                    Text('Edit')
+                  ])),
+            // Change profile picture
             const PopupMenuItem<int>(
-                value: 0,
+                value: 1,
                 child: Row(children: [
-                  Icon(Icons.edit),
+                  Icon(Icons.photo),
                   SizedBox(width: 12),
-                  Text('Edit')
+                  Text('Change Picture')
                 ])),
             // Delete
             const PopupMenuItem<int>(
-                value: 1,
+                value: 2,
                 child: Row(children: [
                   Icon(Icons.delete),
                   SizedBox(width: 12),
@@ -376,6 +391,14 @@ class _FriendsPageState extends State<FriendsPage> {
         );
         break;
       case 1:
+        showDialog(
+          context: context,
+          // Navigate to change modal page
+          builder: (BuildContext context) =>
+              ModalPage(friend: friend, type: "Change"),
+        );
+        break;
+      case 2:
         showDialog(
           context: context,
           builder: (BuildContext context) =>
