@@ -54,4 +54,15 @@ class UserSlambookProvider with ChangeNotifier {
     });
     notifyListeners();
   }
+
+  // Edit user's profile picture
+  Future<void> editUserPicture(String? downloadURL, Users user) async {
+    try {
+      usersInfoAPI.editUserPicture(downloadURL, user).then((message) {
+        print(message);
+      });
+    } on FirebaseException catch (e) {
+      print("Failed with error: ${e.code}");
+    }
+  }
 }

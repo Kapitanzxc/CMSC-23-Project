@@ -37,7 +37,7 @@ class UserInfoProvider with ChangeNotifier {
 
   // Edit user's slambook
   Future<String> editUserInfo(String username, String contact,
-      List<String> additionalContacts, var profilePictureUrl) async {
+      List<String> additionalContacts, String? profilePictureUrl) async {
     String message = await usersInfoAPI.editUserInfo(
         username, contact, additionalContacts, profilePictureUrl);
     return message;

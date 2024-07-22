@@ -8,7 +8,7 @@ import "package:tolentino_mini_project/models/users-info_model.dart";
 import "package:tolentino_mini_project/provider/auth_provider.dart";
 import "package:tolentino_mini_project/provider/user-info_provider.dart";
 import "package:tolentino_mini_project/provider/user-slambook_provider.dart";
-import "package:tolentino_mini_project/screens/pages/general%20pages/user-modal_page.dart";
+import "package:tolentino_mini_project/screens/pages/general%20pages/profile-page_modal.dart";
 
 // Profile Page
 class ProfilePage extends StatefulWidget {
@@ -222,8 +222,8 @@ class _ProfilePageState extends State<ProfilePage> {
           onPressed: () {
             showDialog(
               context: context,
-              builder: (BuildContext context) =>
-                  UserModalPage(type: "Add", name: name),
+              builder: (BuildContext context) => UserModalPage(
+                  type: "Add", name: name, currentUser: currentUser),
             );
           },
           style: ElevatedButton.styleFrom(
@@ -686,7 +686,7 @@ class _ProfilePageState extends State<ProfilePage> {
               } else {
                 // Storing image url
                 Map<String, dynamic> userInfo = snapshot.data!.data()!;
-                String imageURL = userInfo["profilePicURL"] ?? "";
+                String? imageURL = userInfo["profilePicURL"];
                 return Stack(
                   // Profile picture overflow
                   clipBehavior: Clip.none,
@@ -731,13 +731,13 @@ class _ProfilePageState extends State<ProfilePage> {
                           decoration: const BoxDecoration(
                             shape: BoxShape.circle,
                           ),
-                          child: imageURL.isNotEmpty
+                          child: imageURL != null
                               ? Image.network(
                                   imageURL,
                                   fit: BoxFit.cover,
                                 )
                               : Image.asset(
-                                  'assets/default_pfp.png',
+                                  'assets/default_pfp.jpg',
                                   fit: BoxFit.cover,
                                 ),
                         ),
@@ -751,92 +751,22 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       );
 
-  // Text creator for name and username
-  Widget textCreator(String name, String username) {
-    return Column(children: [Text(name), Text(username)]);
-  }
-
 // Displaying name and username
   Widget displayNameUsername(Map<String, dynamic>? userInfo) {
     // Displays the name and username
     name = userInfo!["name"] ?? "none";
     return Container(
-        margin: const EdgeInsets.only(left: 16),
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Text(userInfo["name"] ?? "none",
-              style: Formatting.boldStyle
-                  .copyWith(fontSize: 24, color: Formatting.black)),
-          Text(
-            "@${userInfo["username"] ?? "none"}",
-            style: Formatting.mediumStyle
-                .copyWith(fontSize: 16, color: Formatting.black),
-          )
-        ]));
+      Text(userInfo["name"] ?? "none",
+          style: Formatting.boldStyle
+              .copyWith(fontSize: 24, color: Formatting.black)),
+      Text(
+        "@${userInfo["username"] ?? "none"}",
+        style: Formatting.mediumStyle
+            .copyWith(fontSize: 16, color: Formatting.black),
+      )
+    ]));
   }
-
-// // Displaying profile information
-//   Widget profileInformationContent(Map<String, dynamic> userInfo) {
-//     return Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         buildSummaryRow("Email:", userInfo["email"] ?? "None"),
-//         buildSummaryRow(
-//             "Primary Contact Number:", userInfo["contact"] ?? "None"),
-//         buildAdditionalContacts(userInfo["additional_contacts"]),
-//       ],
-//     );
-//   }
-
-// // Function for displaying secondary contacts
-//   Widget buildAdditionalContacts(List<dynamic> additionalContacts) {
-//     if (additionalContacts.isEmpty) {
-//       return buildSummaryRow("Secondary Contact Number:", "None");
-//     } else {
-//       // Create a list of additional contacts
-//       List<Widget> contactRows = [];
-
-//       // Print the first contact number with a label
-//       contactRows.add(
-//           buildSummaryRow("Secondary Contact Number:", additionalContacts[0]));
-
-//       // Print other contact numbers without a label
-//       for (var i = 1; i < additionalContacts.length; i++) {
-//         contactRows.add(buildSummaryRow("", additionalContacts[i]));
-//       }
-//       // Return a column containing all contact
-//       return Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: contactRows,
-//       );
-//     }
-//   }
-
-//   // Function for building Label: Input formatting
-//   Widget buildSummaryRow(String label, String input) {
-//     return Padding(
-//       padding: const EdgeInsets.only(bottom: 8),
-//       child: Row(
-//         mainAxisAlignment: MainAxisAlignment.start,
-//         children: [
-//           Expanded(
-//             child: Text(
-//               label,
-//               style: const TextStyle(
-//                 color: Color.fromRGBO(79, 111, 82, 1),
-//                 fontWeight: FontWeight.bold,
-//               ),
-//             ),
-//           ),
-//           Text(
-//             input,
-//             style: const TextStyle(
-//               color: Colors.black,
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
 
   // Edit info button
   Widget get editInfoButton => IconButton(
@@ -845,7 +775,10 @@ class _ProfilePageState extends State<ProfilePage> {
           showDialog(
             context: context,
             builder: (BuildContext context) => UserModalPage(
-                type: "Edit2", name: name, currentUser: currentUser),
+                type: "Edit2",
+                name: name,
+                currentUser: currentUser,
+                user: user),
           );
         },
         color: const Color.fromARGB(255, 255, 255, 255),

@@ -65,4 +65,21 @@ class UserSlambook {
       return "Failed with error: ${e.code}";
     }
   }
+
+  // Edit user's profile picture
+  Future<String> editUserPicture(String? downloadURL, Users user) async {
+    try {
+      // Accessing current user id
+      String? userId = authAPI.getCurrentUserId();
+      await usersFriendList
+          .collection("userIds")
+          .doc(userId)
+          .collection("personal_slambook")
+          .doc(user.id)
+          .update({"profilePictureURL": downloadURL});
+      return "Successfully edited user's profile picture";
+    } on FirebaseException catch (e) {
+      return "Failed with error: ${e.code}";
+    }
+  }
 }

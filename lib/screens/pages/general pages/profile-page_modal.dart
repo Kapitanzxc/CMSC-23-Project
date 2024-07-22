@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tolentino_mini_project/android_features/camera_feat.dart';
+import 'package:tolentino_mini_project/formatting/formatting.dart';
 import 'package:tolentino_mini_project/models/user-slambook_model.dart';
 import 'package:tolentino_mini_project/models/users-info_model.dart';
 import 'package:tolentino_mini_project/provider/auth_provider.dart';
@@ -64,6 +65,7 @@ class _UserModalPageState extends State<UserModalPage> {
   double currentSliderValue = 0;
   bool showSummary = false;
   File? _imagePath;
+  String? profilePictureURL;
 
   @override
   void initState() {
@@ -95,22 +97,33 @@ class _UserModalPageState extends State<UserModalPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: _buildTitle(),
-        actions: <Widget>[
-          _dialogAction(context),
-        ],
-      ),
-      body: _buildContent(context),
-    );
+    return Theme(
+        data: theme(),
+        child: Scaffold(
+          appBar: AppBar(
+            centerTitle: true,
+            // Title
+            title: _buildTitle(),
+            // Save/Add button
+            actions: <Widget>[
+              Padding(
+                  padding: const EdgeInsets.only(right: 24),
+                  child: _dialogAction(context)),
+            ],
+          ),
+          // Content
+          body: _buildContent(context),
+        ));
   }
 
   // Method to build the content or body depending on the functionality
   Widget _buildContent(BuildContext context) {
+    // Edit2 = Personal Information
+    // Edit = Slambook Data
+    // Add = Add Slambook Data
     switch (widget.type) {
       case "Edit2":
-        // List of existing text fields
+        // List of textField
         List<Widget> textFields = [
           textFieldCreator(usernameController, "Username"),
           textFieldCreator(nameController, "Name"),
@@ -118,66 +131,106 @@ class _UserModalPageState extends State<UserModalPage> {
         ];
 
         // Add additional contact number text fields
-        for (var controller in contactNumberControllers) {
-          textFields
-              .add(textFieldCreator(controller, "Additional Contact Number"));
+        for (var i = 0; i < contactNumberControllers.length; i++) {
+          textFields.add(displayAdditionalContact(i));
         }
+
         return SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.only(left: 24, right: 24),
           child: Column(
             children: [
               const SizedBox(height: 20),
               Form(
                 key: formKey,
                 child: Column(
-                  // Text Fields
                   children: [
                     // Display users profile picture if imagePath is not set
-                    if (_imagePath == null)
-                      Padding(
-                        padding: const EdgeInsets.all(30),
-                        child: ClipOval(
-                          child: SizedBox(
-                              height: 40,
-                              width: 40,
-                              child: Image.network(
-                                  widget.currentUser!.profilePicURL!,
-                                  fit: BoxFit.cover)),
-                        ),
-                      )
-                    else
-                      // Display users new picture if imagePath is set
-                      Padding(
-                        padding: const EdgeInsets.all(30),
-                        child: ClipOval(
-                            child: SizedBox(
-                          height: 40,
-                          width: 40,
-                          child: Image.file(_imagePath!, fit: BoxFit.cover),
-                        )),
-                      ),
-                    // Shows a button of adding profile photo
-                    Column(
+                    Stack(
+                      // If no image file existing, show the default pfp
                       children: [
-                        ElevatedButton(
-                          // Shows the photo options
-                          onPressed: () => _photoOptions(context),
-                          child: const Text('Edit Profile Photo'),
-                        ),
+                        if (_imagePath != null)
+                          Padding(
+                              padding: const EdgeInsets.only(bottom: 16),
+                              child: SizedBox(
+                                  width: 140,
+                                  height: 140,
+                                  child: ClipOval(
+                                    child: Image.file(_imagePath!,
+                                        fit: BoxFit.cover),
+                                  )))
+                        else if (profilePictureURL != null &&
+                            profilePictureURL!.isNotEmpty)
+                          Padding(
+                              padding: const EdgeInsets.only(bottom: 16),
+                              child: SizedBox(
+                                  width: 140,
+                                  height: 140,
+                                  child: ClipOval(
+                                    child: Image.network(profilePictureURL!,
+                                        fit: BoxFit.cover),
+                                  )))
+                        else
+                          Padding(
+                              padding: const EdgeInsets.only(bottom: 16),
+                              child: SizedBox(
+                                  width: 140,
+                                  height: 140,
+                                  child: ClipOval(
+                                    child: Image.asset("assets/default_pfp.jpg",
+                                        fit: BoxFit.cover),
+                                  ))),
+                        // Add Button
+                        Positioned(
+                          top: 100,
+                          right: 0,
+                          child: IconButton(
+                            // Calls photoOptions/camera
+                            onPressed: () => _photoOptions(context),
+                            icon: Container(
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                              ),
+                              child: const Padding(
+                                padding: EdgeInsets.all(1),
+                                child: Icon(Icons.add, color: Colors.black),
+                              ),
+                            ),
+                          ),
+                        )
                       ],
                     ),
                     // Display text fields
                     ...textFields,
-                    const SizedBox(height: 10),
                     // Button for adding additional contact numbers
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          contactNumberControllers.add(TextEditingController());
-                        });
-                      },
-                      child: const Text("Add Contact Number"),
-                    ),
+                    Row(children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              const Color.fromARGB(255, 237, 237, 237),
+                          shape: const CircleBorder(),
+                          padding: const EdgeInsets.all(1),
+                          elevation: 1,
+                        ),
+                        // Adds contact controller
+                        onPressed: () {
+                          setState(() {
+                            contactNumberControllers
+                                .add(TextEditingController());
+                          });
+                        },
+                        child: const Icon(
+                          Icons.add,
+                          color: Color.fromARGB(255, 0, 0, 0),
+                        ),
+                      ),
+                      const SizedBox(width: 1),
+                      const Text(
+                        'Contact Number',
+                        style: TextStyle(fontSize: 16, color: Formatting.black),
+                      ),
+                    ]),
+
                     const SizedBox(height: 20),
                   ],
                 ),
@@ -186,6 +239,7 @@ class _UserModalPageState extends State<UserModalPage> {
           ),
         );
 
+      // When adding/editing a slambook data
       default:
         return SingleChildScrollView(
             padding: const EdgeInsets.all(20),
@@ -205,23 +259,28 @@ class _UserModalPageState extends State<UserModalPage> {
                         // Age
                         ageFormField(),
                         // Relationship status
-                        const Padding(
-                            padding: EdgeInsets.only(left: 20, right: 20),
-                            child: Text("Are you single?")),
+                        Padding(
+                            padding: const EdgeInsets.only(left: 20, right: 20),
+                            child: Text("Are you single?",
+                                style: Formatting.regularStyle.copyWith(
+                                    fontSize: 16, color: Formatting.black))),
                         // Switch
                         relationshipFormField(),
                       ])),
                   // Happiness Level and its slider
                   headerText("Happiness Level"),
-                  const Text(
+                  Text(
                       "On a scale of 0 (Hopeless) to 10 (Very Happy), how would you rate your current lifestyle?",
+                      style: Formatting.regularStyle
+                          .copyWith(fontSize: 12, color: Formatting.black),
                       textAlign: TextAlign.center),
                   // Slider
                   happinessFormField(),
                   // Superpower and its dropdown
                   headerText("Superpower"),
-                  const Text(
-                      "If you were to have a superpower, what would it be?",
+                  Text("If you were to have a superpower, what would it be?",
+                      style: Formatting.regularStyle
+                          .copyWith(fontSize: 12, color: Formatting.black),
                       textAlign: TextAlign.center),
                   // Dropdown
                   superpowerFormField(),
@@ -236,6 +295,7 @@ class _UserModalPageState extends State<UserModalPage> {
 
   // Saving button function
   Widget _dialogAction(BuildContext context) {
+    // When adding a new slambook data
     switch (widget.type) {
       case "Add":
         return TextButton(
@@ -249,9 +309,9 @@ class _UserModalPageState extends State<UserModalPage> {
                   relationshipStatus: switchLight ? "Single" : "Not Single",
                   happinessLevel: currentSliderValue.toString(),
                   superpower: dropdownValue,
-                  motto: motto(radioValue));
+                  motto: motto(radioValue),
+                  profilePictureURL: widget.currentUser!.profilePicURL);
               context.read<UserSlambookProvider>().addSlambookData(temp);
-
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                   content: Text('Succesfully added slambook data')));
               // Remove dialog after editing
@@ -259,14 +319,12 @@ class _UserModalPageState extends State<UserModalPage> {
             }
           },
           style: TextButton.styleFrom(
-            foregroundColor: Colors.white,
-            textStyle: Theme.of(context).textTheme.labelLarge,
-            backgroundColor:
-                const Color.fromRGBO(79, 111, 82, 1), // Adjust text color here
-          ),
+              foregroundColor: Colors.white,
+              textStyle: Theme.of(context).textTheme.labelLarge,
+              backgroundColor: Formatting.primary),
           child: const Text("Save"),
         );
-      // Edit function
+      // Edit Slambook data function
       case "Edit":
         return TextButton(
           onPressed: () {
@@ -290,20 +348,20 @@ class _UserModalPageState extends State<UserModalPage> {
           style: TextButton.styleFrom(
             foregroundColor: Colors.white,
             textStyle: Theme.of(context).textTheme.labelLarge,
-            backgroundColor:
-                const Color.fromRGBO(79, 111, 82, 1), // Adjust text color here
+            backgroundColor: Formatting.primary, // Adjust text color here
           ),
-          child: const Text("Save"),
+          child: Text("Save",
+              style: Formatting.regularStyle.copyWith(
+                  fontSize: 12,
+                  color: const Color.fromARGB(255, 255, 255, 255))),
         );
+      // Editing Personal Information data
       case "Edit2":
         return TextButton(
           onPressed: () async {
-            // If the form is validated, edit the user's personal information
             if (formKey.currentState!.validate()) {
-              // Accsesing userId
               String? userId =
                   context.read<UserAuthProvider>().getCurrentUserId();
-              // Storing current profile picture URL
               String? profilePicURL = widget.currentUser!.profilePicURL;
 
               // If user added a new picture, upload it to the cloud
@@ -311,6 +369,8 @@ class _UserModalPageState extends State<UserModalPage> {
                 profilePicURL = await context
                     .read<StorageProvider>()
                     .uploadProfilePicture(userId, _imagePath!);
+              } else {
+                profilePicURL = null;
               }
 
               // Edit user's information
@@ -323,21 +383,25 @@ class _UserModalPageState extends State<UserModalPage> {
                     profilePicURL,
                   );
 
-              // Snackbar
+              // Edit slambook profile picture
+              context
+                  .read<UserSlambookProvider>()
+                  .editUserPicture(profilePicURL, widget.user!);
+
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                   content:
                       Text('Succesfully edited your personal information')));
-              // Remove dialog after editing
               Navigator.of(context).pop();
             }
           },
           style: TextButton.styleFrom(
             foregroundColor: Colors.white,
             textStyle: Theme.of(context).textTheme.labelLarge,
-            backgroundColor:
-                const Color.fromRGBO(79, 111, 82, 1), // Adjust text color here
+            backgroundColor: Formatting.primary,
           ),
-          child: const Text("Save"),
+          child: Text("Save",
+              style: Formatting.regularStyle
+                  .copyWith(fontSize: 12, color: Colors.white)),
         );
       default:
         return const Text("");
@@ -352,84 +416,51 @@ class _UserModalPageState extends State<UserModalPage> {
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // Camera
             ListTile(
-                // Taking a picture from the camera
-                leading: const Icon(Icons.camera_alt),
-                title: const Text('Take a picture'),
-                onTap: () async {
-                  Navigator.of(context).pop();
-                  final imagePath = await _cameraFeature.takePicture();
-                  if (imagePath != null) {
-                    // Setting new image path
-                    setState(() {
-                      _imagePath = imagePath;
-                    });
-                  }
-                }),
-            ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: const Text('Choose from gallery'),
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('Take a picture'),
               onTap: () async {
                 Navigator.of(context).pop();
-                // Taking a picture from the gallery
-                final imagePath = await _cameraFeature.chooseFromGallery();
+                final imagePath = await _cameraFeature.takePicture();
                 if (imagePath != null) {
-                  // Setting new image path
                   setState(() {
                     _imagePath = imagePath;
                   });
                 }
               },
             ),
+            // Gallery
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('Choose from gallery'),
+              onTap: () async {
+                Navigator.of(context).pop();
+                final imagePath = await _cameraFeature.chooseFromGallery();
+                if (imagePath != null) {
+                  setState(() {
+                    _imagePath = imagePath;
+                  });
+                }
+              },
+            ),
+            // Delete option
+            if (_imagePath != null ||
+                (profilePictureURL != null && profilePictureURL!.isNotEmpty))
+              ListTile(
+                leading: const Icon(Icons.delete),
+                title: const Text('Remove Photo'),
+                onTap: () async {
+                  Navigator.of(context).pop();
+                  setState(() {
+                    _imagePath = null;
+                    profilePictureURL = null;
+                  });
+                },
+              )
           ],
         );
       },
-    );
-  }
-
-  // Text field formatting function
-  Padding textFieldCreator(TextEditingController controller, String labelText) {
-    return Padding(
-        padding: const EdgeInsets.only(bottom: 20),
-        child: TextFormField(
-          readOnly: labelText == "Name" ? true : false,
-          controller: controller,
-          // Validation
-          validator: (val) {
-            if (val == null || val.isEmpty || val.trim().isEmpty) {
-              return "This is a required field";
-            }
-            return null;
-          },
-          decoration: InputDecoration(
-              border: const OutlineInputBorder(), labelText: labelText),
-        ));
-  }
-
-  // Header formatting function
-  Text headerText(String title) {
-    return Text(
-      title,
-      style: const TextStyle(
-          fontSize: 17,
-          fontWeight: FontWeight.bold,
-          color: Color.fromRGBO(79, 111, 82, 1)),
-    );
-  }
-
-  // Radio creator function
-  ListTile radioCreators(Widget motto, int value) {
-    return ListTile(
-      title: motto,
-      leading: Radio<int>(
-        value: value,
-        groupValue: radioValue,
-        onChanged: (int? value) {
-          setState(() {
-            radioValue = value!;
-          });
-        },
-      ),
     );
   }
 
@@ -451,8 +482,46 @@ class _UserModalPageState extends State<UserModalPage> {
       TextEditingController controller = TextEditingController(text: contact);
       contactNumberControllers.add(controller);
     }
+    profilePictureURL = widget.currentUser!.profilePicURL;
   }
 
+  // Displaying additional contacts
+  Widget displayAdditionalContact(int index) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Row(
+        children: [
+          Expanded(
+            // Creating text form field
+            child: TextFormField(
+              controller: contactNumberControllers[index],
+              validator: (val) {
+                if (val == null || val.isEmpty || val.trim().isEmpty) {
+                  return "This is a required field";
+                }
+                return null;
+              },
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                labelText: "Additional Contact Number ${index + 1}",
+              ),
+            ),
+          ),
+          // Delete button for additional contacts
+          IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: () {
+              setState(() {
+                contactNumberControllers.removeAt(index);
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Age form field
   Widget ageFormField() {
     return Flexible(
         child: TextFormField(
@@ -473,11 +542,12 @@ class _UserModalPageState extends State<UserModalPage> {
     ));
   }
 
+  // Relationship form field
   Widget relationshipFormField() {
     return Switch(
       // Bool value that toggles the switch
       value: switchLight,
-      activeColor: const Color.fromRGBO(79, 111, 82, 1),
+      activeColor: Formatting.primary,
       onChanged: (bool value) {
         // Update bool value when changed
         setState(() {
@@ -487,14 +557,15 @@ class _UserModalPageState extends State<UserModalPage> {
     );
   }
 
+  // Happiness level form field
   Widget happinessFormField() {
     return Slider(
       value: currentSliderValue,
       // From 0: 10
       max: 10,
       divisions: 10,
-      label: currentSliderValue.toString(),
-      activeColor: const Color.fromRGBO(79, 111, 82, 1),
+      label: currentSliderValue.round().toString(),
+      activeColor: Formatting.primary,
       onChanged: (double value) {
         setState(() {
           // Update slider value on change
@@ -504,10 +575,10 @@ class _UserModalPageState extends State<UserModalPage> {
     );
   }
 
+// Superpower form field
   Widget superpowerFormField() {
     return Padding(
-        padding:
-            const EdgeInsets.only(top: 20, left: 40, right: 40, bottom: 20),
+        padding: const EdgeInsets.only(top: 16, bottom: 16),
         // Creation of drowdownbutton
         child: DropdownButtonFormField(
             value: dropdownValue,
@@ -527,39 +598,91 @@ class _UserModalPageState extends State<UserModalPage> {
             ));
   }
 
+  // Text field formatting function
+  Padding textFieldCreator(TextEditingController controller, String labelText) {
+    return Padding(
+        padding: const EdgeInsets.only(bottom: 16),
+        child: TextFormField(
+          controller: controller,
+          // Validation
+          validator: (val) {
+            if (val == null || val.isEmpty || val.trim().isEmpty) {
+              return "This is a required field";
+            }
+            return null;
+          },
+          decoration: InputDecoration(
+              border: const OutlineInputBorder(), labelText: labelText),
+        ));
+  }
+
+  // Header formatting function
+  Text headerText(String title) {
+    return Text(title,
+        style: Formatting.semiBoldStyle.copyWith(
+          fontSize: 20,
+          color: Formatting.black,
+        ));
+  }
+
+  // Radio creator function
+  ListTile radioCreators(Widget motto, int value) {
+    return ListTile(
+      title: motto,
+      leading: Radio<int>(
+        value: value,
+        groupValue: radioValue,
+        activeColor: Formatting.primary, // Set the active color here
+        onChanged: (int? value) {
+          setState(() {
+            radioValue = value!;
+          });
+        },
+      ),
+    );
+  }
+
   Widget radioFormFields() {
     return Column(
       children: <Widget>[
         // Radioboxes
         radioCreators(
-            const Text("When life gives you lemons, make lemonade"), 1),
-        radioCreators(const Text("Life every day like it's your last"), 2),
+            Text("When life gives you lemons, make lemonade",
+                style: Formatting.regularStyle
+                    .copyWith(fontSize: 16, color: Formatting.black)),
+            1),
         radioCreators(
-            const Text("Be yourself. Everyone else is already taken"), 3),
+            Text("Live every day like it's your last",
+                style: Formatting.regularStyle
+                    .copyWith(fontSize: 16, color: Formatting.black)),
+            2),
         radioCreators(
-            const Text("Be the change you wish to see in the world"), 4),
+            Text("Be yourself. Everyone else is already taken",
+                style: Formatting.regularStyle
+                    .copyWith(fontSize: 16, color: Formatting.black)),
+            3),
         radioCreators(
-            const Text("If you are not obsessed with your life, change it"), 5),
-        radioCreators(const Text("Take small steps every day"), 6),
-        radioCreators(const Text("Be a rainbow in someone else's cloud"), 7),
+            Text("Be the change you wish to see in the world",
+                style: Formatting.regularStyle
+                    .copyWith(fontSize: 16, color: Formatting.black)),
+            4),
+        radioCreators(
+            Text("If you are not obsessed with your life, change it",
+                style: Formatting.regularStyle
+                    .copyWith(fontSize: 16, color: Formatting.black)),
+            5),
+        radioCreators(
+            Text("Take small steps every day",
+                style: Formatting.regularStyle
+                    .copyWith(fontSize: 16, color: Formatting.black)),
+            6),
+        radioCreators(
+            Text("Be a rainbow in someone else's cloud",
+                style: Formatting.regularStyle
+                    .copyWith(fontSize: 16, color: Formatting.black)),
+            7),
       ],
     );
-  }
-
-  // Method to show the title of the modal depending on the functionality
-  Text _buildTitle() {
-    switch (widget.type) {
-      case 'Add':
-        return const Text("My Slambook");
-      case 'Edit':
-        return const Text("Edit Slambook");
-      case 'Edit2':
-        return const Text("Edit Personal Information");
-      case 'Delete':
-        return const Text("Delete friend?");
-      default:
-        return const Text("");
-    }
   }
 
   // Returns the motto string given a value
@@ -603,6 +726,43 @@ class _UserModalPageState extends State<UserModalPage> {
         return 7;
       default:
         return 0;
+    }
+  }
+
+  // Themes
+  ThemeData theme() {
+    return ThemeData(
+      inputDecorationTheme: InputDecorationTheme(
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20.0),
+          borderSide: const BorderSide(color: Colors.grey),
+        ),
+        labelStyle: const TextStyle(color: Formatting.black),
+        errorStyle: const TextStyle(color: Colors.red),
+      ),
+    );
+  }
+
+  // Method to show the title of the modal depending on the functionality
+  Text _buildTitle() {
+    switch (widget.type) {
+      case 'Add':
+        return Text("My Slambook",
+            style: Formatting.boldStyle
+                .copyWith(fontSize: 18, color: Formatting.black));
+      case 'Edit':
+        return Text("Edit Slambook",
+            style: Formatting.boldStyle
+                .copyWith(fontSize: 18, color: Formatting.black));
+      case 'Edit2':
+        return Text("Edit Personal Information",
+            style: Formatting.boldStyle
+                .copyWith(fontSize: 18, color: Formatting.black));
+      default:
+        return const Text("");
     }
   }
 }

@@ -10,31 +10,32 @@ class Users {
   String happinessLevel;
   String superpower;
   String motto;
+  String? profilePictureURL;
 
   // Constuctor
-  Users({
-    this.id,
-    required this.name,
-    required this.nickname,
-    required this.age,
-    required this.relationshipStatus,
-    required this.happinessLevel,
-    required this.superpower,
-    required this.motto,
-  });
+  Users(
+      {this.id,
+      required this.name,
+      required this.nickname,
+      required this.age,
+      required this.relationshipStatus,
+      required this.happinessLevel,
+      required this.superpower,
+      required this.motto,
+      required this.profilePictureURL});
 
   // Factory constructor to instantiate object from json format
   factory Users.fromJson(Map<String, dynamic> json) {
     return Users(
-      id: json['id'],
-      name: json['name'],
-      nickname: json['nickname'],
-      age: json['age'],
-      relationshipStatus: json['relationshipStatus'],
-      happinessLevel: json['happinessLevel'],
-      superpower: json['superpower'],
-      motto: json['motto'],
-    );
+        id: json['id'],
+        name: json['name'],
+        nickname: json['nickname'],
+        age: json['age'],
+        relationshipStatus: json['relationshipStatus'],
+        happinessLevel: json['happinessLevel'],
+        superpower: json['superpower'],
+        motto: json['motto'],
+        profilePictureURL: json['profilePictureURL']);
   }
 
   String toJsonString(Users user) {
@@ -51,7 +52,8 @@ class Users {
       'relationshipStatus': user.relationshipStatus,
       'happinessLevel': user.happinessLevel,
       'superpower': user.superpower,
-      'motto': user.motto
+      'motto': user.motto,
+      'profilePictureURL': user.profilePictureURL
     };
   }
 }

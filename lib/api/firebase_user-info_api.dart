@@ -39,7 +39,7 @@ class UsersInfoAPI {
 
   // Edit user's information
   Future<String> editUserInfo(String username, String contact,
-      List<String> additionalContacts, String profilePictureUrl) async {
+      List<String> additionalContacts, String? profilePictureUrl) async {
     try {
       // Accessing current user id
       String? userId = authAPI.getCurrentUserId();

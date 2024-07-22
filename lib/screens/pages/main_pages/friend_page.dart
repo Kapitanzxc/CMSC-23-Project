@@ -7,7 +7,7 @@ import 'package:tolentino_mini_project/formatting/formatting.dart';
 import 'package:tolentino_mini_project/models/friend_model.dart';
 import 'package:tolentino_mini_project/provider/auth_provider.dart';
 import 'package:tolentino_mini_project/provider/user-friend_provider.dart';
-import 'package:tolentino_mini_project/screens/pages/general%20pages/modal_page.dart';
+import 'package:tolentino_mini_project/screens/pages/general%20pages/slambook_modal.dart';
 import 'package:tolentino_mini_project/screens/pages/general%20pages/qr-code_page.dart';
 
 // Friends page
