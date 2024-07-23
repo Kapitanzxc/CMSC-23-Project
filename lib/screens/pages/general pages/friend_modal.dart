@@ -307,7 +307,9 @@ class _ModalPageState extends State<ModalPage> {
                   currentSliderValue.toString(),
                   dropdownValue,
                   motto(radioValue));
-
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(
+                      '${widget.friend.name} has been adjusted in the pond!')));
               // Remove dialog after editing
               Navigator.pop(context, 'refresh');
             }
@@ -327,6 +329,9 @@ class _ModalPageState extends State<ModalPage> {
           // Delete friend through the provider
           onPressed: () {
             context.read<FriendListProvider>().deleteFriend(widget.friend);
+            ;
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text('A friend leapt out of the pond!')));
             // Remove dialog after editing
             Navigator.of(context).pop();
           },
@@ -368,6 +373,8 @@ class _ModalPageState extends State<ModalPage> {
                   profilePicURL,
                 )
                 .then((value) {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text('Successfully splashed a new profile pic')));
               Navigator.pop(context, 'refresh');
             });
           },
@@ -525,6 +532,7 @@ class _ModalPageState extends State<ModalPage> {
         padding: const EdgeInsets.only(bottom: 16),
         child: TextFormField(
           controller: controller,
+          readOnly: labelText == "Name" ? true : false,
           // Validation
           validator: (val) {
             if (val == null || val.isEmpty || val.trim().isEmpty) {

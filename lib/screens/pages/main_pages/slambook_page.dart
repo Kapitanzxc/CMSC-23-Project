@@ -526,6 +526,7 @@ class _SlamBookState extends State<SlamBook> {
     switchLight = false;
     currentSliderValue = 0;
     showSummary = false;
+    _imageFile = null;
   }
 
   // Returns the motto string given a value

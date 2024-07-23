@@ -26,6 +26,8 @@ class StorageAPI {
       var tempDir = await getTemporaryDirectory();
       imageFile = await File('${tempDir.path}/img').writeAsBytes(
           buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+    } else {
+      imageFile = image;
     }
 
     try {

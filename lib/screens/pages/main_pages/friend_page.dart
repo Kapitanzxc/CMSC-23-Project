@@ -382,8 +382,7 @@ class _FriendsPageState extends State<FriendsPage> {
           builder: (BuildContext context) =>
               ModalPage(friend: friend, type: "Edit"),
         );
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('${friend.name} has been adjusted in the pond!')));
+        ;
         break;
       case 1:
         await showDialog(
@@ -392,8 +391,7 @@ class _FriendsPageState extends State<FriendsPage> {
           builder: (BuildContext context) =>
               ModalPage(friend: friend, type: "Change"),
         );
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Successfully splashed a new profile pic')));
+
         break;
       case 2:
         await showDialog(
@@ -402,8 +400,7 @@ class _FriendsPageState extends State<FriendsPage> {
               // Navigate to delete modal page
               ModalPage(friend: friend, type: 'Delete'),
         );
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('A friend leapt out of the pond!')));
+
         break;
     }
   }

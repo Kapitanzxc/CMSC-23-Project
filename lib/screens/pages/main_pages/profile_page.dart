@@ -24,7 +24,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  late Users user;
+  Users? user;
   // Get the screen dimensions
   double get screenHeight => MediaQuery.of(context).size.height;
   double get screenWidth => MediaQuery.of(context).size.width;
@@ -160,7 +160,7 @@ class _ProfilePageState extends State<ProfilePage> {
         // Slambook data is fetched
         WidgetsBinding.instance.addPostFrameCallback((_) {
           setState(() {
-            context.read<UserSlambookProvider>().setUser(user);
+            context.read<UserSlambookProvider>().setUser(user!);
             slambookDataChecker = true;
           });
         });
@@ -168,13 +168,13 @@ class _ProfilePageState extends State<ProfilePage> {
         // Extract user data
         user = Users.fromJson(
             snapshot.data!.docs.first.data() as Map<String, dynamic>);
-        user.id = snapshot.data!.docs.first.id;
+        user!.id = snapshot.data!.docs.first.id;
 
         // Display user's slambook data
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            displaySlambookData(user.toJson(user).values.toList()),
+            displaySlambookData(user!.toJson(user!).values.toList()),
           ],
         );
       },
@@ -311,7 +311,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 builder: (BuildContext context) =>
                     UserModalPage(type: "Edit", name: name, user: user),
               );
-              context.read<UserSlambookProvider>().setUser(user);
+              context.read<UserSlambookProvider>().setUser(user!);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Formatting.primary,
@@ -373,39 +373,47 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // Shows an alert dialog of qr mimage
   Widget get slambookQrImage => AlertDialog(
-        content: SizedBox(
-            width: 320,
-            height: 350,
-            child: Column(
-              children: [
-                // Qr code
-                RepaintBoundary(
-                    key: _qrkey,
-                    child: QrImageView(
-                      data: user.toJsonString(user),
-                      version: QrVersions.auto,
-                      size: 250,
-                      gapless: false,
-                    )),
-                const SizedBox(
-                  height: 12,
-                ),
-                // Text
-                Text(
-                  "$name's slambook",
-                  style: Formatting.boldStyle
-                      .copyWith(fontSize: 24, color: Formatting.primary),
-                  textAlign: TextAlign.center,
-                ),
-                // Text
-                Text(
-                  "Show this QR code to your friends so they can easily add you to their slambook. Just let them scan it with their device!",
-                  style: Formatting.mediumStyle
-                      .copyWith(fontSize: 12, color: Formatting.black),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            )),
+        content: SingleChildScrollView(
+          child: SizedBox(
+              width: screenWidth * 0.8,
+              height: screenHeight * 0.42 / screenWidth * 400,
+              child: Column(
+                children: [
+                  // Qr code
+                  RepaintBoundary(
+                      key: _qrkey,
+                      child: QrImageView(
+                        data: user!.toJsonString(user!),
+                        version: QrVersions.auto,
+                        size: screenHeight * 0.25,
+                        gapless: false,
+                      )),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  // Text
+                  Flexible(
+                      child: Column(
+                    children: [
+                      Text(
+                        "$name's slambook",
+                        softWrap: true,
+                        style: Formatting.boldStyle
+                            .copyWith(fontSize: 24, color: Formatting.primary),
+                        textAlign: TextAlign.center,
+                      ),
+                      // Text
+                      Text(
+                        "Show this QR code to your friends so they can easily add you to their slambook. Just let them scan it with their device!",
+                        style: Formatting.mediumStyle
+                            .copyWith(fontSize: 12, color: Formatting.black),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ))
+                ],
+              )),
+        ),
         actions: <Widget>[
           Column(
             mainAxisSize: MainAxisSize.min,

@@ -385,10 +385,12 @@ class _UserModalPageState extends State<UserModalPage> {
                     profilePicURL,
                   );
 
-              // Edit slambook profile picture
-              context
-                  .read<UserSlambookProvider>()
-                  .editUserPicture(profilePicURL, widget.user!);
+              if (widget.user != null) {
+                // Edit slambook profile picture
+                context
+                    .read<UserSlambookProvider>()
+                    .editUserPicture(profilePicURL, widget.user!);
+              }
 
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                   content: Text(
@@ -606,6 +608,7 @@ class _UserModalPageState extends State<UserModalPage> {
         padding: const EdgeInsets.only(bottom: 16),
         child: TextFormField(
           controller: controller,
+          readOnly: labelText == "Name" ? true : false,
           // Validation
           validator: (val) {
             if (val == null || val.isEmpty || val.trim().isEmpty) {

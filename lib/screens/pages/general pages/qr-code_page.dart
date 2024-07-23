@@ -63,8 +63,8 @@ class _QRCodeScannerPageState extends State<QRCodeScannerPage> {
     // Scanning area based on screen dimenions
     var scanArea = (MediaQuery.of(context).size.width < 400 ||
             MediaQuery.of(context).size.height < 400)
-        ? 300.0
-        : 500.0;
+        ? MediaQuery.of(context).size.width * 0.7
+        : MediaQuery.of(context).size.width * 0.8;
     // To ensure the Scanner view is properly sizes after rotation
     return QRView(
       key: qrKey,
