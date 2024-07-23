@@ -42,4 +42,11 @@ class UserInfoProvider with ChangeNotifier {
         username, contact, additionalContacts, profilePictureUrl);
     return message;
   }
+
+  // / Function to return list of emails from the userIds collection
+  Future<List<String?>> getAllEmails() async {
+    List<String?> emails = await usersInfoAPI.getAllEmails();
+    print(emails);
+    return emails;
+  }
 }

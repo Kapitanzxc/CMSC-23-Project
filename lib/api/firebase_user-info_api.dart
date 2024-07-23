@@ -54,4 +54,22 @@ class UsersInfoAPI {
       return "Failed with error: ${e.code}";
     }
   }
+
+  // Function to return list of emails from the userIds collection
+  Future<List<String?>> getAllEmails() async {
+    try {
+      // Fetch all documents from the userIds collection
+      QuerySnapshot<Map<String, dynamic>> snapshot =
+          await userIds.collection('userIds').get();
+
+      // Extract emails from each document
+      List<String?> emails = snapshot.docs.map((doc) {
+        return doc.data()['email'] as String;
+      }).toList();
+      return emails;
+    } catch (e) {
+      print("Error fetching emails: $e");
+      return [];
+    }
+  }
 }

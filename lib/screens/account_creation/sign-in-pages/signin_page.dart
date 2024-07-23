@@ -17,7 +17,6 @@ class _SignInPageState extends State<SignInPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
   double get screenWidth => MediaQuery.of(context).size.width;
   String? email;
   String? password;
@@ -89,6 +88,8 @@ class _SignInPageState extends State<SignInPage> {
                           passwordField,
                           submitButton,
                           signUpButton,
+                          orText,
+                          googleSignInButton,
                         ],
                       ),
                     )),
@@ -169,6 +170,72 @@ class _SignInPageState extends State<SignInPage> {
         ),
       );
 
+// Sign in using google
+  Widget get googleSignInButton => SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () async {
+          // Checks if its email is existing in the firebase
+          final result =
+              await context.read<UserAuthProvider>().signInWithGoogle();
+          // If existing, show error
+          if (result == false) showSignInErrorDialog(context);
+        },
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.black,
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          elevation: 5, // Button shadow
+          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              'assets/google_logo.png',
+              height: 24.0,
+            ),
+            SizedBox(width: 12),
+            Text(
+              'Login with Google',
+              style: Formatting.mediumStyle
+                  .copyWith(fontSize: 14, color: Formatting.black),
+            ),
+          ],
+        ),
+      ));
+
+// Or divider text
+  Widget get orText => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // Divider
+          Container(
+            decoration: BoxDecoration(color: Color.fromRGBO(0, 0, 0, 0.105)),
+            height: 2,
+            width: screenWidth * 0.32,
+          ),
+          // Text
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Text(
+              'Or',
+              style: Formatting.regularStyle.copyWith(
+                  fontSize: 12,
+                  color: const Color.fromARGB(255, 102, 102, 102)),
+            ),
+          ),
+          // Divider
+          Container(
+            decoration: BoxDecoration(color: Color.fromRGBO(0, 0, 0, 0.105)),
+            height: 2,
+            width: screenWidth * 0.32,
+          ),
+        ],
+      );
+
   // Sign in button
   Widget get submitButton => SizedBox(
       width: double.infinity,
@@ -179,6 +246,7 @@ class _SignInPageState extends State<SignInPage> {
             ? () async {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
+                  // Checks if the user signed in succesfully
                   bool signinChecker = await context
                       .read<UserAuthProvider>()
                       .signIn(email!, password!);

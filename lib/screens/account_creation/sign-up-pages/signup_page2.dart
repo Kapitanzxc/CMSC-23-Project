@@ -15,6 +15,8 @@ class SignupInfoPage extends StatefulWidget {
   final String? email;
   final String? password;
   final File? imageFile;
+  final String? profilePictureURL;
+  final OAuthCredential? credentials;
 
   // Constructor
   const SignupInfoPage(
@@ -22,7 +24,9 @@ class SignupInfoPage extends StatefulWidget {
       required this.name,
       required this.email,
       required this.password,
-      required this.imageFile});
+      this.imageFile,
+      this.profilePictureURL,
+      this.credentials});
 
   @override
   State<SignupInfoPage> createState() => _SignupInfoPageState();
@@ -257,7 +261,8 @@ class _SignupInfoPageState extends State<SignupInfoPage> {
   // Submitting the form
   void submitForm(BuildContext context) async {
     // Getting user's uid
-    String? uid = await getUid(widget.email!, widget.password!);
+    String? uid =
+        await getUid(widget.email!, widget.password!, widget.credentials);
     if (uid != null) {
       try {
         String? downloadURL;
@@ -269,6 +274,7 @@ class _SignupInfoPageState extends State<SignupInfoPage> {
         }
         // Creates userinfo and append it to the cloud
         UsersInfo temp = UsersInfo(
+            email: widget.email!,
             name: widget.name!,
             username: usernameController.text,
             contact: contactController.text,
@@ -287,12 +293,13 @@ class _SignupInfoPageState extends State<SignupInfoPage> {
   }
 
   // Function for getting users uid
-  Future<String?> getUid(String email, String password) async {
+  Future<String?> getUid(
+      String email, String password, dynamic credentials) async {
     try {
       UserCredential? userCredential = await context
           .read<UserAuthProvider>()
           .authService
-          .signUp(email, password);
+          .signUp(email, password, credentials);
       String uid = userCredential!.user!.uid;
       return uid;
     } catch (e) {

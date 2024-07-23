@@ -32,12 +32,31 @@ class UserAuthProvider with ChangeNotifier {
     return response;
   }
 
+  // Sign in with google function
+  Future<bool> signInWithGoogle() async {
+    bool result = await authService.signInWithGoogle();
+    notifyListeners();
+    return result;
+  }
+
   // Sign Up Function
-  Future<UserCredential?> signUp(String email, String password) async {
-    UserCredential? userCredential = await authService.signUp(email, password);
-    print(userCredential);
+  Future<UserCredential?> signUp(
+      String email, String password, dynamic credentials) async {
+    UserCredential? userCredential =
+        await authService.signUp(email, password, credentials);
     notifyListeners();
     return userCredential;
+  }
+
+  // Sign up with google function
+  Future<Map<String, dynamic>?> signUpWithGoogle() async {
+    Map<String, dynamic>? credentials = await authService.signUpWithGoogle();
+    notifyListeners();
+    if (credentials != null) {
+      return credentials;
+    } else {
+      return null;
+    }
   }
 
   // Sign out Function

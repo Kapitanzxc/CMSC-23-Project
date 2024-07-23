@@ -1,7 +1,11 @@
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tolentino_mini_project/formatting/formatting.dart';
 import 'package:tolentino_mini_project/android_features/camera_feat.dart';
+import 'package:tolentino_mini_project/provider/auth_provider.dart';
+import 'package:tolentino_mini_project/provider/user-info_provider.dart';
 import 'package:tolentino_mini_project/screens/account_creation/sign-up-pages/signup_page2.dart';
 
 // First Signup Page
@@ -23,7 +27,11 @@ class _SignUpState extends State<SignUpPage> {
   bool obscurePassword = true;
   // disable button
   bool isButtonEnabled = false;
+  OAuthCredential? credentials;
+  String? profilePictureURL;
+  bool enableEmail = false;
 
+  double get screenWidth => MediaQuery.of(context).size.width;
   // Initializing camera feature
   final CameraFeature _cameraFeature = CameraFeature();
 
@@ -94,6 +102,8 @@ class _SignUpState extends State<SignUpPage> {
                           emailField,
                           passwordField,
                           submitButton,
+                          orText,
+                          googleSignUpButton
                         ],
                       ),
                     )
@@ -123,25 +133,41 @@ class _SignUpState extends State<SignUpPage> {
   // Profile picture
   Widget get profilePicture => Stack(
         children: [
-          // If no image file existing, show the default pfp
-          _imageFile != null
-              ? Padding(
-                  padding: const EdgeInsets.only(bottom: 40),
-                  child: SizedBox(
-                      width: 140,
-                      height: 140,
-                      child: ClipOval(
-                        child: Image.file(_imageFile!, fit: BoxFit.cover),
-                      )))
-              : Padding(
-                  padding: const EdgeInsets.only(bottom: 40),
-                  child: SizedBox(
-                      width: 140,
-                      height: 140,
-                      child: ClipOval(
-                        child: Image.asset("assets/default_pfp.jpg",
-                            fit: BoxFit.cover),
-                      ))),
+          if (_imageFile != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 40),
+              child: SizedBox(
+                width: 140,
+                height: 140,
+                child: ClipOval(
+                  child: Image.file(_imageFile!, fit: BoxFit.cover),
+                ),
+              ),
+            )
+          else if (profilePictureURL != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 40),
+              child: SizedBox(
+                width: 140,
+                height: 140,
+                child: ClipOval(
+                  child: Image.network(profilePictureURL!, fit: BoxFit.cover),
+                ),
+              ),
+            )
+          else
+            Padding(
+              padding: const EdgeInsets.only(bottom: 40),
+              child: SizedBox(
+                width: 140,
+                height: 140,
+                child: ClipOval(
+                  child:
+                      Image.asset("assets/default_pfp.jpg", fit: BoxFit.cover),
+                ),
+              ),
+            ),
+
           // Add Button
           Positioned(
             top: 100,
@@ -188,6 +214,7 @@ class _SignUpState extends State<SignUpPage> {
   Widget get emailField => Padding(
         padding: const EdgeInsets.only(bottom: 16),
         child: TextFormField(
+          readOnly: enableEmail,
           controller: emailController,
           decoration: const InputDecoration(
               border: OutlineInputBorder(),
@@ -257,11 +284,12 @@ class _SignUpState extends State<SignUpPage> {
                       MaterialPageRoute(
                           // Pass the variables to the next page
                           builder: (context) => SignupInfoPage(
-                                name: nameController.text,
-                                email: emailController.text,
-                                password: passwordController.text,
-                                imageFile: _imageFile,
-                              )));
+                              name: nameController.text,
+                              email: emailController.text,
+                              password: passwordController.text,
+                              imageFile: _imageFile,
+                              profilePictureURL: profilePictureURL,
+                              credentials: credentials)));
                 }
               }
             : null,
@@ -279,6 +307,81 @@ class _SignUpState extends State<SignUpPage> {
               fontSize: 16, color: const Color.fromRGBO(255, 255, 255, 1)),
         ),
       ));
+
+  // Google sign up
+  Widget get googleSignUpButton => SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () async {
+          Map<String, dynamic>? userCredentials =
+              await context.read<UserAuthProvider>().signUpWithGoogle();
+          // Checks if the email used is already existing
+          if (userCredentials != null) {
+            setState(() {
+              nameController.text = userCredentials["name"];
+              emailController.text = userCredentials["email"];
+              profilePictureURL = userCredentials["profilePictureURL"];
+              credentials = userCredentials["credentials"];
+              enableEmail = true;
+            });
+          } else {
+            showSignInErrorDialog(context);
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.black,
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          elevation: 5, // Button shadow
+          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              'assets/google_logo.png',
+              height: 24.0,
+            ),
+            SizedBox(width: 12),
+            Text(
+              'Sign Up with Google',
+              style: Formatting.mediumStyle
+                  .copyWith(fontSize: 14, color: Formatting.black),
+            ),
+          ],
+        ),
+      ));
+
+  // Or text divider
+  Widget get orText => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // Divider
+          Container(
+            decoration: BoxDecoration(color: Color.fromRGBO(0, 0, 0, 0.105)),
+            height: 2,
+            width: screenWidth * 0.32,
+          ),
+          // Text
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Text(
+              'Or',
+              style: Formatting.regularStyle.copyWith(
+                  fontSize: 12,
+                  color: const Color.fromARGB(255, 102, 102, 102)),
+            ),
+          ),
+          // Divider
+          Container(
+            decoration: BoxDecoration(color: Color.fromRGBO(0, 0, 0, 0.105)),
+            height: 2,
+            width: screenWidth * 0.32,
+          ),
+        ],
+      );
 
   // Function for showing photo options
   void _photoOptions(BuildContext context) {
@@ -325,6 +428,73 @@ class _SignUpState extends State<SignUpPage> {
                   });
                 },
               )
+          ],
+        );
+      },
+    );
+  }
+
+  // Show error dialog
+  void showSignInErrorDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Flexible(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 10),
+                // Image
+                Container(
+                  width: 150,
+                  height: 150,
+                  child: Image.asset("assets/frog_sad.png"),
+                ),
+                const SizedBox(height: 10),
+                // Text
+                Text(
+                  "Oops something went wrong!",
+                  style: Formatting.boldStyle
+                      .copyWith(fontSize: 24, color: Formatting.black),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 10),
+                // Text
+                Text(
+                  "This email is already in use. Please log in or use a different email.",
+                  style: Formatting.mediumStyle
+                      .copyWith(fontSize: 12, color: Formatting.black),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            // Try again button
+            SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Formatting.primary,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    elevation: 4,
+                  ),
+                  child: Text(
+                    'Try Again',
+                    style: Formatting.mediumStyle.copyWith(
+                        fontSize: 16,
+                        color: const Color.fromRGBO(255, 255, 255, 1)),
+                  ),
+                )),
           ],
         );
       },

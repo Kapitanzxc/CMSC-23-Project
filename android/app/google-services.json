@@ -9,10 +9,23 @@
       "client_info": {
         "mobilesdk_app_id": "1:852005782893:android:b806f3b383365263e78664",
         "android_client_info": {
-          "package_name": "com.example.exer5_app"
+          "package_name": "com.example.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "852005782893-hud4adtvonaq92aha3oe1k0cqm110ne7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.app",
+            "certificate_hash": "86e2f9aac397e70e2e08aff410476e522a9e55f5"
+          }
+        },
+        {
+          "client_id": "852005782893-7otq53ohuihlovbrjf7jbfa715bimn68.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAtO9kN-BJC1N_Exjdcu4MBbsjRhPVpcaA"
@@ -20,18 +33,43 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "852005782893-7otq53ohuihlovbrjf7jbfa715bimn68.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "852005782893-b1qd7alsvbn4pmp3frc3tlnuopn5mmpd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.exer5App"
+              }
+            }
+          ]
         }
       }
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:852005782893:android:2f45b555f167c1b7e78664",
+        "mobilesdk_app_id": "1:852005782893:android:8e02a143de7a19f9e78664",
         "android_client_info": {
           "package_name": "com.example.exer5_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "852005782893-ike1t7iff94k0jjqad73jh30k4j31mn0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.exer5_app",
+            "certificate_hash": "86e2f9aac397e70e2e08aff410476e522a9e55f5"
+          }
+        },
+        {
+          "client_id": "852005782893-7otq53ohuihlovbrjf7jbfa715bimn68.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAtO9kN-BJC1N_Exjdcu4MBbsjRhPVpcaA"
@@ -39,7 +77,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "852005782893-7otq53ohuihlovbrjf7jbfa715bimn68.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "852005782893-b1qd7alsvbn4pmp3frc3tlnuopn5mmpd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.exer5App"
+              }
+            }
+          ]
         }
       }
     }

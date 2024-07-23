@@ -1,3 +1,19 @@
+buildscript {
+    ext.kotlin_version = '1.8.22' // Add this line
+
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "com.android.tools.build:gradle:7.4.2"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "com.google.gms:google-services:4.3.15" 
+    }
+}
+
+
 plugins {
     id "com.android.application"
     // START: FlutterFire Configuration
@@ -28,7 +44,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace = "com.example.exer5_app"
-    compileSdkVersion 30
+    compileSdkVersion 33
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -43,7 +59,7 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion 23
-        targetSdkVersion 30
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
     }

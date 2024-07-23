@@ -1,5 +1,6 @@
 // Users Personal Class
 class UsersInfo {
+  String email;
   String name;
   String username;
   String contact;
@@ -8,7 +9,8 @@ class UsersInfo {
 
   // Constuctor
   UsersInfo(
-      {required this.name,
+      {required this.email,
+      required this.name,
       required this.username,
       required this.contact,
       required this.profilePicURL,
@@ -17,6 +19,7 @@ class UsersInfo {
 // Factory constructor to instantiate object from JSON format
   factory UsersInfo.fromJson(Map<String, dynamic> json) {
     return UsersInfo(
+      email: json['email'],
       name: json['name'],
       username: json['username'],
       contact: json['contact'],
@@ -28,6 +31,7 @@ class UsersInfo {
   // Transforming a User object to a map
   Map<String, dynamic> toJson() {
     return {
+      'email': email,
       'name': name,
       'username': username,
       'contact': contact,
