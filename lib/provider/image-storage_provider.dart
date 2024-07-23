@@ -10,8 +10,8 @@ class StorageProvider with ChangeNotifier {
   // Getter
   String? get profilePictureUrl => _profilePictureUrl;
 
-  // Uploads imagefile to the cloud
-  Future<String?> uploadProfilePicture(String userId, File? imageFile) async {
+  // / Uploads imagefile to the cloud
+  Future<String?> uploadProfilePicture(String userId, dynamic imageFile) async {
     if (imageFile == null) {
       print("No image file provided.");
       return null;

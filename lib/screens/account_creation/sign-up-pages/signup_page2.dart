@@ -268,9 +268,15 @@ class _SignupInfoPageState extends State<SignupInfoPage> {
         String? downloadURL;
         // Upload profile picture to the cloud
         if (widget.imageFile != null) {
+          print("im here");
           downloadURL = await context
               .read<StorageProvider>()
               .uploadProfilePicture(uid, widget.imageFile!);
+        } else if (widget.profilePictureURL != null) {
+          print("im hsaaere");
+          downloadURL = await context
+              .read<StorageProvider>()
+              .uploadProfilePicture(uid, widget.profilePictureURL);
         }
         // Creates userinfo and append it to the cloud
         UsersInfo temp = UsersInfo(
@@ -278,7 +284,10 @@ class _SignupInfoPageState extends State<SignupInfoPage> {
             name: widget.name!,
             username: usernameController.text,
             contact: contactController.text,
-            profilePicURL: widget.imageFile == null ? null : downloadURL,
+            profilePicURL:
+                (widget.imageFile != null || widget.profilePictureURL != null)
+                    ? downloadURL
+                    : null,
             additionalContacts: contactNumberControllers
                 .map((controller) => controller.text)
                 .toList());

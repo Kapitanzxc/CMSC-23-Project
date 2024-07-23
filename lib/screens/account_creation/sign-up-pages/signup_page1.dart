@@ -30,6 +30,7 @@ class _SignUpState extends State<SignUpPage> {
   OAuthCredential? credentials;
   String? profilePictureURL;
   bool enableEmail = false;
+  double get screenHeight => MediaQuery.of(context).size.height;
 
   double get screenWidth => MediaQuery.of(context).size.width;
   // Initializing camera feature
@@ -90,7 +91,7 @@ class _SignUpState extends State<SignUpPage> {
                 // Form Field
                 child: Column(
                   children: [
-                    const SizedBox(height: 80),
+                    SizedBox(height: screenHeight * 0.05),
                     Form(
                       key: _formKey,
                       child: Column(
@@ -364,7 +365,7 @@ class _SignUpState extends State<SignUpPage> {
           Container(
             decoration: BoxDecoration(color: Color.fromRGBO(0, 0, 0, 0.105)),
             height: 2,
-            width: screenWidth * 0.32,
+            width: screenWidth * 0.3,
           ),
           // Text
           Container(
@@ -380,7 +381,7 @@ class _SignUpState extends State<SignUpPage> {
           Container(
             decoration: BoxDecoration(color: Color.fromRGBO(0, 0, 0, 0.105)),
             height: 2,
-            width: screenWidth * 0.32,
+            width: screenWidth * 0.3,
           ),
         ],
       );

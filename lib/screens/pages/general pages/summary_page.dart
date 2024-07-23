@@ -37,11 +37,10 @@ class _SummaryPageState extends State<SummaryPage> {
           coverAndPfp,
           SizedBox(
             child: Padding(
-              padding: const EdgeInsets.all(15),
+              padding: const EdgeInsets.only(left: 16, right: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 60),
                   // Name
                   displayName(widget.friend),
                   const SizedBox(height: 12),
@@ -243,6 +242,8 @@ class _SummaryPageState extends State<SummaryPage> {
 
 // Widget for the cover photo and profile picture
   Widget get coverAndPfp => SizedBox(
+        height: screenHeight * 0.4,
+        width: double.infinity,
         child: Stack(
           // Profile picture overflow
           clipBehavior: Clip.none,
@@ -252,6 +253,7 @@ class _SummaryPageState extends State<SummaryPage> {
               height: screenHeight * 0.3,
               width: double.infinity,
               decoration: const BoxDecoration(
+                color: Colors.blue,
                 image: DecorationImage(
                   image: AssetImage('assets/cover_photo.jpg'),
                   fit: BoxFit.cover,
@@ -524,7 +526,7 @@ class _SummaryPageState extends State<SummaryPage> {
 
   // Add button
   Widget get addButton => Positioned(
-        top: screenHeight * 0.337,
+        top: screenHeight * 0.33,
         left: 75,
         right: 0,
         child: Align(
@@ -604,7 +606,7 @@ class _SummaryPageState extends State<SummaryPage> {
   Widget displayName(Friend friend) {
     // Displays the name and username
     return Container(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(friend.name,
           style: Formatting.boldStyle
               .copyWith(fontSize: 24, color: Formatting.black)),
