@@ -19,6 +19,7 @@ class _SignInPageState extends State<SignInPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   double get screenWidth => MediaQuery.of(context).size.width;
+  double get screenHeight => MediaQuery.of(context).size.height;
   String? email;
   String? password;
   bool showSignInErrorMessage = false;
@@ -65,7 +66,7 @@ class _SignInPageState extends State<SignInPage> {
             backgroundColor: const Color.fromARGB(255, 255, 255, 255),
             body: Stack(children: [
               Container(
-                margin:
+                padding:
                     const EdgeInsets.symmetric(vertical: 48, horizontal: 48),
                 // Form for text fields for signing in
                 child: Form(
@@ -75,10 +76,11 @@ class _SignInPageState extends State<SignInPage> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         // Text Fields and buttons
                         children: [
-                          const SizedBox(height: 100),
+                          SizedBox(height: screenHeight * 0.1),
                           // Logo
                           Container(
-                            padding: const EdgeInsets.only(bottom: 80),
+                            padding:
+                                EdgeInsets.only(bottom: screenHeight * 0.05),
                             width: 200,
                             child: Image.asset("assets/ribbit_logo.png"),
                           ),
@@ -107,7 +109,7 @@ class _SignInPageState extends State<SignInPage> {
             Text(
               "Hop hop, how are you?",
               style: Formatting.boldStyle
-                  .copyWith(fontSize: 28, color: Formatting.black),
+                  .copyWith(fontSize: 24, color: Formatting.black),
             ),
             Text(
               "Sign in to your account",
@@ -218,11 +220,12 @@ class _SignInPageState extends State<SignInPage> {
           Container(
             decoration: BoxDecoration(color: Color.fromRGBO(0, 0, 0, 0.105)),
             height: 2,
-            width: screenWidth * 0.32,
+            width: screenWidth * 0.3,
           ),
           // Text
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            padding: EdgeInsets.symmetric(
+                horizontal: 16, vertical: screenHeight * 0.02),
             child: Text(
               'Or',
               style: Formatting.regularStyle.copyWith(
@@ -234,7 +237,7 @@ class _SignInPageState extends State<SignInPage> {
           Container(
             decoration: BoxDecoration(color: Color.fromRGBO(0, 0, 0, 0.105)),
             height: 2,
-            width: screenWidth * 0.32,
+            width: screenWidth * 0.3,
           ),
         ],
       );
@@ -348,7 +351,7 @@ class _SignInPageState extends State<SignInPage> {
 
   // Sign up button
   Widget get signUpButton => Padding(
-        padding: const EdgeInsets.only(bottom: 16),
+        padding: EdgeInsets.only(bottom: screenHeight / 1000),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

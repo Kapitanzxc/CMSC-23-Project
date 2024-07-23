@@ -40,7 +40,7 @@ class _ProfilePageState extends State<ProfilePage> {
   // Saving qr code variables
   final GlobalKey _qrkey = GlobalKey();
   bool dirExists = false;
-  dynamic externalDir = '/storage/emulated/0/Download/Ribbit';
+  dynamic externalDir = '/storage/emulated/0/Download/Qr_code';
 
   // Fetch user's slambook data everytime this page is initialize
   @override
@@ -57,12 +57,12 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 244, 244, 244),
       extendBodyBehindAppBar: true,
-      body: Column(
+      body: SingleChildScrollView(
+          child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Cover photo and profile picture
           coverAndPfp,
-          Expanded(
+          SizedBox(
             child: Padding(
               padding: const EdgeInsets.all(15),
               child: Column(
@@ -71,7 +71,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: 60),
                   // Creation of name and user name
                   createStreamBuilder(context),
-                  const SizedBox(height: 12),
+                  // const SizedBox(height: 12),
                   // Content UI (slambook widget)
                   mainContentUI(),
                   // Logout button
@@ -81,7 +81,8 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
         ],
-      ),
+      )),
+
       // Navigation Bar
       bottomNavigationBar: bottomNavigationBar(),
     );
@@ -89,7 +90,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // Responsible for Content UI
   Widget mainContentUI() {
-    return Expanded(
+    return SizedBox(
+      height: screenHeight * 0.44,
       // Container formatting
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
@@ -113,18 +115,17 @@ class _ProfilePageState extends State<ProfilePage> {
               child: SizedBox(
                 width: double.infinity,
                 // Show the slambook content
-                child: Container(
-                  child: slambookContent(),
-                ),
+                child: slambookContent(),
               ),
             ),
             // Buttons
             if (slambookDataChecker)
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Expanded(child: editSlambookButton()),
+                  editSlambookButton(),
                   const SizedBox(width: 10), // Space between buttons
-                  Expanded(child: generateQrButton(context, name)),
+                  generateQrButton(context, name)
                 ],
               )
             else
@@ -182,54 +183,55 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // User's Slambook data
   Widget displaySlambookData(List<dynamic> userValues) {
-    return Stack(
-      // Stack overflow
-      clipBehavior: Clip.none,
-      children: [
-        Container(
-          padding: const EdgeInsets.only(left: 16, right: 16),
-          decoration: const BoxDecoration(color: Colors.white),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Nickname
-              heading,
-              nickname(userValues[1]),
-              const SizedBox(height: 8),
-              // Motto
-              motto(userValues[6]),
-              Column(
-                children: [
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Age and happiness Level
-                      age(userValues[2]),
-                      happinessLevel(userValues[4]),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  // Superpower
-                  superPower(userValues[5]),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  // Relationship status
-                  relationshipStatus(userValues[3]),
-                ],
-              )
-            ],
+    return LayoutBuilder(builder: (context, constraints) {
+      double imageSize = constraints.maxWidth * 0.15;
+      double fontSizeLarge = constraints.maxWidth * 0.07;
+      double fontSizeSmall = constraints.maxWidth * 0.035;
+      return Stack(
+        // Stack overflow
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            padding: const EdgeInsets.only(left: 12, right: 12),
+            decoration: const BoxDecoration(color: Colors.white),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Nickname
+                heading(fontSizeLarge),
+                nickname(userValues[1], fontSizeSmall),
+                // Motto
+                motto(userValues[6], fontSizeSmall),
+                Column(
+                  children: [
+                    SizedBox(height: imageSize / 5),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Age and happiness Level
+                        age(userValues[2], fontSizeSmall, imageSize),
+                        happinessLevel(userValues[4], fontSizeSmall, imageSize),
+                      ],
+                    ),
+                    SizedBox(height: imageSize / 5),
+                    // Superpower
+                    superPower(userValues[5], fontSizeSmall, imageSize),
+                    SizedBox(height: imageSize / 5),
+                    // Relationship status
+                    relationshipStatus(userValues[3], fontSizeSmall, imageSize),
+                  ],
+                )
+              ],
+            ),
           ),
-        ),
-        // Happiness level emoji
-        displayHappinessEmoji(userValues[4]),
-        // Verified sticker
-        verified,
-      ],
-    );
+          // Happiness level emoji
+          displayHappinessEmoji(userValues[4], imageSize),
+          // Verified sticker
+          verified(imageSize),
+        ],
+      );
+    });
   }
 
 // Add slambook button
@@ -263,41 +265,44 @@ class _ProfilePageState extends State<ProfilePage> {
   // Generate qr code button
   Widget generateQrButton(BuildContext context, String name) {
     return SizedBox(
+        width: screenWidth * 0.30,
         child: ElevatedButton(
-      onPressed: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            // Shows an alert dialog showing an qr image of user's slambook data
-            return slambookQrImage;
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                // Shows an alert dialog showing an qr image of user's slambook data
+                return slambookQrImage;
+              },
+            );
           },
-        );
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
-        ),
-        elevation: 4,
-      ),
-      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Icon(Icons.qr_code, color: const Color.fromARGB(255, 0, 0, 0)),
-        const SizedBox(
-          width: 10,
-        ),
-        Text(
-          'Qr Code',
-          style: Formatting.mediumStyle
-              .copyWith(fontSize: 14, color: Formatting.black),
-        )
-      ]),
-    ));
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
+            ),
+            elevation: 4,
+          ),
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            const Icon(Icons.qr_code,
+                color: const Color.fromARGB(255, 0, 0, 0)),
+            const SizedBox(
+              width: 7,
+            ),
+            Text(
+              'Qr Code',
+              style: Formatting.mediumStyle
+                  .copyWith(fontSize: 10, color: Formatting.black),
+            )
+          ]),
+        ));
   }
 
   // Edit slambook button
   Widget editSlambookButton() {
     return SizedBox(
+        width: screenWidth * 0.30,
         child: ElevatedButton(
             onPressed: () {
               showDialog(
@@ -317,14 +322,14 @@ class _ProfilePageState extends State<ProfilePage> {
               elevation: 4,
             ),
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              const Icon(Icons.edit, color: Color.fromARGB(255, 255, 255, 255)),
+              Icon(Icons.edit, color: Color.fromARGB(255, 255, 255, 255)),
               const SizedBox(
-                width: 10,
+                width: 7,
               ),
               Text(
                 'Edit',
                 style: Formatting.mediumStyle.copyWith(
-                  fontSize: 14,
+                  fontSize: 10,
                   color: const Color.fromRGBO(255, 255, 255, 1),
                 ),
               )
@@ -521,27 +526,29 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
 // Heading
-  Widget get heading => Text(
-        "My Slambook",
-        style: Formatting.semiBoldStyle.copyWith(
-          fontSize: 24,
-          color: Formatting.black,
-        ),
-      );
+  Widget heading(double fontSized) {
+    return Text(
+      "My Slambook",
+      style: Formatting.semiBoldStyle.copyWith(
+        fontSize: fontSized,
+        color: Formatting.black,
+      ),
+    );
+  }
 
   // Nickname
-  Widget nickname(String nickname) {
+  Widget nickname(String nickname, double fontSized) {
     return Text(
       "Frog name: ${nickname.length > 18 ? "${nickname.substring(0, 18)}..." : nickname}",
       style: Formatting.mediumStyle.copyWith(
-        fontSize: 10,
+        fontSize: fontSized,
         color: Formatting.black,
       ),
     );
   }
 
   // Motto
-  Widget motto(String motto) {
+  Widget motto(String motto, double fontSized) {
     return SizedBox(
         width: 200,
         child: Column(
@@ -551,7 +558,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Text(
               motto,
               style: Formatting.italicStyle
-                  .copyWith(fontSize: 10, color: Formatting.black),
+                  .copyWith(fontSize: fontSized, color: Formatting.black),
               softWrap: true,
             )
           ],
@@ -559,12 +566,12 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   // Frog image with age
-  Widget age(String age) {
+  Widget age(String age, double fontSized, double imageSize) {
     return Row(
       children: [
         SizedBox(
-          height: 50,
-          width: 50,
+          height: imageSize,
+          width: imageSize,
           child: Image.asset("assets/frog_age.png"),
         ),
         const SizedBox(
@@ -575,12 +582,12 @@ class _ProfilePageState extends State<ProfilePage> {
           children: [
             Text(age,
                 style: Formatting.semiBoldStyle.copyWith(
-                  fontSize: 16,
+                  fontSize: fontSized * 1.5,
                   color: Formatting.black,
                 )),
             Text("Age",
                 style: Formatting.mediumStyle.copyWith(
-                  fontSize: 12,
+                  fontSize: fontSized,
                   color: const Color.fromARGB(255, 90, 90, 90),
                 ))
           ],
@@ -590,13 +597,14 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   // Happiness Level
-  Widget happinessLevel(String happinessLevel) {
+  Widget happinessLevel(
+      String happinessLevel, double fontSized, double imageSize) {
     List happinessLevelList = happinessLevel.split(".");
     return Row(
       children: [
         SizedBox(
-          height: 50,
-          width: 50,
+          height: imageSize,
+          width: imageSize,
           child: Image.asset("assets/frog_happiness.png"),
         ),
         const SizedBox(
@@ -607,12 +615,12 @@ class _ProfilePageState extends State<ProfilePage> {
           children: [
             Text(happinessLevelList[0],
                 style: Formatting.semiBoldStyle.copyWith(
-                  fontSize: 16,
+                  fontSize: fontSized * 1.5,
                   color: Formatting.black,
                 )),
             Text("Happiness Level",
                 style: Formatting.mediumStyle.copyWith(
-                  fontSize: 12,
+                  fontSize: fontSized,
                   color: const Color.fromARGB(255, 90, 90, 90),
                 ))
           ],
@@ -622,12 +630,12 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   // Superpower
-  Widget superPower(String superpower) {
+  Widget superPower(String superpower, double fontSized, double imageSize) {
     return Row(
       children: [
         SizedBox(
-          height: 50,
-          width: 50,
+          height: imageSize,
+          width: imageSize,
           child: Image.asset("assets/frog_superpower.png"),
         ),
         const SizedBox(
@@ -638,12 +646,12 @@ class _ProfilePageState extends State<ProfilePage> {
           children: [
             Text(superpower,
                 style: Formatting.semiBoldStyle.copyWith(
-                  fontSize: 16,
+                  fontSize: fontSized * 1.5,
                   color: Formatting.black,
                 )),
             Text("Super Power",
                 style: Formatting.mediumStyle.copyWith(
-                  fontSize: 12,
+                  fontSize: fontSized,
                   color: const Color.fromARGB(255, 90, 90, 90),
                 ))
           ],
@@ -653,12 +661,13 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   // Relationship status
-  Widget relationshipStatus(String relationshipStatus) {
+  Widget relationshipStatus(
+      String relationshipStatus, double fontSized, double imageSize) {
     return Row(
       children: [
         SizedBox(
-          height: 50,
-          width: 50,
+          height: imageSize,
+          width: imageSize,
           child: Image.asset("assets/frog_relationship.png"),
         ),
         const SizedBox(
@@ -669,12 +678,12 @@ class _ProfilePageState extends State<ProfilePage> {
           children: [
             Text(relationshipStatus,
                 style: Formatting.semiBoldStyle.copyWith(
-                  fontSize: 16,
+                  fontSize: fontSized * 1.5,
                   color: Formatting.black,
                 )),
             Text("Relationship Status",
                 style: Formatting.mediumStyle.copyWith(
-                  fontSize: 12,
+                  fontSize: fontSized,
                   color: const Color.fromARGB(255, 90, 90, 90),
                 ))
           ],
@@ -684,14 +693,14 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   // Emoji depending on the happiness level
-  Widget displayHappinessEmoji(String happinessLevel) {
+  Widget displayHappinessEmoji(String happinessLevel, double imageSize) {
     return Positioned(
       top: -40,
       right: 0,
       child: ClipOval(
         child: Container(
-            height: 120,
-            width: 120,
+            height: imageSize * 2.3,
+            width: imageSize * 2.3,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
             ),
@@ -701,17 +710,19 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   // Verified sticker
-  Widget get verified => Positioned(
-        bottom: 18,
-        right: 15,
-        child: Container(
-            height: 90,
-            width: 90,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-            ),
-            child: Image.asset("assets/verified.png")),
-      );
+  Widget verified(double imageSize) {
+    return Positioned(
+      bottom: 18,
+      right: 15,
+      child: Container(
+          height: imageSize * 1.5,
+          width: imageSize * 1.5,
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+          ),
+          child: Image.asset("assets/verified.png")),
+    );
+  }
 
 // Return image depending on the happiness Level
   Widget happinessLevelEmoji(double happinessLevel) {
@@ -732,33 +743,47 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   // Display no slambook data
-  Widget get noSlambookData => Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 10),
-          // Image
-          SizedBox(
-            width: 150,
-            height: 150,
-            child: Image.asset("assets/frog_angry.png"),
-          ),
-          // Text
-          Text(
-            "No slambook yet   (¬､¬)",
-            style: Formatting.boldStyle
-                .copyWith(fontSize: 24, color: Formatting.black),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 20),
-          // Text
-          Text(
-            "Your slambook is currently empty. Click the ‘Add’ button to start creating your own slambook",
-            style: Formatting.mediumStyle
-                .copyWith(fontSize: 12, color: Formatting.black),
-            textAlign: TextAlign.center,
-          ),
-        ],
+  Widget get noSlambookData => LayoutBuilder(
+        builder: (context, constraints) {
+          double imageSize = constraints.maxWidth * 0.3;
+          double fontSizeLarge = constraints.maxWidth * 0.07;
+          double fontSizeSmall = constraints.maxWidth * 0.035;
+          double spacing = constraints.maxHeight * 0.06;
+
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: spacing),
+              // Image
+              SizedBox(
+                width: imageSize,
+                height: imageSize,
+                child: Image.asset("assets/frog_angry.png"),
+              ),
+              // Text
+              Text(
+                "No slambook yet   (¬､¬)",
+                style: Formatting.boldStyle.copyWith(
+                  fontSize: fontSizeLarge,
+                  color: Formatting.black,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: spacing),
+              // Text
+              Text(
+                "Your slambook is currently empty. Click the ‘Add’ button to start creating your own slambook",
+                style: Formatting.mediumStyle.copyWith(
+                  fontSize: fontSizeSmall,
+                  color: Formatting.black,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: spacing),
+            ],
+          );
+        },
       );
 
   // Function for creating a stream builder
@@ -843,7 +868,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Positioned(top: 55, right: 16, child: editInfoButton),
                     // Profile picture
                     Positioned(
-                      top: 210,
+                      top: screenHeight * 0.2,
                       right: 0,
                       left: 0,
                       child: Align(

@@ -29,17 +29,19 @@ class _SummaryPageState extends State<SummaryPage> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 244, 244, 244),
       extendBodyBehindAppBar: true,
-      body: Column(
+      body: SingleChildScrollView(
+          child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Cover photo and profile picture
           coverAndPfp,
-          Flexible(
+          SizedBox(
             child: Padding(
               padding: const EdgeInsets.all(15),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  const SizedBox(height: 60),
                   // Name
                   displayName(widget.friend),
                   const SizedBox(height: 12),
@@ -50,93 +52,110 @@ class _SummaryPageState extends State<SummaryPage> {
             ),
           ),
         ],
-      ),
+      )),
     );
   }
 
   // Responsible for Content UI
   Widget mainContentUI() {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+    return SizedBox(
+      height: screenHeight * 0.52,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
           border: Border.all(color: const Color.fromARGB(65, 97, 97, 97)),
           borderRadius: BorderRadius.circular(20),
-          color: Colors.white),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: double.infinity,
-            // Show the slambook content
-            child: slambookContent(),
-          ),
-          // Buttons
-          const SizedBox(height: 12),
-          editSlambookButton(),
-          const SizedBox(height: 4),
-          deleteSlambookButton()
-        ],
+          color: Colors.white,
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.grey,
+              blurRadius: 6.0,
+              offset: Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Expanded(
+              child: SizedBox(
+                width: double.infinity,
+                // Show the slambook content
+                child: slambookContent(),
+              ),
+            ),
+            // Buttons
+            const SizedBox(height: 12),
+            editSlambookButton(),
+            const SizedBox(height: 4),
+            deleteSlambookButton()
+          ],
+        ),
       ),
     );
   }
 
   // Function for showing the slambook content
   Widget slambookContent() {
-    // Display friend's slambook data
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Stack(
-          // Stack overflow
-          clipBehavior: Clip.none,
-          children: [
-            Container(
-              padding: const EdgeInsets.only(left: 16, right: 16),
-              decoration: const BoxDecoration(color: Colors.white),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Nickname
-                  heading,
-                  nickname(widget.friend.nickname),
-                  const SizedBox(height: 8),
-                  // Motto
-                  motto(widget.friend.motto),
-                  Column(
-                    children: [
-                      const SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // Age and happiness Level
-                          age(widget.friend.age),
-                          happinessLevel(widget.friend.happinessLevel),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      // Superpower
-                      superPower(widget.friend.superpower),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      // Relationship status
-                      relationshipStatus(widget.friend.relationshipStatus),
-                    ],
-                  )
-                ],
+    return LayoutBuilder(builder: (context, constraints) {
+      double imageSize = constraints.maxWidth * 0.15;
+      double fontSizeLarge = constraints.maxWidth * 0.07;
+      double fontSizeSmall = constraints.maxWidth * 0.035;
+      // Display friend's slambook data
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Stack(
+            // Stack overflow
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                padding: const EdgeInsets.only(left: 12, right: 12),
+                decoration: const BoxDecoration(color: Colors.white),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Nickname
+                    heading(fontSizeLarge),
+                    nickname(widget.friend.nickname, fontSizeSmall),
+                    // Motto
+                    motto(widget.friend.motto, fontSizeSmall),
+                    Column(
+                      children: [
+                        SizedBox(height: imageSize / 5),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // Age and happiness Level
+                            age(widget.friend.age, fontSizeSmall, imageSize),
+                            happinessLevel(widget.friend.happinessLevel,
+                                fontSizeSmall, imageSize),
+                          ],
+                        ),
+                        SizedBox(height: imageSize / 5),
+                        // Superpower
+                        superPower(
+                            widget.friend.superpower, fontSizeSmall, imageSize),
+                        SizedBox(height: imageSize / 5),
+                        // Relationship status
+                        relationshipStatus(widget.friend.relationshipStatus,
+                            fontSizeSmall, imageSize),
+                      ],
+                    )
+                  ],
+                ),
               ),
-            ),
-            // Happiness level emoji
-            displayHappinessEmoji(widget.friend.happinessLevel),
-            // Verified sticker
-            if (widget.friend.verified == "Yes") verified,
-          ],
-        )
-      ],
-    );
+              // Happiness level emoji
+              displayHappinessEmoji(widget.friend.happinessLevel, imageSize),
+              // Verified sticker
+              if (widget.friend.verified == "Yes") verified(imageSize),
+            ],
+          )
+        ],
+      );
+    });
   }
 
   // Edit slambook button
@@ -223,8 +242,7 @@ class _SummaryPageState extends State<SummaryPage> {
   }
 
 // Widget for the cover photo and profile picture
-  Widget get coverAndPfp => Container(
-        height: 360,
+  Widget get coverAndPfp => SizedBox(
         child: Stack(
           // Profile picture overflow
           clipBehavior: Clip.none,
@@ -253,30 +271,29 @@ class _SummaryPageState extends State<SummaryPage> {
       );
 
 // Heading
-  Widget get heading => SizedBox(
-      width: 200,
-      child: Text(
-        widget.friend.nickname,
-        overflow: TextOverflow.ellipsis,
-        style: Formatting.semiBoldStyle.copyWith(
-          fontSize: 24,
-          color: Formatting.black,
-        ),
-      ));
+  Widget heading(double fontSized) {
+    return Text(
+      widget.friend.name,
+      style: Formatting.semiBoldStyle.copyWith(
+        fontSize: fontSized,
+        color: Formatting.black,
+      ),
+    );
+  }
 
   // Nickname
-  Widget nickname(String nickname) {
+  Widget nickname(String nickname, double fontSized) {
     return Text(
-      "Frog name",
+      "Frog name: ${nickname.length > 18 ? "${nickname.substring(0, 18)}..." : nickname}",
       style: Formatting.mediumStyle.copyWith(
-        fontSize: 12,
-        color: const Color.fromARGB(255, 90, 90, 90),
+        fontSize: fontSized,
+        color: Formatting.black,
       ),
     );
   }
 
   // Motto
-  Widget motto(String motto) {
+  Widget motto(String motto, double fontSized) {
     return SizedBox(
         width: 200,
         child: Column(
@@ -286,7 +303,7 @@ class _SummaryPageState extends State<SummaryPage> {
             Text(
               motto,
               style: Formatting.italicStyle
-                  .copyWith(fontSize: 10, color: Formatting.black),
+                  .copyWith(fontSize: fontSized, color: Formatting.black),
               softWrap: true,
             )
           ],
@@ -294,12 +311,12 @@ class _SummaryPageState extends State<SummaryPage> {
   }
 
   // Frog image with age
-  Widget age(String age) {
+  Widget age(String age, double fontSized, double imageSize) {
     return Row(
       children: [
         SizedBox(
-          height: 50,
-          width: 50,
+          height: imageSize,
+          width: imageSize,
           child: Image.asset("assets/frog_age.png"),
         ),
         const SizedBox(
@@ -310,12 +327,12 @@ class _SummaryPageState extends State<SummaryPage> {
           children: [
             Text(age,
                 style: Formatting.semiBoldStyle.copyWith(
-                  fontSize: 16,
+                  fontSize: fontSized * 1.5,
                   color: Formatting.black,
                 )),
             Text("Age",
                 style: Formatting.mediumStyle.copyWith(
-                  fontSize: 12,
+                  fontSize: fontSized,
                   color: const Color.fromARGB(255, 90, 90, 90),
                 ))
           ],
@@ -325,13 +342,14 @@ class _SummaryPageState extends State<SummaryPage> {
   }
 
   // Happiness Level
-  Widget happinessLevel(String happinessLevel) {
+  Widget happinessLevel(
+      String happinessLevel, double fontSized, double imageSize) {
     List happinessLevelList = happinessLevel.split(".");
     return Row(
       children: [
         SizedBox(
-          height: 50,
-          width: 50,
+          height: imageSize,
+          width: imageSize,
           child: Image.asset("assets/frog_happiness.png"),
         ),
         const SizedBox(
@@ -342,12 +360,12 @@ class _SummaryPageState extends State<SummaryPage> {
           children: [
             Text(happinessLevelList[0],
                 style: Formatting.semiBoldStyle.copyWith(
-                  fontSize: 16,
+                  fontSize: fontSized * 1.5,
                   color: Formatting.black,
                 )),
             Text("Happiness Level",
                 style: Formatting.mediumStyle.copyWith(
-                  fontSize: 12,
+                  fontSize: fontSized,
                   color: const Color.fromARGB(255, 90, 90, 90),
                 ))
           ],
@@ -357,12 +375,12 @@ class _SummaryPageState extends State<SummaryPage> {
   }
 
   // Superpower
-  Widget superPower(String superpower) {
+  Widget superPower(String superpower, double fontSized, double imageSize) {
     return Row(
       children: [
         SizedBox(
-          height: 50,
-          width: 50,
+          height: imageSize,
+          width: imageSize,
           child: Image.asset("assets/frog_superpower.png"),
         ),
         const SizedBox(
@@ -373,12 +391,12 @@ class _SummaryPageState extends State<SummaryPage> {
           children: [
             Text(superpower,
                 style: Formatting.semiBoldStyle.copyWith(
-                  fontSize: 16,
+                  fontSize: fontSized * 1.5,
                   color: Formatting.black,
                 )),
             Text("Super Power",
                 style: Formatting.mediumStyle.copyWith(
-                  fontSize: 12,
+                  fontSize: fontSized,
                   color: const Color.fromARGB(255, 90, 90, 90),
                 ))
           ],
@@ -388,12 +406,13 @@ class _SummaryPageState extends State<SummaryPage> {
   }
 
   // Relationship status
-  Widget relationshipStatus(String relationshipStatus) {
+  Widget relationshipStatus(
+      String relationshipStatus, double fontSized, double imageSize) {
     return Row(
       children: [
         SizedBox(
-          height: 50,
-          width: 50,
+          height: imageSize,
+          width: imageSize,
           child: Image.asset("assets/frog_relationship.png"),
         ),
         const SizedBox(
@@ -404,12 +423,12 @@ class _SummaryPageState extends State<SummaryPage> {
           children: [
             Text(relationshipStatus,
                 style: Formatting.semiBoldStyle.copyWith(
-                  fontSize: 16,
+                  fontSize: fontSized * 1.5,
                   color: Formatting.black,
                 )),
             Text("Relationship Status",
                 style: Formatting.mediumStyle.copyWith(
-                  fontSize: 12,
+                  fontSize: fontSized,
                   color: const Color.fromARGB(255, 90, 90, 90),
                 ))
           ],
@@ -419,14 +438,14 @@ class _SummaryPageState extends State<SummaryPage> {
   }
 
   // Emoji depending on the happiness level
-  Widget displayHappinessEmoji(String happinessLevel) {
+  Widget displayHappinessEmoji(String happinessLevel, double imageSize) {
     return Positioned(
       top: -40,
       right: 0,
       child: ClipOval(
         child: Container(
-            height: 120,
-            width: 120,
+            height: imageSize * 2.3,
+            width: imageSize * 2.3,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
             ),
@@ -436,21 +455,23 @@ class _SummaryPageState extends State<SummaryPage> {
   }
 
   // Verified sticker
-  Widget get verified => Positioned(
-        bottom: 18,
-        right: 15,
-        child: Container(
-            height: 90,
-            width: 90,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-            ),
-            child: Image.asset("assets/verified.png")),
-      );
+  Widget verified(double imageSize) {
+    return Positioned(
+      bottom: 18,
+      right: 15,
+      child: Container(
+          height: imageSize * 1.5,
+          width: imageSize * 1.5,
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+          ),
+          child: Image.asset("assets/verified.png")),
+    );
+  }
 
   // Title
   Widget get appBar => Positioned(
-        top: 60,
+        top: 40,
         left: 0,
         right: 0,
         child: Align(
@@ -467,14 +488,14 @@ class _SummaryPageState extends State<SummaryPage> {
 
   // Back button
   Widget get backButton => Positioned(
-        top: 50,
+        top: 35,
         left: 24,
         child: backButtonIcon,
       );
 
   // Profile picture
   Widget get profilePicture => Positioned(
-        top: 210,
+        top: screenHeight * 0.2,
         left: 0,
         right: 0,
         child: Align(
@@ -503,7 +524,7 @@ class _SummaryPageState extends State<SummaryPage> {
 
   // Add button
   Widget get addButton => Positioned(
-        top: 325,
+        top: screenHeight * 0.337,
         left: 75,
         right: 0,
         child: Align(
