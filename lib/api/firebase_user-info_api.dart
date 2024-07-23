@@ -7,14 +7,15 @@ class UsersInfoAPI {
   final FirebaseAuthAPI authAPI = FirebaseAuthAPI();
 
   // Userid Collection Field
-  Stream<DocumentSnapshot<Map<String, dynamic>>> getUserInfo() {
+  Stream<DocumentSnapshot<Map<String, dynamic>>>? getUserInfo() {
     // Accessing current user id
     String? userId = authAPI.getCurrentUserId();
     if (userId != null) {
       //Snapshots
       return userIds.collection("userIds").doc(userId).snapshots();
     } else {
-      throw Exception("User ID not found.");
+      print("Users Info: User ID not found.");
+      return null;
     }
   }
 
@@ -55,17 +56,26 @@ class UsersInfoAPI {
     }
   }
 
-  // Function to return list of emails from the userIds collection
-  Future<List<String?>> getAllEmails() async {
+  Future<List<String>> getAllEmailsFromFirestore() async {
     try {
       // Fetch all documents from the userIds collection
       QuerySnapshot<Map<String, dynamic>> snapshot =
-          await userIds.collection('userIds').get();
+          await FirebaseFirestore.instance.collection('userIds').get();
+
+      // Check if snapshot contains any docs
+      if (snapshot.docs.isEmpty) {
+        print("No documents found in the userIds collection.");
+        return [];
+      }
 
       // Extract emails from each document
-      List<String?> emails = snapshot.docs.map((doc) {
-        return doc.data()['email'] as String;
+      List<String> emails = snapshot.docs.map((doc) {
+        final email = doc.data()['email'];
+        // Return email if it's a valid string
+        return email is String ? email : '';
       }).toList();
+
+      print(emails);
       return emails;
     } catch (e) {
       print("Error fetching emails: $e");

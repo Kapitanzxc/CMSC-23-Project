@@ -313,8 +313,10 @@ class _SignUpState extends State<SignUpPage> {
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () async {
+          List<String?> emails =
+              await context.read<UserInfoProvider>().getAllEmails();
           Map<String, dynamic>? userCredentials =
-              await context.read<UserAuthProvider>().signUpWithGoogle();
+              await context.read<UserAuthProvider>().signUpWithGoogle(emails);
           // Checks if the email used is already existing
           if (userCredentials != null) {
             setState(() {

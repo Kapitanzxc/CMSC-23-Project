@@ -6,7 +6,7 @@ import 'package:tolentino_mini_project/api/firebase_user-info_api.dart';
 // UserIds -> Field
 class UserInfoProvider with ChangeNotifier {
   final UsersInfoAPI usersInfoAPI = UsersInfoAPI();
-  late Stream<DocumentSnapshot<Map<String, dynamic>>> _userInfoStream;
+  late Stream<DocumentSnapshot<Map<String, dynamic>>>? _userInfoStream;
 
   // Constructor to initialize and fetch user info
   UserInfoProvider() {
@@ -14,7 +14,7 @@ class UserInfoProvider with ChangeNotifier {
   }
 
   // Getter for user info stream
-  Stream<DocumentSnapshot<Map<String, dynamic>>> get userInfoStream =>
+  Stream<DocumentSnapshot<Map<String, dynamic>>>? get userInfoStream =>
       _userInfoStream;
 
   // Function to fetch user info
@@ -40,13 +40,14 @@ class UserInfoProvider with ChangeNotifier {
       List<String> additionalContacts, String? profilePictureUrl) async {
     String message = await usersInfoAPI.editUserInfo(
         username, contact, additionalContacts, profilePictureUrl);
+    notifyListeners();
     return message;
   }
 
   // / Function to return list of emails from the userIds collection
   Future<List<String?>> getAllEmails() async {
-    List<String?> emails = await usersInfoAPI.getAllEmails();
-    print(emails);
+    List<String?> emails = await usersInfoAPI.getAllEmailsFromFirestore();
+    notifyListeners();
     return emails;
   }
 }

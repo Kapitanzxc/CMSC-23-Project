@@ -1,11 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:tolentino_mini_project/api/firebase_user-info_api.dart';
 
 // Authentication API
 class FirebaseAuthAPI {
   final FirebaseAuth auth = FirebaseAuth.instance;
-  final UsersInfoAPI usersInfoAPI = UsersInfoAPI();
 
   Stream<User?> getUserStream() {
     return auth.authStateChanges(); // Returns a stream of user changes
@@ -31,45 +29,6 @@ class FirebaseAuthAPI {
     }
   }
 
-  Future<bool> signInWithGoogle() async {
-    try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) {
-        // User canceled the sign-in
-        return false;
-      }
-
-      // Authenticate user credentials
-      final GoogleSignInAuthentication? googleAuth =
-          await googleUser.authentication;
-
-      // Access user's credential
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
-      );
-
-      // Check if the user exists in the Firestore collection
-      List<String?> emails = await usersInfoAPI.getAllEmails();
-
-      if (emails.contains(googleUser.email)) {
-        // Proceed with sign-in if user exists
-        await FirebaseAuth.instance.signInWithCredential(credential);
-        print('User exists in the database.');
-        return true;
-      } else {
-        print('User does not exist in the database.');
-        return false;
-      }
-    } on FirebaseAuthException catch (e) {
-      print('FirebaseAuthException: $e');
-      return false;
-    } catch (e) {
-      print('Exception: $e');
-      return false;
-    }
-  }
-
   // Function for signing up
   Future<UserCredential?> signUp(
       String email, String password, dynamic credentials) async {
@@ -91,8 +50,50 @@ class FirebaseAuthAPI {
     await auth.currentUser!.linkWithCredential(credentials);
   }
 
+  // Function for signing out
+  Future<void> signOut() async {
+    print("Successfully signed out!");
+    await auth.signOut();
+  }
+
+  Future<bool> signInWithGoogle(List<String?> emails) async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) {
+        // User canceled the sign-in
+        return false;
+      }
+
+      // Authenticate user credentials
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser.authentication;
+
+      // Access user's credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+
+      if (emails.contains(googleUser.email)) {
+        // Proceed with sign-in if user exists
+        await FirebaseAuth.instance.signInWithCredential(credential);
+        print('User exists in the database.');
+        return true;
+      } else {
+        print('User does not exist in the database.');
+        return false;
+      }
+    } on FirebaseAuthException catch (e) {
+      print('FirebaseAuthException: $e');
+      return false;
+    } catch (e) {
+      print('Exception: $e');
+      return false;
+    }
+  }
+
   // Function for signing up with google
-  Future<Map<String, dynamic>?> signUpWithGoogle() async {
+  Future<Map<String, dynamic>?> signUpWithGoogle(List<String?> emails) async {
     try {
       // Google Sign-In UI
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -116,9 +117,6 @@ class FirebaseAuthAPI {
         idToken: googleAuth?.idToken,
       );
 
-      // Check if the user exists in the Firestore collection
-      List<String?> emails = await usersInfoAPI.getAllEmails();
-
       if (emails.contains(googleUser.email)) {
         // If email exists already, return null:
         print('User already exists in the database.');
@@ -139,11 +137,5 @@ class FirebaseAuthAPI {
       print('Exception: $e');
     }
     return null;
-  }
-
-  // Function for signing out
-  Future<void> signOut() async {
-    print("Successfully signed out!");
-    await auth.signOut();
   }
 }

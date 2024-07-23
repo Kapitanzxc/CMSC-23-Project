@@ -15,11 +15,13 @@ class UserAuthProvider with ChangeNotifier {
     user = authService.getUser();
   }
 
+  // Updates userStream
   void fetchUserStream() {
     userStream = authService.getUserStream();
     notifyListeners();
   }
 
+  // Function for accessing userId
   String? getUserId() {
     String? userId = authService.getCurrentUserId();
     return userId;
@@ -33,8 +35,8 @@ class UserAuthProvider with ChangeNotifier {
   }
 
   // Sign in with google function
-  Future<bool> signInWithGoogle() async {
-    bool result = await authService.signInWithGoogle();
+  Future<bool> signInWithGoogle(List<String?> emails) async {
+    bool result = await authService.signInWithGoogle(emails);
     notifyListeners();
     return result;
   }
@@ -49,8 +51,9 @@ class UserAuthProvider with ChangeNotifier {
   }
 
   // Sign up with google function
-  Future<Map<String, dynamic>?> signUpWithGoogle() async {
-    Map<String, dynamic>? credentials = await authService.signUpWithGoogle();
+  Future<Map<String, dynamic>?> signUpWithGoogle(List<String?> emails) async {
+    Map<String, dynamic>? credentials =
+        await authService.signUpWithGoogle(emails);
     notifyListeners();
     if (credentials != null) {
       return credentials;
@@ -68,6 +71,7 @@ class UserAuthProvider with ChangeNotifier {
 
 // Returns current user Id
   String? getCurrentUserId() {
+    notifyListeners();
     return authService.getCurrentUserId();
   }
 }

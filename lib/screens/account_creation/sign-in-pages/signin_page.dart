@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tolentino_mini_project/formatting/formatting.dart';
 import 'package:tolentino_mini_project/provider/auth_provider.dart';
+import 'package:tolentino_mini_project/provider/user-info_provider.dart';
 import 'package:tolentino_mini_project/screens/account_creation/sign-up-pages/signup_page1.dart';
 
 // Sign In Page
@@ -176,8 +177,10 @@ class _SignInPageState extends State<SignInPage> {
       child: ElevatedButton(
         onPressed: () async {
           // Checks if its email is existing in the firebase
+          List<String?> emails =
+              await context.read<UserInfoProvider>().getAllEmails();
           final result =
-              await context.read<UserAuthProvider>().signInWithGoogle();
+              await context.read<UserAuthProvider>().signInWithGoogle(emails);
           // If existing, show error
           if (result == false) showSignInErrorDialog(context);
         },
@@ -246,7 +249,7 @@ class _SignInPageState extends State<SignInPage> {
             ? () async {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
-                  // Checks if the user signed in succesfully
+                  // Checks if the user signed in succesfull
                   bool signinChecker = await context
                       .read<UserAuthProvider>()
                       .signIn(email!, password!);
