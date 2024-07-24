@@ -12,7 +12,6 @@ import 'package:tolentino_mini_project/provider/user-slambook_provider.dart';
 import 'package:tolentino_mini_project/screens/pages/general%20pages/friend_modal.dart';
 import 'package:tolentino_mini_project/screens/pages/general%20pages/qr-code_page.dart';
 import 'package:tolentino_mini_project/screens/pages/general%20pages/summary_page.dart';
-import 'package:tolentino_mini_project/screens/pages/main_pages/profile_page.dart';
 
 // Friends page
 class FriendsPage extends StatefulWidget {

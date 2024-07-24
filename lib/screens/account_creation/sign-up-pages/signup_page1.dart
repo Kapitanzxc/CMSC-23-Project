@@ -78,7 +78,7 @@ class _SignUpState extends State<SignUpPage> {
           // Scaffold Formatting
           backgroundColor: Colors.white,
           extendBodyBehindAppBar: true,
-          resizeToAvoidBottomInset: false,
+          resizeToAvoidBottomInset: true,
           // Transparent appbar
           appBar: AppBar(
             backgroundColor: Colors.transparent,

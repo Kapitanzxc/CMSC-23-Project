@@ -269,12 +269,10 @@ class _SignupInfoPageState extends State<SignupInfoPage> {
         String? downloadURL;
         // Upload profile picture to the cloud
         if (widget.imageFile != null) {
-          print("im here");
           downloadURL = await context
               .read<StorageProvider>()
               .uploadProfilePicture(uid, widget.imageFile!);
         } else if (widget.profilePictureURL != null) {
-          print("im hsaaere");
           downloadURL = await context
               .read<StorageProvider>()
               .uploadProfilePicture(uid, widget.profilePictureURL);
