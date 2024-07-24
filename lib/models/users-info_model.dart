@@ -1,4 +1,4 @@
-// Users Personal Class
+// Users Personal Information Class
 class UsersInfo {
   String email;
   String name;

@@ -188,7 +188,8 @@ class _SignupInfoPageState extends State<SignupInfoPage> {
             if (val == null || val.isEmpty || val.trim().isEmpty) {
               return "This is a required field";
             }
-          } else if (labelText == "Primary Contact Number") {
+          } else if (labelText == "Primary Contact Number" ||
+              labelText == "Additional Contact Number") {
             if (val == null || val.isEmpty) {
               return "This is a required field";
             }
@@ -209,6 +210,7 @@ class _SignupInfoPageState extends State<SignupInfoPage> {
   // Displaying additional contacts
   Widget displayAdditionalContact(int index) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
           child: textFieldCreator(
@@ -220,7 +222,6 @@ class _SignupInfoPageState extends State<SignupInfoPage> {
         IconButton(
           icon: const Icon(Icons.delete),
           onPressed: () {
-            contactNumberControllers[index].removeListener(_checkFields);
             setState(() {
               contactNumberControllers.removeAt(index);
             });

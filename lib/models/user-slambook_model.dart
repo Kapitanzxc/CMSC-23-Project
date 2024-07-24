@@ -1,6 +1,6 @@
-// Users Class
 import 'dart:convert';
 
+// Users Slambook Class
 class Users {
   String? id;
   String name;

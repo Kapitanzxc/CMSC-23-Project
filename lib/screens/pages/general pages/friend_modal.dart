@@ -80,6 +80,7 @@ class _ModalPageState extends State<ModalPage> {
             : buildScaffold());
   }
 
+  // Content for delete and change type
   Widget buildDialog() {
     return AlertDialog(
       title: _buildTitle(),
@@ -106,6 +107,7 @@ class _ModalPageState extends State<ModalPage> {
     );
   }
 
+  // Content for editing type
   Widget buildScaffold() {
     return Scaffold(
       appBar: AppBar(

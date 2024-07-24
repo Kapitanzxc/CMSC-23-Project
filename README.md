@@ -49,3 +49,4 @@ https://stackoverflow.com/questions/41558368/how-can-i-layout-widgets-based-on-t
 https://medium.com/@dev.lens/flutter-google-sign-in-using-firebase-authentication-step-by-step-ef2ddfb84a2c
 https://stackoverflow.com/questions/59546381/how-to-get-image-from-url-to-a-file-in-flutter
 https://medium.com/@anusha.btech.2018/flutter-linking-accounts-in-firebase-with-different-authentication-providers-abe993ba4efe
+https://stackoverflow.com/questions/41371449/how-do-you-use-a-textpainter-to-draw-text

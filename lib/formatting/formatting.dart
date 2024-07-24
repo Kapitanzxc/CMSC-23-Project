@@ -2,7 +2,9 @@
 
 import 'package:flutter/material.dart';
 
+// Formatting class
 class Formatting {
+  // Colors
   static const Color primary = Color.fromRGBO(80, 141, 78, 1);
   static const Color darkerGreen = Color.fromRGBO(26, 83, 25, 1);
   static const Color white = Color.fromRGBO(242, 242, 242, 1);

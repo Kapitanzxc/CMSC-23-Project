@@ -40,11 +40,6 @@ class Friend {
         profilePictureURL: json['profilePictureURL']);
   }
 
-  // static List<Friend> fromJsonArray(String jsonData) {
-  //   final Iterable<dynamic> data = jsonDecode(jsonData);
-  //   return data.map<Friend>((dynamic d) => Friend.fromJson(d)).toList();
-  // }
-
   // Transforming a friend class to a map
   Map<String, dynamic> toJson(Friend friend) {
     return {

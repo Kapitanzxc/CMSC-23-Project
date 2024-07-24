@@ -134,6 +134,7 @@ class _SignUpState extends State<SignUpPage> {
   // Profile picture
   Widget get profilePicture => Stack(
         children: [
+          // Show user's chosen photo
           if (_imageFile != null)
             Padding(
               padding: const EdgeInsets.only(bottom: 40),
@@ -145,6 +146,7 @@ class _SignUpState extends State<SignUpPage> {
                 ),
               ),
             )
+          // Show google profile picture
           else if (profilePictureURL != null)
             Padding(
               padding: const EdgeInsets.only(bottom: 40),
@@ -156,6 +158,7 @@ class _SignUpState extends State<SignUpPage> {
                 ),
               ),
             )
+          // Show default picture
           else
             Padding(
               padding: const EdgeInsets.only(bottom: 40),
@@ -320,6 +323,7 @@ class _SignUpState extends State<SignUpPage> {
               await context.read<UserAuthProvider>().signUpWithGoogle(emails);
           // Checks if the email used is already existing
           if (userCredentials != null) {
+            // Fill up the controllers
             setState(() {
               nameController.text = userCredentials["name"];
               emailController.text = userCredentials["email"];
@@ -340,6 +344,7 @@ class _SignUpState extends State<SignUpPage> {
           elevation: 5, // Button shadow
           padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
         ),
+        // Logo and text
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

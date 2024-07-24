@@ -87,6 +87,7 @@ class _SignInPageState extends State<SignInPage> {
                           Row(children: [
                             heading,
                           ]),
+                          // Fields and buttons
                           emailField,
                           passwordField,
                           submitButton,

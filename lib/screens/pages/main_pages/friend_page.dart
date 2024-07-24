@@ -172,28 +172,30 @@ class _FriendsPageState extends State<FriendsPage> {
           MaterialPageRoute(builder: (context) => const QRCodeScannerPage()),
         );
         if (result != null) {
-          Users user = context.read<UserSlambookProvider>().user!;
-          String temp = user.toJsonString(user);
-          print(temp + "   " + result);
-          if (temp != result) {
-            // Turn the result to a Map
-            Map<String, dynamic> dataMap = jsonDecode(result);
-            // Instantiate a friend
-            Friend temp = Friend(
-                verified: "Yes",
-                name: dataMap["name"],
-                nickname: dataMap["nickname"],
-                age: dataMap["age"],
-                relationshipStatus: dataMap["relationshipStatus"],
-                happinessLevel: dataMap["happinessLevel"],
-                superpower: dataMap["superpower"],
-                motto: dataMap["motto"],
-                profilePictureURL: dataMap["profilePictureURL"]);
-            // Add friend to the firestore
-            addFriend(temp);
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text("Uh-oh, you can’t leap in with yourself!")));
+          if (context.read<UserSlambookProvider>().user != null) {
+            // Compares current user slambook to the scanned result
+            Users user = context.read<UserSlambookProvider>().user!;
+            String temp = user.toJsonString(user);
+            if (temp != result) {
+              // Turn the result to a Map
+              Map<String, dynamic> dataMap = jsonDecode(result);
+              // Instantiate a friend
+              Friend temp = Friend(
+                  verified: "Yes",
+                  name: dataMap["name"],
+                  nickname: dataMap["nickname"],
+                  age: dataMap["age"],
+                  relationshipStatus: dataMap["relationshipStatus"],
+                  happinessLevel: dataMap["happinessLevel"],
+                  superpower: dataMap["superpower"],
+                  motto: dataMap["motto"],
+                  profilePictureURL: dataMap["profilePictureURL"]);
+              // Add friend to the firestore
+              addFriend(temp);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text("Uh-oh, you can’t leap in with yourself!")));
+            }
           }
         }
       },
@@ -323,7 +325,7 @@ class _FriendsPageState extends State<FriendsPage> {
     return SizedBox(
       width: 150,
       child: Text(
-        friend.name,
+        friend.nickname,
         overflow: TextOverflow.ellipsis,
         style: Formatting.regularStyle.copyWith(
           fontSize: 12,

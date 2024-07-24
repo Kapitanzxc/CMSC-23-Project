@@ -71,7 +71,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: 60),
                   // Creation of name and user name
                   createStreamBuilder(context),
-                  // const SizedBox(height: 12),
                   // Content UI (slambook widget)
                   mainContentUI(),
                   // Logout button
@@ -453,8 +452,10 @@ class _ProfilePageState extends State<ProfilePage> {
     return Container(
       padding: const EdgeInsets.only(top: 8),
       child: TextButton(
-        onPressed: () {
-          _captureAndSavePng();
+        onPressed: () async {
+          await _captureAndSavePng().then(
+            (value) => Navigator.pop(context),
+          );
         },
         style: TextButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -482,28 +483,61 @@ class _ProfilePageState extends State<ProfilePage> {
           _qrkey.currentContext!.findRenderObject() as RenderRepaintBoundary;
       var image = await boundary.toImage(pixelRatio: 3.0);
 
-      //Drawing white background because QR code is black
+      // Drawing white background because QR code is black
       final whitePaint = Paint()..color = Colors.white;
       // Starts the picture recorder
       final recorder = PictureRecorder();
-      // Creates Canvas
-      final canvas = Canvas(recorder,
-          Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()));
-      // Draw a whtie rectangle canvas
+      // Calculate the dimensions for the new image with text below
+      final double textHeight = 50.0; // Adjust this value as needed
+      final canvas = Canvas(
+        recorder,
+        Rect.fromLTWH(
+          0,
+          0,
+          image.width.toDouble(),
+          image.height.toDouble() + textHeight,
+        ),
+      );
+      // Draw a white rectangle canvas
       canvas.drawRect(
-          Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()),
-          whitePaint);
-      // Draws the image (qr code) to the canvas
+        Rect.fromLTWH(
+            0, 0, image.width.toDouble(), image.height.toDouble() + textHeight),
+        whitePaint,
+      );
+      // Draw the image (QR code) to the canvas
       canvas.drawImage(image, Offset.zero, Paint());
+
+      // Add the text below the QR code
+      final textPainter = TextPainter(
+        text: TextSpan(
+          text: "${user!.name}'s slambook",
+          style: Formatting.semiBoldStyle.copyWith(
+            fontSize: 32,
+            color: Formatting.primary,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      );
+      textPainter.layout(
+        minWidth: 0,
+        maxWidth: image.width.toDouble(),
+      );
+      // Coordinates
+      final double textX = (image.width - textPainter.width) / 2;
+      final double textY =
+          image.height.toDouble() + (textHeight - textPainter.height) / 2;
+      textPainter.paint(canvas, Offset(textX, textY));
+
       // End recording
       final picture = recorder.endRecording();
       // Translate the drawing to an image
-      final img = await picture.toImage(image.width, image.height);
+      final img = await picture.toImage(
+          image.width, (image.height + textHeight).toInt());
       // Saving the image to png format
       ByteData? byteData = await img.toByteData(format: ImageByteFormat.png);
       Uint8List pngBytes = byteData!.buffer.asUint8List();
 
-      //Check for duplicate file name to avoid overwriting
+      // Check for duplicate file name to avoid overwriting
       String fileName = currentUser.name;
       int i = 1;
       while (await File('$externalDir/$fileName.png').exists()) {
@@ -513,7 +547,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
       // Check if Directory Path exists or not
       dirExists = await File(externalDir).exists();
-      //if not then create the path
+      // if not then create the path
       if (!dirExists) {
         await Directory(externalDir).create(recursive: true);
         dirExists = true;
