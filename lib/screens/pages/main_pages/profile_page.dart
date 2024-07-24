@@ -1017,7 +1017,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person),
-          label: 'Logout',
+          label: 'Profile',
         ),
       ],
     );

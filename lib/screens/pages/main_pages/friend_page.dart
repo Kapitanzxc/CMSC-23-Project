@@ -465,7 +465,7 @@ class _FriendsPageState extends State<FriendsPage> {
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person),
-          label: 'Logout',
+          label: 'Profile',
         ),
       ],
     );

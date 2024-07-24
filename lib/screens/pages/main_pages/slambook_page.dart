@@ -775,7 +775,7 @@ class _SlamBookState extends State<SlamBook> {
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person),
-          label: 'Logout',
+          label: 'Profile',
         ),
       ],
     );
