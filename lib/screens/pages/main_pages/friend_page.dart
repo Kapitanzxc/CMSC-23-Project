@@ -197,6 +197,8 @@ class _FriendsPageState extends State<FriendsPage> {
                   content: Text("Uh-oh, you can’t leap in with yourself!")));
             }
           }
+        } else {
+          print("Error qr code");
         }
       },
       child: const Icon(Icons.qr_code_scanner),
