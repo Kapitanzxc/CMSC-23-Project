@@ -44,7 +44,7 @@ Introducing **Ribbit** , a slambook application with a charming frog theme, desi
 
 6. **Edit Profile:** On the profile page, click the edit button to update your username, profile picture, and contact numbers. You can also add or edit your slambook data.
 
-7. **Generate QR Code:** Create a shareable QR code so friends can scan it to add you instantly.
+7. **Generate QR Code:** Create a shareable QR code so friends can scan it to add you instantly. You can also save the QR code to your local device for easy access and sharing.
 
 8. **Logout:** Use the logout button to sign out of the app.
 
