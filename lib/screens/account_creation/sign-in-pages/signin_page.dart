@@ -16,11 +16,11 @@ class SignInPage extends StatefulWidget {
 class _SignInPageState extends State<SignInPage> {
   // Variables
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController emailController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   double get screenWidth => MediaQuery.of(context).size.width;
   double get screenHeight => MediaQuery.of(context).size.height;
-  String? email;
+  String? username;
   String? password;
   bool showSignInErrorMessage = false;
   // button disabler
@@ -32,14 +32,14 @@ class _SignInPageState extends State<SignInPage> {
   void initState() {
     super.initState();
     // adding listeners to the controllers
-    emailController.addListener(_checkFields);
+    usernameController.addListener(_checkFields);
     passwordController.addListener(_checkFields);
   }
 
   // Updates the button if the fields is not empty
   void _checkFields() {
     setState(() {
-      if (emailController.text.isNotEmpty &&
+      if (usernameController.text.isNotEmpty &&
           passwordController.text.isNotEmpty) {
         isButtonEnabled = true;
       } else {
@@ -51,7 +51,7 @@ class _SignInPageState extends State<SignInPage> {
   @override
   void dispose() {
     // Disposing controllers
-    emailController.dispose();
+    usernameController.dispose();
     passwordController.dispose();
     super.dispose();
   }
@@ -88,7 +88,7 @@ class _SignInPageState extends State<SignInPage> {
                             heading,
                           ]),
                           // Fields and buttons
-                          emailField,
+                          usernameField,
                           passwordField,
                           submitButton,
                           signUpButton,
@@ -121,20 +121,20 @@ class _SignInPageState extends State<SignInPage> {
         ),
       );
 
-  // Text field for email
-  Widget get emailField => Padding(
+  // Text field for username
+  Widget get usernameField => Padding(
         padding: const EdgeInsets.only(bottom: 16),
         child: TextFormField(
-          controller: emailController,
+          controller: usernameController,
           decoration: InputDecoration(
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20.0),
               ),
-              label: const Text("Email")),
-          onSaved: (value) => email = value,
+              label: const Text("Username")),
+          onSaved: (value) => username = value,
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return "Please enter your email";
+              return "Please enter your username";
             }
             return null;
           },
@@ -179,7 +179,7 @@ class _SignInPageState extends State<SignInPage> {
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () async {
-          // Checks if its email is existing in the firebase
+          // Checks if its username is existing in the firebase
           List<String?> emails =
               await context.read<UserInfoProvider>().getAllEmails();
           final result =
@@ -253,17 +253,24 @@ class _SignInPageState extends State<SignInPage> {
             ? () async {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
-                  // Checks if the user signed in succesfull
-                  bool signinChecker = await context
-                      .read<UserAuthProvider>()
-                      .signIn(email!, password!);
 
-                  setState(() {
-                    // If message is not empty (error): show the error dialog
-                    if (!signinChecker) {
-                      showSignInErrorDialog(context);
-                    }
-                  });
+                  String? email = await getEmailByUsername(username!);
+
+                  if (email != null) {
+                    // Checks if the user signed in successful
+                    bool signinChecker = await context
+                        .read<UserAuthProvider>()
+                        .signIn(email, password!);
+
+                    setState(() {
+                      // If message is not empty (error): show the error dialog
+                      if (!signinChecker) {
+                        showSignInErrorDialog(context);
+                      }
+                    });
+                  } else {
+                    showSignInErrorDialog(context);
+                  }
                 }
               }
             : null,
@@ -281,6 +288,27 @@ class _SignInPageState extends State<SignInPage> {
               fontSize: 16, color: const Color.fromRGBO(255, 255, 255, 1)),
         ),
       ));
+
+  // Returns email by username
+  Future<String?> getEmailByUsername(String usernameToCheck) async {
+    try {
+      // Get the list of all usernames and emails
+      List<Map<String, dynamic>> usernamesAndEmails =
+          await context.read<UserInfoProvider>().getUsernameAndEmail();
+
+      // Iterate through the list to find the email linked to the specified username
+      for (var user in usernamesAndEmails) {
+        if (user['username'] == usernameToCheck) {
+          return user['email'];
+        }
+      }
+      // If no matching username is found, return null
+      return null;
+    } catch (e) {
+      print("Error fetching email by username: $e");
+      return null;
+    }
+  }
 
 // Show error dialog
   void showSignInErrorDialog(BuildContext context) {

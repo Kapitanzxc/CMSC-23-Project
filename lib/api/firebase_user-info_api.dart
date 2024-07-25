@@ -56,11 +56,12 @@ class UsersInfoAPI {
     }
   }
 
+  // Fetch all emails
   Future<List<String>> getAllEmailsFromFirestore() async {
     try {
       // Fetch all documents from the userIds collection
       QuerySnapshot<Map<String, dynamic>> snapshot =
-          await FirebaseFirestore.instance.collection('userIds').get();
+          await userIds.collection('userIds').get();
 
       // Check if snapshot contains any docs
       if (snapshot.docs.isEmpty) {
@@ -79,6 +80,63 @@ class UsersInfoAPI {
       return emails;
     } catch (e) {
       print("Error fetching emails: $e");
+      return [];
+    }
+  }
+
+  // Fetch all usernames
+  Future<List<String>> getAllUsernamesFromFirestore() async {
+    try {
+      // Fetch all documents from the userIds collection
+      QuerySnapshot<Map<String, dynamic>> snapshot =
+          await userIds.collection('userIds').get();
+
+      // Check if snapshot contains any docs
+      if (snapshot.docs.isEmpty) {
+        print("No documents found in the userIds collection.");
+        return [];
+      }
+
+      // Extract emails from each document
+      List<String> usernames = snapshot.docs.map((doc) {
+        final username = doc.data()['username'];
+        // Return email if it's a valid string
+        return username is String ? username : '';
+      }).toList();
+
+      print(usernames);
+      return usernames;
+    } catch (e) {
+      print("Error fetching emails: $e");
+      return [];
+    }
+  }
+
+  // Fetch all usernames and emails attached to it
+  Future<List<Map<String, dynamic>>> getUsernameAndEmail() async {
+    try {
+      // Fetch all documents from the userIds collection
+      QuerySnapshot<Map<String, dynamic>> snapshot =
+          await FirebaseFirestore.instance.collection('userIds').get();
+
+      // Check if snapshot contains any docs
+      if (snapshot.docs.isEmpty) {
+        print("No documents found in the userIds collection.");
+        return [];
+      }
+
+      // Extract usernames and emails from each document
+      List<Map<String, dynamic>> usernamesAndEmails = snapshot.docs.map((doc) {
+        final data = doc.data();
+        final username = data['username'] ?? '';
+        final email = data['email'] ?? '';
+        return {'username': username, 'email': email};
+      }).toList();
+
+      print(usernamesAndEmails);
+      return usernamesAndEmails;
+    } catch (e) {
+      print("Error fetching usernames and emails: $e");
       return [];
     }
   }

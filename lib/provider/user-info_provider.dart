@@ -50,4 +50,19 @@ class UserInfoProvider with ChangeNotifier {
     notifyListeners();
     return emails;
   }
+
+  // / Function to return list of emails from the userIds collection
+  Future<List<String?>> getAllUsernames() async {
+    List<String?> usernames = await usersInfoAPI.getAllUsernamesFromFirestore();
+    notifyListeners();
+    return usernames;
+  }
+
+  // Returns a map of username and email attached to it
+  Future<List<Map<String, dynamic>>> getUsernameAndEmail() async {
+    List<Map<String, dynamic>> usernameAndEmails =
+        await usersInfoAPI.getUsernameAndEmail();
+    notifyListeners();
+    return usernameAndEmails;
+  }
 }

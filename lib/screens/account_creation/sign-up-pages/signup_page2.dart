@@ -38,9 +38,10 @@ class _SignupInfoPageState extends State<SignupInfoPage> {
   final TextEditingController contactController = TextEditingController();
   final List<TextEditingController> contactNumberControllers = [];
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
   // disable button
   bool isButtonEnabled = false;
+  // List of usernames
+  List<String?> usernamesList = [];
 
   // Updates the button if fields are empty
   void _checkFields() {
@@ -66,6 +67,15 @@ class _SignupInfoPageState extends State<SignupInfoPage> {
     // Listeners to the controllers
     usernameController.addListener(_checkFields);
     contactController.addListener(_checkFields);
+    fetchUsernames();
+  }
+
+  Future<void> fetchUsernames() async {
+    List<String?> usernames =
+        await context.read<UserInfoProvider>().getAllUsernames();
+    setState(() {
+      usernamesList = usernames;
+    });
   }
 
   @override
@@ -187,6 +197,8 @@ class _SignupInfoPageState extends State<SignupInfoPage> {
           if (labelText == "Username") {
             if (val == null || val.isEmpty || val.trim().isEmpty) {
               return "This is a required field";
+            } else if (usernamesList.contains(val)) {
+              return "This username already exists";
             }
           } else if (labelText == "Primary Contact Number" ||
               labelText == "Additional Contact Number") {

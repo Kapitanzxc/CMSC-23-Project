@@ -20,17 +20,32 @@ Introducing **Ribbit** , a slambook application with a charming frog theme, desi
 
 ## How to use Ribbit App
 
+![Create an Account](./assets/readme/1.jpg) 
+
 1. **Create an Account:** Sign up via Google or manually by filling in the required fields.
 
 2. **Sign In:** After signing up, you're automatically logged in. For future logins, use your account credentials.
 
-3. **Add Friends:** Navigate to the slambook page, input your friend's information, and click submit. Alternatively, use the add button on the friends page or the QR code scanner. Friends added via QR code are marked as verified.
+![*Add Friends](./assets/readme/2.jpg) 
 
-4. **Manage Friends:** View your friends on the friends page. Edit, change profile pictures, or delete a friend using the three dots menu. Note: You can't edit the information of a verified friend except for their picture. Also, you can't change your friends' names.
+3. **Add Friends:** Navigate to the slambook page, input your friend's information, and click submit. A summary dialog will pop up after submitting. Alternatively, use the add button on the friends page or the QR code scanner. Friends added via QR code are marked as verified.
+
+![Manage Friends](./assets/readme/3.jpg) 
+
+4. **Manage Friends:** View your friends on the friends page. Edit, change profile pictures, or delete a friend using the three dots menu. 
+> [!NOTE]
+> You can't edit the information of a verified friend except for their picture. Also, you can't change your friends' names..
+
+![View Friends' Slambook](./assets/readme/4.jpg) 
 
 5. **View Friends' Slambook:** Click on a friend to view their slambook page with their information and helpful buttons.
 
+![Edit Profile](./assets/readme/5.jpg) 
+
 6. **Edit Profile:** On the profile page, click the edit button to update your username, profile picture, and contact numbers. You can also add or edit your slambook data.
+
+
+![*Generate QR Code](./assets/readme/6.jpg) 
 
 7. **Generate QR Code:** Create a shareable QR code so friends can scan it to add you instantly.
 
@@ -52,7 +67,7 @@ Ribbit is developed using Dart and Flutter. To install the app on an Android pho
      ```
 
     - Flutter will build the app and install it on your selected device. Follow any additional prompts if needed.
-    - For further setup instructions, refer to the [Flutter installation guide](https://flutter.dev/docs/get-started/install).
+    - For further setup instructions, refer to the [Flutter installation guide](https://docs.flutter.dev/).
 
 
 ## References
@@ -88,6 +103,7 @@ Ribbit is developed using Dart and Flutter. To install the app on an Android pho
 
 
 ### Images
+- [Logo](https://www.brandcrowd.com/maker/logo/frog-amphibian-toad-75777?text=ribbit&isSearch=True)
 - [Pinterest Pin: Design Inspiration](https://ph.pinterest.com/pin/625015254566607927/)
 - [Rating Satisfaction Feedback Illustration](https://www.istockphoto.com/vector/rating-satisfaction-feedback-in-form-of-emotions-gm1160344267-317584172)
 - [Other images are from Canva Elements](https://www.canva.com)
