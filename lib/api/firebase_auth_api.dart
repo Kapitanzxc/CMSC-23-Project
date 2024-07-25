@@ -58,6 +58,8 @@ class FirebaseAuthAPI {
 
   Future<bool> signInWithGoogle(List<String?> emails) async {
     try {
+      // Shows the google accounts ui
+      await GoogleSignIn().signOut();
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) {
         // User canceled the sign-in
@@ -96,6 +98,7 @@ class FirebaseAuthAPI {
   Future<Map<String, dynamic>?> signUpWithGoogle(List<String?> emails) async {
     try {
       // Google Sign-In UI
+      await GoogleSignIn().signOut();
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) {
         // User canceled the sign-up
