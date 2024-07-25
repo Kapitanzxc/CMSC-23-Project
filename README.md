@@ -34,7 +34,7 @@ Introducing **Ribbit** , a slambook application with a charming frog theme, desi
 
 4. **Manage Friends:** View your friends on the friends page. Edit, change profile pictures, or delete a friend using the three dots menu. 
 > [!NOTE]
-> You can't edit the information of a verified friend except for their picture. Also, you can't change your friends' names..
+> You can't edit the information of a verified friend except for their picture. Also, you can't change your friends' names.
 
 ![View Friends' Slambook](./assets/readme/4.jpg) 
 
