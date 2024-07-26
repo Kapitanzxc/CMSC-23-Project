@@ -39,8 +39,9 @@ class _ProfilePageState extends State<ProfilePage> {
   bool slambookDataChecker = false;
   // Saving qr code variables
   final GlobalKey _qrkey = GlobalKey();
+  // Directory
   bool dirExists = false;
-  dynamic externalDir = '/storage/emulated/0/Download/Qr_code';
+  dynamic externalDir = '/storage/emulated/0/Download/Ribbit';
 
   // Fetch user's slambook data everytime this page is initialize
   @override
