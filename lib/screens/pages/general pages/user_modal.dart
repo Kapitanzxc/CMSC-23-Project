@@ -33,6 +33,8 @@ class UserModalPage extends StatefulWidget {
 class _UserModalPageState extends State<UserModalPage> {
   // Iniitializing camera feature
   final CameraFeature _cameraFeature = CameraFeature();
+  // List of usernames
+  List<String?> usernamesList = [];
 
   // List of superpowers
   List<String> superpowers = [
@@ -613,6 +615,8 @@ class _UserModalPageState extends State<UserModalPage> {
           validator: (val) {
             if (val == null || val.isEmpty || val.trim().isEmpty) {
               return "This is a required field";
+            } else if (labelText == "Username" && usernamesList.contains(val)) {
+              return "This username already exists";
             }
             return null;
           },
